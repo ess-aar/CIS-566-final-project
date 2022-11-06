@@ -57,6 +57,7 @@ neighboring edge is the same feature type like water).
 
 #### Design:
 
+<img width="482" alt="PG Project Flow Diagram" src="https://user-images.githubusercontent.com/90112787/200188201-6eef1f37-ee3b-49e3-89b8-66b1a7b93501.png">
 
 #### Timeline:
 Milestone 1:
