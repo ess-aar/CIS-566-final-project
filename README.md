@@ -6,29 +6,94 @@ This is it! The culmination of your procedural graphics experience this semester
 Before submitting your first milestone, _you must get your project idea and scope approved by Rachel, Adam or a TA._
 
 ### Design Doc
-Start off by forking this repository. In your README, write a design doc to outline your project goals and implementation plan. It must include the following sections:
 
 #### Introduction
-- What motivates your project?
+Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. We would like to develop a tool for visualizing and creating these maps procedurally. We want to allow users to be able to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
 
 #### Goal
-- What do you intend to achieve with this project?
+We intend to produce a 2D hexagonal fantasy map generator using Wave Function Collapse in the Unity game engine. We plan to render our procedurally generated map data in the style of the references below.
 
 #### Inspiration/reference:
-- You must have some form of reference material for your final project. Your reference may be a research paper, a blog post, some artwork, a video, another class at Penn, etc.  
-- Include in your design doc links to and images of your reference material.
+![mistborn_greyscale](https://user-images.githubusercontent.com/43520504/200185466-631fa337-4e37-46a8-90e8-587224125730.jpg)
+
+[Mistborn Map](https://www.deviantart.com/mapeffects/art/Mistborn-The-Final-Empire-Map-Brandon-Sanderson-907741466)
+
+![lotr_map](https://user-images.githubusercontent.com/43520504/200185526-67683e39-83b9-4daa-bfd2-70f2a17cb18e.jpg)
+
+[Lord of the Rings Map](https://i.ebayimg.com/images/g/05MAAOSws9dfjJnE/s-l1600.jpg) 
+
+![narniamap](https://user-images.githubusercontent.com/43520504/200185636-b325b0bd-319d-4acb-a030-ee172c081eef.jpg)
+
+[Narnia Map](https://m.media-amazon.com/images/I/91F8R4qQHML.jpg)
+
+![landandsea](https://user-images.githubusercontent.com/43520504/200185530-1856d75e-7f1a-4d29-b72a-c06fbbf1adf4.jpg)
+
+[Land and Sea Board Game](https://www.theboardgamefamily.com/wp-content/uploads/2021/09/20210923_172855.jpg)
+
+<img width="775" alt="inkarnate" src="https://user-images.githubusercontent.com/43520504/200187904-54a2d224-854f-4b9d-ac64-374e3461be02.PNG">
+
+[Inkarnate Fantasy Map Creator](https://inkarnate.com/)
+
+<img width="1280" alt="azgaar" src="https://user-images.githubusercontent.com/43520504/200187977-09de9537-ee70-48bf-bfeb-5bf88cb301ae.PNG">
+
+[Azgaar's Fantasy Map Generator](https://azgaar.github.io/Fantasy-Map-Generator/)
+
+<img width="1170" alt="rollforfantasy" src="https://user-images.githubusercontent.com/43520504/200188159-2223faca-f2ce-4088-9382-e23b5abe791c.PNG">
+
+[Roll For Fantasy Randomized Tile-based Map Generator](https://rollforfantasy.com/tools/map-creator.php)
 
 #### Specification:
-- Outline the main features of your project.
+- 2D Wave Function Collapse: Implementation of the Wave Function Collapse algorithm
+- Hexagonal Tiles: Use hexagonal tiles for the WFC map generation
+- Non-photorealistic Rendering: Rendering of assets using shaders that provide features like cross-hatching, paint splotches, and outline generation
+- Interactivity: Manual seed placement or autoregeneration of map
 
 #### Techniques:
-- What are the main technical/algorithmic tools you’ll be using? Give an overview, citing specific papers/articles.
+- 2D Hexagonal Grid made up of 6-sided tiles with a map terrain feature type on each edge of a tile. Each tile has a color mask that defines the feature types that can occupy the tile over its domain.
+- Wave Function Collapse to place tiles in the grid based on rules that define what tiles edges can be placed together (i.e. we will only connect two tiles if the
+neighboring edge is the same feature type like water).
+- For rendering, we plan to use common NPR concepts such as cross-hatching, paint splotches, and outline generation. We will most likely write these as Unity shaders. Additionally, we may add post-process render passes for adding rivers, roads, labels, compass, torn edges, and sea monsters.
+- Unity built-in modules for cursor-based selection and GUI rendering
 
 #### Design:
-- How will your program fit together? Make a simple free-body diagram illustrating the pieces.
+
 
 #### Timeline:
-- Create a week-by-week set of milestones for each person in your group. Make sure you explicitly outline what each group member's duties will be.
+Milestone 1:
+- Everyone
+  - Learn Unity scripting and shading
+  - Understand and design approach to Wave Function Collapse Algorithm
+- Nick & Sakshi
+  - Basic Asset Creation
+  - 2D Hexagonal Wave Function Collapse development
+- Megan
+  - Shade based on color map from 2D hexagonal tiles
+  - Initial prototype of NPR techniques
+
+Milestone 2:
+- Everyone
+  - Polish leftover features from the previous milestone
+  - Asset creation and polish
+- Nick
+  - Post-processing filters
+- Sakshi
+  - Post-processing labels and roads
+- Megan
+  - Interactivity
+  - Surface shader polish
+- If time permits
+  - Inifinite map generation :O
+
+Final Submission:
+- Everyone
+  - Polish leftover features from the previous milestones
+  - Asset creation and polish
+- Nick
+  - Hi
+- Sakshi
+  - Hi
+- Megan
+  - Hi
 
 Submit your Design doc as usual via pull request against this repository.
 ## Milestone 1: Implementation part 1 (due 11/16)
