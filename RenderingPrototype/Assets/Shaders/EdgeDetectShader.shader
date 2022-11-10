@@ -1,4 +1,4 @@
-Shader "Hidden/ColorShader"
+Shader "Hidden/EdgeDetectShader"
 {
     Properties
     {
