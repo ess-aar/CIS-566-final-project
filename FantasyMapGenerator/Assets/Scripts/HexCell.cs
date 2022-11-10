@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class HexCell : MonoBehaviour
 {
+
+    public bool is_cell_collapsed = false;
+    public int entropy;
+    public Tile tile;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -14,5 +19,13 @@ public class HexCell : MonoBehaviour
     void Update()
     {
         
+    }
+
+    public void collapseCell(Tile t)
+    {
+        this.tile = Instantiate<Tile>(t);
+        this.tile.transform.SetParent(transform, false);
+        //this.tile.transform.localPosition = transform.position;
+        this.is_cell_collapsed = true;
     }
 }

@@ -154,7 +154,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   width: 10
   height: 10
-  cellPrefab: {fileID: 6993778801520588890, guid: 158bd1a85409d354492a00e1477e99ea, type: 3}
+  is_grid_collapsed: 0
+  cellPrefab: {fileID: -1915333941536036059, guid: c4ea1198054c5314b823f9727af86dc3, type: 3}
+  cells: []
 --- !u!4 &290387604
 Transform:
   m_ObjectHideFlags: 0
@@ -264,6 +266,59 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &1714802305
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1714802307}
+  - component: {fileID: 1714802306}
+  m_Layer: 0
+  m_Name: WFC
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1714802306
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714802305}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6417b59c1f34eca43a47e50945071da9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  grid: {fileID: 290387603}
+  tile_prefabs:
+  - {fileID: -8741093752008912707, guid: 06cc6ac8d1c3de34291a67f9a3485256, type: 3}
+  - {fileID: 8705989519417168777, guid: 95dc44dc06391b04d9e48e9b6ff27e02, type: 3}
+  - {fileID: 5672681092597592479, guid: 158bd1a85409d354492a00e1477e99ea, type: 3}
+  - {fileID: 726314094500107195, guid: bce83dd88ee8add4489a87c429fa0139, type: 3}
+  - {fileID: 5260315386775526443, guid: a8a18f0582ff23548a4e50444bc1996f, type: 3}
+  - {fileID: 4113033252204199701, guid: d402c90e86406c94690ea50b32953672, type: 3}
+  - {fileID: 5023103324501576513, guid: a368cce7062f84244b66009038522ccf, type: 3}
+--- !u!4 &1714802307
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1714802305}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 8.2679405, y: 0.19750938, z: 7.12933}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1944858175
 GameObject:
   m_ObjectHideFlags: 0

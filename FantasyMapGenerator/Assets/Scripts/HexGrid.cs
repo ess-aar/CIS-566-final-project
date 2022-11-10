@@ -7,10 +7,11 @@ public class HexGrid : MonoBehaviour
 
     public int width = 10;
     public int height = 10;
+	public bool is_grid_collapsed = false;
 
-	public HexCell[] cellPrefab;
+	public HexCell cellPrefab;
 
-    HexCell[] cells;
+    public HexCell[] cells;
 
 	void Awake()
 	{
@@ -28,7 +29,7 @@ public class HexGrid : MonoBehaviour
 		}
 	}
 
-	void CreateCell(int x, int z, int i)
+	public void CreateCell(int x, int z, int i)
 	{
 		Vector3 position;
 		
@@ -38,9 +39,11 @@ public class HexGrid : MonoBehaviour
         //position.z = z * 2f;
         //position.x = x * 2f;
 
-        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab[Random.Range(0,6)]);
+        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
 		cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
+		//cell.entropy = cellPrefab.Length;
+		
 	}
 
 }
