@@ -73,21 +73,23 @@ Milestone 1:
   - Understand and design approach to Wave Function Collapse Algorithm
 - Nick & Sakshi
   - Basic Asset Creation (i.e. basic combination of sea, shore, and land tiles)
+  - Creation of hexagonal grid and tiles
   - 2D Hexagonal Wave Function Collapse development
 - Megan
   - Shade based on color map from 2D hexagonal tiles in Unity
-  - Initial prototype of NPR techniques
+  - Initial prototype of NPR post-process techniques in Unity
+  - Research and prototype how to represent advanced features on tiles (mountains, forests, etc.)
 
 Milestone 2:
 - Everyone
   - Polish leftover features from the previous milestone
   - Asset creation and polish (more advanced terrain and sea features such as mountain ranges, forests, lakes, castles, etc.)
 - Nick
-  - Post-processing filters (roads, rivers, labels, compass, antique painterly look, etc.)
+  - More post-processing filters (roads, rivers, labels, compass, etc.)
 - Sakshi
   - UI features and tooling - clear canvas, regeneration of map, and inventory to select tiles
 - Megan
-  - Continue working on surface shaders for extra features (mountains, forests, lakes, etc.)
+  - Continue working on shaders for extra features (mountains, forests, lakes, antique painterly look, etc.)
 - If time permits
   - Inifinite map generation :O
   - Extra shader types (e.g. Lord of the Rings or Narnia style)
