@@ -8,7 +8,7 @@ public class HexGrid : MonoBehaviour
     public int width = 10;
     public int height = 10;
 
-	public HexCell cellPrefab;
+	public HexCell[] cellPrefab;
 
     HexCell[] cells;
 
@@ -38,7 +38,7 @@ public class HexGrid : MonoBehaviour
         //position.z = z * 2f;
         //position.x = x * 2f;
 
-        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+        HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab[Random.Range(0,6)]);
 		cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
 	}
