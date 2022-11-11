@@ -20,4 +20,20 @@ public class HexMetrics : MonoBehaviour
 
 
     public enum TerrainFeature { Water, Land };
+
+    public static Dictionary<Color, TerrainFeature> color_to_feature = new Dictionary<Color, TerrainFeature>
+    {
+        { new Color(0.808f, 0.910f, 0.514f, 1f), TerrainFeature.Land },
+        { new Color(0.537f, 0.894f, 0.969f, 1f), TerrainFeature.Water },
+    };
+
+    public static Dictionary<NeighborDirections, Vector2> direction_to_textureUV = new Dictionary<NeighborDirections, Vector2>
+    {
+        { NeighborDirections.Left, new Vector2(51, 256) },
+        { NeighborDirections.Right, new Vector2(460, 256) },
+        { NeighborDirections.Upper_Left, new Vector2(153, 410) },
+        { NeighborDirections.Upper_Right, new Vector2(384, 410) },
+        { NeighborDirections.Lower_Left, new Vector2(153, 102) },
+        { NeighborDirections.Lower_Right, new Vector2(384, 102) }
+    };
 }

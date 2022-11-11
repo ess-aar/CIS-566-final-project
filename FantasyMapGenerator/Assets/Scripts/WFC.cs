@@ -14,16 +14,28 @@ public class WFC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        num_seeds = Random.Range(1, 5);
-        generateSeeds();
-        performWFC();
-        //grid = gameObject.GetComponent(typeof(HexGrid)) as HexGrid;
+        generateTileEdgeData();
+        //num_seeds = Random.Range(1, 5);
+        //generateSeeds();
+        //performWFC();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    void generateTileEdgeData()
+    {
+        for (int i = 0; i < 7; ++i)
+        {
+            tile_prefabs[i].GenerateTileEdgeFeatures();
+        }
+        //Tile t = Instantiate<Tile>(tile_prefabs[1]);
+        //Texture2D debug_texture = (Texture2D) t.GetComponent<Renderer>().material.mainTexture;
+        //Debug.Log("Renderer" + debug_texture.GetPixel(256, 256));
     }
 
     void generateSeeds()
