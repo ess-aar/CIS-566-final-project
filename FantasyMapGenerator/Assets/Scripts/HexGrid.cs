@@ -40,10 +40,37 @@ public class HexGrid : MonoBehaviour
         //position.x = x * 2f;
 
         HexCell cell = cells[i] = Instantiate<HexCell>(cellPrefab);
+		cell.x = x;
+		cell.z = z;
 		cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
 		//cell.entropy = cellPrefab.Length;
 		
 	}
 
+	public List<HexCell> getCellsWithMinEntropy()
+	{
+		List<HexCell> cells_with_min_entropy = new List<HexCell>();
+		int min_entropy = 100000000;
+		for (int i = 0; i < this.height * this.width; ++i)
+		{
+			if (cells[i].entropy < min_entropy)
+			{
+				min_entropy = cells[i].entropy;
+			}
+		}
+		for (int i = 0; i < this.height * this.width; ++i)
+		{
+			if (cells[i].entropy == min_entropy)
+			{
+				cells_with_min_entropy.Add(cells[i]);
+			}
+		}
+		return cells_with_min_entropy;
+	}
+
+	public Tile pickTileToInstantiate(HexCell cell)
+    {
+		return new Tile();
+    }
 }

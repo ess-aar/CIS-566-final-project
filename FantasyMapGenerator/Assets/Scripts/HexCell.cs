@@ -8,6 +8,8 @@ public class HexCell : MonoBehaviour
     public bool is_cell_collapsed = false;
     public int entropy;
     public Tile tile;
+    public int x;
+    public int z;
 
     // Start is called before the first frame update
     void Start()
