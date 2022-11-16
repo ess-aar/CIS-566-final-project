@@ -4,10 +4,7 @@ using UnityEngine;
 
 public class Tile : MonoBehaviour
 {
-
-    public int edge_0 = 0;
-    public Dictionary<HexMetrics.NeighborDirections, HexMetrics.TerrainFeature> edge_map = new Dictionary<HexMetrics.NeighborDirections, HexMetrics.TerrainFeature>();
-    
+    public int id;
     // Start is called before the first frame update
     void Start()
     {
@@ -20,14 +17,17 @@ public class Tile : MonoBehaviour
         
     }
 
-    public void GenerateTileEdgeFeatures()
+    public List<TileInterface> GenerateRotatedTiles(TileInterface tile_interface)
     {
-        foreach(HexMetrics.NeighborDirections dir in HexMetrics.direction_to_textureUV.Keys)
+        List<TileInterface> tile_list = new List<TileInterface>();
+        for (int i = 0; i < 6; ++i)
         {
-
-            Vector2 uvs = HexMetrics.direction_to_textureUV[dir];
-            Color color = ((Texture2D)this.GetComponent<Renderer>().sharedMaterial.mainTexture).GetPixel((int)uvs.x, (int)uvs.y);
-            edge_map[dir] = HexMetrics.color_to_feature[color];
+            TileInterface new_tile = Instantiate<TileInterface>(tile_interface);
+            new_tile.prefab = this;
+            new_tile.rotateAngle = i * 60;
+            new_tile.id = i + this.id * 6;
+            tile_list.Add(new_tile);
         }
+        return tile_list;
     }
 }

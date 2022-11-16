@@ -36,13 +36,15 @@ public class HexMetrics : MonoBehaviour
     };
 
 
-    public enum TerrainFeature { Water, Land };
+    public enum TerrainFeature { Water, Land, Mountain };
 
     public static Dictionary<Color, TerrainFeature> color_to_feature = new Dictionary<Color, TerrainFeature>
     {
         { new Color(0.807843137254902f, 0.909803921568627f, 0.513725490196078f, 1f), TerrainFeature.Land },
         { new Color(0.541176470588235f, 0.894117647058824f, 0.972549019607843f, 1f), TerrainFeature.Water },
         { new Color(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1f), TerrainFeature.Water },
+        { new Color(0.470588235294118f, 0.313725490196078f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
+        { new Color(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
     };
 
     public static Dictionary<NeighborDirections, Vector2> direction_to_textureUV = new Dictionary<NeighborDirections, Vector2>
@@ -73,5 +75,155 @@ public class HexMetrics : MonoBehaviour
                 return neighbor_directions[dir];
             }
         }
+    }
+
+    public static NeighborDirections remapDirectionWithAngle(NeighborDirections dir, int angle)
+    {
+        NeighborDirections remapped_dir = NeighborDirections.Left;
+        switch(dir)
+        {
+            case NeighborDirections.Left:
+                switch(angle)
+                {
+                    case 0:
+                        remapped_dir = dir;
+                        break;
+                    case 300:
+                        remapped_dir = NeighborDirections.Upper_Left;
+                        break;
+                    case 240:
+                        remapped_dir = NeighborDirections.Upper_Right;
+                        break;
+                    case 180:
+                        remapped_dir = NeighborDirections.Right;
+                        break;
+                    case 120:
+                        remapped_dir = NeighborDirections.Lower_Right;
+                        break;
+                    case 60:
+                        remapped_dir = NeighborDirections.Lower_Left;
+                        break;
+                }
+                break;
+            case NeighborDirections.Upper_Left:
+                switch (angle)
+                {
+                    case 0:
+                        remapped_dir = dir;
+                        break;
+                    case 300:
+                        remapped_dir = NeighborDirections.Upper_Right;
+                        break;
+                    case 240:
+                        remapped_dir = NeighborDirections.Right;
+                        break;
+                    case 180:
+                        remapped_dir = NeighborDirections.Lower_Right;
+                        break;
+                    case 120:
+                        remapped_dir = NeighborDirections.Lower_Left;
+                        break;
+                    case 60:
+                        remapped_dir = NeighborDirections.Left;
+                        break;
+                }
+                break;
+            case NeighborDirections.Upper_Right:
+                switch (angle)
+                {
+                    case 0:
+                        remapped_dir = dir;
+                        break;
+                    case 300:
+                        remapped_dir = NeighborDirections.Right;
+                        break;
+                    case 240:
+                        remapped_dir = NeighborDirections.Lower_Right;
+                        break;
+                    case 180:
+                        remapped_dir = NeighborDirections.Lower_Left;
+                        break;
+                    case 120:
+                        remapped_dir = NeighborDirections.Left;
+                        break;
+                    case 60:
+                        remapped_dir = NeighborDirections.Upper_Left;
+                        break;
+                }
+                break;
+            case NeighborDirections.Right:
+                switch (angle)
+                {
+                    case 0:
+                        remapped_dir = dir;
+                        break;
+                    case 300:
+                        remapped_dir = NeighborDirections.Lower_Right;
+                        break;
+                    case 240:
+                        remapped_dir = NeighborDirections.Lower_Left;
+                        break;
+                    case 180:
+                        remapped_dir = NeighborDirections.Left;
+                        break;
+                    case 120:
+                        remapped_dir = NeighborDirections.Upper_Left;
+                        break;
+                    case 60:
+                        remapped_dir = NeighborDirections.Upper_Right;
+                        break;
+                }
+                break;
+            case NeighborDirections.Lower_Right:
+                switch (angle)
+                {
+                    case 0:
+                        remapped_dir = dir;
+                        break;
+                    case 300:
+                        remapped_dir = NeighborDirections.Lower_Left;
+                        break;
+                    case 240:
+                        remapped_dir = NeighborDirections.Left;
+                        break;
+                    case 180:
+                        remapped_dir = NeighborDirections.Upper_Left;
+                        break;
+                    case 120:
+                        remapped_dir = NeighborDirections.Upper_Right;
+                        break;
+                    case 60:
+                        remapped_dir = NeighborDirections.Right;
+                        break;
+                }
+                break;
+            case NeighborDirections.Lower_Left:
+                switch (angle)
+                {
+                    case 0:
+                        remapped_dir = dir;
+                        break;
+                    case 300:
+                        remapped_dir = NeighborDirections.Left;
+                        break;
+                    case 240:
+                        remapped_dir = NeighborDirections.Upper_Left;
+                        break;
+                    case 180:
+                        remapped_dir = NeighborDirections.Upper_Right;
+                        break;
+                    case 120:
+                        remapped_dir = NeighborDirections.Right;
+                        break;
+                    case 60:
+                        remapped_dir = NeighborDirections.Lower_Right;
+                        break;
+                }
+                break;
+            default:
+                break;
+        }
+
+        return remapped_dir;
     }
 }

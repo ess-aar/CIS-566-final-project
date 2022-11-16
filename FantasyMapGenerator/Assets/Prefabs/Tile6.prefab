@@ -11,6 +11,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tile6
       objectReference: {fileID: 0}
+    - target: {fileID: 5260315386775526443, guid: a8a18f0582ff23548a4e50444bc1996f, type: 3}
+      propertyPath: id
+      value: 5
+      objectReference: {fileID: 0}
     - target: {fileID: 5361360426620171874, guid: a8a18f0582ff23548a4e50444bc1996f, type: 3}
       propertyPath: m_RootOrder
       value: 0

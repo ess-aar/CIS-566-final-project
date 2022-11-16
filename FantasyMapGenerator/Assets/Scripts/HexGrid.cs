@@ -13,7 +13,7 @@ public class HexGrid : MonoBehaviour
 	public HexCell cellPrefab;
 
     public HexCell[] cells;
-	public List<Tile> tile_prefabs;
+	public List<TileInterface> tile_prefabs;
 
 	void Awake()
 	{
@@ -21,10 +21,10 @@ public class HexGrid : MonoBehaviour
 		cells = new HexCell[height * width];
 	}
 
-	public void SetupGrid(Tile[] t_prefabs)
+	public void SetupGrid(TileInterface[] t_prefabs)
 	{
-		this.tile_prefabs = new List<Tile>();
-		foreach (Tile t in t_prefabs)
+		this.tile_prefabs = new List<TileInterface>();
+		foreach (TileInterface t in t_prefabs)
 		{
 			this.tile_prefabs.Add(t);
         }
@@ -85,7 +85,7 @@ public class HexGrid : MonoBehaviour
 		return cells_with_min_entropy;
 	}
 
-	public Tile pickTileToInstantiate(HexCell cell)
+	public TileInterface pickTileToInstantiate(HexCell cell)
     {
 		if (cell.available_tiles.Count == 0)
 		{
@@ -97,7 +97,7 @@ public class HexGrid : MonoBehaviour
 		return cell.available_tiles[Random.Range(0, cell.available_tiles.Count - 1)];
     }
 
-	public void propagate(Tile t, Vector2 cell_pos)
+	public void propagate(TileInterface t, Vector2 cell_pos)
     {
 		foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
 		{

@@ -11,7 +11,7 @@ public class HexCell : MonoBehaviour
     public int x;
     public int z;
 
-    public List<Tile> available_tiles; // tiles available to be placed in this cell
+    public List<TileInterface> available_tiles; // tiles available to be placed in this cell
 
     public Vector2 getPosition()
     {
@@ -30,25 +30,40 @@ public class HexCell : MonoBehaviour
         
     }
 
-    public void setTilePrefabs(List<Tile> t_prefabs)
+    public void setTilePrefabs(List<TileInterface> t_prefabs)
     {
-        this.available_tiles = new List<Tile>();
-        foreach (Tile t in t_prefabs)
+        this.available_tiles = new List<TileInterface>();
+        foreach (TileInterface t in t_prefabs)
         {
             this.available_tiles.Add(t);
         }
     }
 
-    public void collapseCell(Tile t)
+    public void collapseCell(TileInterface t)
     {
-        this.tile = Instantiate<Tile>(t);
+        
+        this.tile = Instantiate<Tile>(t.prefab);
+        //Debug.Log("Rotation before: " + this.tile.transform.rotation);
         this.tile.transform.SetParent(transform, false);
+        this.tile.transform.rotation = Quaternion.AngleAxis(-90 + t.rotateAngle, Vector3.up);
+        //Debug.Log("Rotation after: " + this.tile.transform.rotation);
         this.is_cell_collapsed = true;
         this.entropy = 1000000;
+        //Debug.Log("Cell : (" + this.x + ", " + this.z + ")");
+        //foreach (HexMetrics.NeighborDirections edge in t.edge_map.Keys)
+        //{
+        //    Debug.Log("Direction: " + edge + ", Feature: " + t.edge_map[edge]);
+        //}
+        //foreach (HexMetrics.NeighborDirections edge in t.edge_map.Keys)
+        //{
+        //    Debug.Log("Direction: " + edge + ", Feature: " + t.edge_map[edge]);
+        //}
+
+
         //Debug.Log("Cell Collapsed: (" + this.x + ", " + this.z +")");
     }
 
-    public void updateEntropy(Tile t, HexMetrics.NeighborDirections dir)
+    public void updateEntropy(TileInterface t, HexMetrics.NeighborDirections dir)
     {
         if (this.is_cell_collapsed)
             return;

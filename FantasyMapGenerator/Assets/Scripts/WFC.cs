@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class WFC : MonoBehaviour
 {
 
     public HexGrid grid;
-    public Tile[] tile_prefabs;
+    public TileInterface tile_interface;
+    public Tile[] original_tile_prefabs;
+    public TileInterface[] tile_prefabs;
     public int num_seeds = 0;
 
 
@@ -14,6 +17,8 @@ public class WFC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+ 
+        generateTilesWithRotation();
         generateTileEdgeData();
         this.grid.SetupGrid(tile_prefabs);
 
@@ -21,8 +26,11 @@ public class WFC : MonoBehaviour
         //num_seeds = 4;
         generateSeeds();
 
+
+
         performWFC();
         //testFillGrid();
+        //testAllTiles();
     }
 
     // Update is called once per frame
@@ -31,12 +39,27 @@ public class WFC : MonoBehaviour
         
     }
 
+    void generateTilesWithRotation()
+    {
+        //Debug.Log("Tile Prefab size before: " + tile_prefabs.Length);
+        for (int i = 0; i < original_tile_prefabs.Length; ++i)
+        {
+            List<TileInterface> new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+            tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();        
+        }
+        //Debug.Log("Tile Prefab size after: " + tile_prefabs.Length);
+    }
+
     void generateTileEdgeData()
     {
-        for (int i = 0; i < 7; ++i)
+        
+        for (int i = 0; i < tile_prefabs.Length; ++i)
         {
             tile_prefabs[i].GenerateTileEdgeFeatures();
+            //Debug.Log("Tile Prefab " + i + ": " + tile_prefabs[i].rotateAngle);
+            
         }
+        //tile_prefabs = tile_prefabs.Concat(original_tile_prefabs).ToArray();
     }
 
     void generateSeeds()
@@ -45,8 +68,8 @@ public class WFC : MonoBehaviour
         for (int i = 0; i < num_seeds; ++i)
         {
             int rand_index = Random.Range(0, tile_prefabs.Length - 1);
-            //int rand_index = 3;
-            Tile t = tile_prefabs[rand_index];
+            //int rand_index = 13;
+            TileInterface t = tile_prefabs[rand_index];
             //Debug.Log("Tile Selected as Seed: " + rand_index);
 
             Vector2 this_cell_pos = new Vector2(Random.Range(0, this.grid.width - 1), Random.Range(0, this.grid.height - 1));
@@ -63,6 +86,8 @@ public class WFC : MonoBehaviour
                 // propogate entropy
                 this.grid.propagate(t, this_cell_pos);
             }
+            
+            //t.prefab.transform.rotation = Quaternion.AngleAxis(0, Vector3.up);
         }
     }
 
@@ -82,7 +107,7 @@ public class WFC : MonoBehaviour
             foreach (HexCell cell in cells_to_collapse)
             {
                 // pick tile based on rules and neighbors
-                Tile tile_to_instantiate = this.grid.pickTileToInstantiate(cell);
+                TileInterface tile_to_instantiate = this.grid.pickTileToInstantiate(cell);
 
                 if (tile_to_instantiate == null)
                     break;
@@ -109,6 +134,14 @@ public class WFC : MonoBehaviour
                     //cell.collapseCell(tile_prefabs[Random.Range(0, tile_prefabs.Length - 1)]);
             }
             this.grid.is_grid_collapsed = true;
+        }
+    }
+
+    void testAllTiles()
+    {
+        for (int i = 0; i < tile_prefabs.Length; ++i)
+        {
+            this.grid.cells[i].collapseCell(tile_prefabs[i]);
         }
     }
 }
