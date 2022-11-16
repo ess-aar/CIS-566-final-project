@@ -177,7 +177,7 @@ Final Submission:
 
 <details>
   <summary><b>Rendering Prototype</b></summary>
-  <br><p>The basic rendering process consists of a three passes to get the desired output. Although the order of these passes may change, the current sequence is:
+  <br><p>The rendering work for this milestone can be found in the "Milestone_1_Rendering" branch. The basic rendering process consists of three passes to get the desired output. Although the order of these passes may change, the current sequence is:
   <br>
   <br>1. Color pass
   <br>2. Asset pass
