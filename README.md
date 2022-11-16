@@ -183,6 +183,21 @@ Final Submission:
     <br>
     <p><b>Step 1.</b> Create basic grid setup and camera for rendering</p>
     <p>I started by creating a new Unity project so that I could test out rendering techniques without affecting the main Wave Function Collapse project. Using the basic assets (tiles) we created, I manually placed and constructed a hexagon grid for testing the post-process effects. Since the post-process effects would operate on a camera, I created a new Orthographic camera called "Top Down Camera" so that I could attach any scripts and shaders I made to it.</p>
+    <img src="/img/unity_camera_setup.PNG">
+    <br>
+    <br>
+    <p><b>Step 2.</b> Create post-process script and setup color pass shader</p>
+    <p>In order to apply a post-process effect to the camera image, I needed a script that would tell the camera to pass the output image through a shader before rendering the result to the screen. To do this, I made a very simple script that sends the camera output to a shader, and then sends the result to the screen. To see if this worked, I created a new shader that would take the base color of the tiles and apply FBM to it.</p>
+    <img src="/img/unity_color_pass_only.PNG">
+    <br>
+    <br>
+    <p><b>Step 3.</b> Create edge/outline shader</p>
+    <p>Now that one shader was setup, I added another shader to test outlines. I created a basic Sobel filter that would create outlines based on color differences within an image.</p>
+    <img src="/img/unity_edge_pass_only.PNG">
+    <br>
+    <br>
+    <p><b>Step 4.</b> Execute both shaders at the same time</p>
+    <p>After I got each individual shader working, I tested them together. Each shader is executed sequentially and uses the output of the previous shader as its input. In this case, the output of the color pass will be used as the input to the edge pass. This was a critical step because our pipeline depends on the ability to execute multiple passes at once. The look of the Unity shaders will be refined more in the following milestone, but the infrastructure is in place to handle multiple effects at once.</p>
     <img src="/img/unity_prototype.PNG">
   </details>
   <details>
