@@ -160,7 +160,6 @@ Final Submission:
   <br><p>We wanted to extend the implementation to more features, so we introduced mountain tiles. For this we just added 7 new textures and prefabs, and a new feature color value in the lookup.</p>
   <img src="/img/step4.PNG">
   
-  <br>
   <p><h3>Observations & Next steps</h3></p>
   <p>During this process we noticed some holes appearing in our output. Upon analysis we noticed the following 2 possible enhacements to get rid of these artifacts:
   <br>- Added more assets for special cases like rivers, etc.
