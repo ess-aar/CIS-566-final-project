@@ -102,3 +102,25 @@ Final Submission:
   - Look into ways to publish project online (live demo)
   - Finalize README and presentation
 
+
+### Milestone 1
+
+#### Progress
+
+
+#### Output
+
+**Basic assets**
+![](/img/basic_assets.png)
+
+**Wavefunction Step 1** - Filling hex grid with random tiles
+![](/img/step1.PNG)
+
+**Wavefunction Step 2** - Filling grid using wavefunction collapse
+![](/img/step2.PNG)
+
+**Wavefunction Step 3** - Added rotation to the tiles to fill the whole grid
+![](/img/step3.PNG)
+
+**Wavefunction Step 4** - Introduced a new feature (mountains)
+![](/img/step4.PNG)
