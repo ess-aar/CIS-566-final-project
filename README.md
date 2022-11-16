@@ -129,6 +129,12 @@ Final Submission:
   
   <p>Creating a grid and filling it with random tiles</p>
   <img src="/img/step1.PNG">
+  
+  <p>
+    Some references we used: 
+    <a href="https://catlikecoding.com/unity/tutorials/hex-map/part-1/">Catlike Coding Hex Grid</a>, 
+    <a href="https://www.redblobgames.com/grids/hexagons/">Red Blob Games Hexagonal Grid</a>
+  </p>
 </details>
 
 <details>
