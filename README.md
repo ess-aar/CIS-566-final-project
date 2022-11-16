@@ -105,30 +105,69 @@ Final Submission:
 
 ### Milestone 1
 
-#### Progress
-
-
-#### Output
+#### Progress & Outputs
 
 <details>
   <summary><b>Basic assets</b></summary>
-  <p>3 features - land, water, mountains</p>
+  <p>We started the project with basic assets that are hexagonal textures. Any edge of a tile may be associated with just one feature. Each feature on a tile is identifiable by a color. The idea is that these textures define the space that any feature encompasses on a tile, and not the end look( which would be achieved in post-processing).
+  <br>Initially we had just 2 features - land & water. There are tiles for each feature with all edges belonging to that same feature, and there are 5 tiles for any 2 features that interface with eachother. Later on we added mountains (as you will see below). We ended up with 13 tiles in all. <br>
+  3 features - land(green), water(blue), mountains(brown)</p>
   <img src="/img/basic_assets.png">
 </details>
 
 <details>
-  <summary><b>Wavefunction Collapse</b></summary>
-  <br><p>Step 1 - Filling hex grid with random tiles</p>
-  <img src="/img/step1.PNG">
+  <summary><b>Hexagonal Grid and Tiles</b></summary>
   
-  <br><p>Step 2 - Filling grid using wavefunction collapse</p>
+  <p><b>Tile</b><br>
+  A Tile is a pointed hexagon prefab that has a texture applied to it. Every Tile stores the edge map specific to that tile. An edge map stores which feature each edge maps to and is generated procedurally at run time using texture lookup.</p>
+  
+  <p><b>Cell</b><br>
+  A Cell is a placeholder for a Tile in the grid. A Cell also stores information to aid the Wave Function Collapse algorithm such as, whether the cell collasped, list of compatible tiles that could fill the cell, index of the cell in the grid, etc.</p>
+  
+  <p><b>Grid</b><br>
+  We setup a grid in Unity composed of Cells. Every other row of Cells is offset in order to properly tesselate the hexagon grid pattern. The grid also holds values used in the Wave Function Collapse algorithm like, number of cells collapsed and functions that access or modify multiple cells.</p>
+  
+  <p>Creating a grid and filling it with random tiles</p>
+  <img src="/img/step1.PNG">
+</details>
+
+<details>
+  <summary><b>Wave Function Collapse</b></summary>
+  
+  <p><h3>Some terminology</h3>
+  <b>Entropy</b>: Entropy of a cell is the total number of tiles that could be placed in the cell, while maintaining the neighboring cells' constraints. The available tiles start as all the tiles. As cells collapse, the entropy starts to decrease and incompatible tiles are removed from the available tiles list.
+  <br><br><b>Collapse</b>: A cell is collapsed if it contains an instance of a tile. The goal is to collapse all cells. Thus, once a cell is collapsed, its entropy is set to a very large value so that it does not impact the search for cells with minimum entropy.
+  <br><br><b>Propagate Entropy</b>: This happens after a cell collapses. As part of propagate, we update the avaiable tiles list for each neighboring cell of the collapsed cell. Once the tile list is updated, the cell's entropy is updated to the size of the tile list.
+  </p>
+  
+  <p><h3>Wave Function Collapse Steps</h3>
+  <b>Generate Seeds</b><br>
+  We start with placing random seeds on the grid, i.e. collapse some random cells with random tiles. Then we propogate the entropy from the seeds.</p>
+  <p><b>Main loop</b>
+  <br>- Get cells with minimun entropy.
+  <br>- For each of those cells, pick a random tile from the list of available compatible tiles.
+  <br>- Collpase the cell with the picked tile.
+  <br>- Propagate entropy accross the grid.
+  <br>- Break if all cells are collapsed.
+  </p>
+  
+  <p>This is a grid filled with the inital 7 tiles using the Wave Function Collapse Algorithm. Number of seeds = 5</p>
   <img src="/img/step2.PNG">
   
-  <br><p>Step 3 - Added rotation to the tiles to fill the whole grid</p>
+  <br><p>This output is after we added procedural rotation to the 7 inital tiles (resulting in 42 total tiles). Number of seeds = 10</p>
   <img src="/img/step3.PNG">
   
-  <br><p>Step 4 - Introduced a new feature (mountains)</p>
+  <br><p>We wanted to extend the implementation to more features, so we introduced mountain tiles. For this we just added 7 new textures and prefabs, and a new feature color value in the lookup.</p>
   <img src="/img/step4.PNG">
+  
+  <br>
+  <p><h3>Observations & Next steps</h3></p>
+  <p>During this process we noticed some holes appearing in our output. Upon analysis we noticed the following 2 possible enhacements to get rid of these artifacts:
+  <br>- Added more assets for special cases like rivers, etc.
+  <br>- Adding backtracking to our WFC implementation to avoid a case where a cell has no possible tile it could pick.
+  </p>
+  
+  <p>Another feature step we would like to implement is adding probability to our features & tiles. We noticed the output right now is more or less a uniform distribution of each feature. As this is undesireable for the look we want, adding varied probability should help us get larger landmasses and oceans.</p>
 </details>
 
 <details>
