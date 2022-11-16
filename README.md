@@ -110,17 +110,24 @@ Final Submission:
 
 #### Output
 
-**Basic assets**
-![](/img/basic_assets.png)
+<details>
+  <summary><b>Basic assets</b></summary>
+  <p>3 features - land, water, mountains</p>
+  <img src="/img/basic_assets.png">
+</details>
 
-**Wavefunction Step 1** - Filling hex grid with random tiles
-![](/img/step1.PNG)
+<details>
+  <summary><b>Wavefunction Collapse</b></summary>
+  <br><p>Step 1 - Filling hex grid with random tiles</p>
+  <img src="/img/step1.PNG">
+  
+  <br><p>Step 2 - Filling grid using wavefunction collapse</p>
+  <img src="/img/step2.PNG">
+  
+  <br><p>Step 3 - Added rotation to the tiles to fill the whole grid</p>
+  <img src="/img/step3.PNG">
+  
+  <br><p>Step 4 - Introduced a new feature (mountains)</p>
+  <img src="/img/step4.PNG">
+</details>
 
-**Wavefunction Step 2** - Filling grid using wavefunction collapse
-![](/img/step2.PNG)
-
-**Wavefunction Step 3** - Added rotation to the tiles to fill the whole grid
-![](/img/step3.PNG)
-
-**Wavefunction Step 4** - Introduced a new feature (mountains)
-![](/img/step4.PNG)
