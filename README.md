@@ -102,3 +102,152 @@ Final Submission:
   - Look into ways to publish project online (live demo)
   - Finalize README and presentation
 
+
+### Milestone 1
+
+#### Progress & Outputs
+
+<details>
+  <summary><b>Basic assets</b></summary>
+  <p>We started the project with basic assets that are hexagonal textures. Any edge of a tile may be associated with just one feature. Each feature on a tile is identifiable by a color. The idea is that these textures define the space that any feature encompasses on a tile, and not the end look( which would be achieved in post-processing).
+  <br>Initially we had just 2 features - land & water. There are tiles for each feature with all edges belonging to that same feature, and there are 5 tiles for any 2 features that interface with eachother. Later on we added mountains (as you will see below). We ended up with 13 tiles in all. <br>
+  3 features - land(green), water(blue), mountains(brown)</p>
+  <img src="/img/basic_assets.png">
+</details>
+
+<details>
+  <summary><b>Hexagonal Grid and Tiles</b></summary>
+  
+  <p><b>Tile</b><br>
+  A Tile is a pointed hexagon prefab that has a texture applied to it. Every Tile stores the edge map specific to that tile. An edge map stores which feature each edge maps to and is generated procedurally at run time using texture lookup.</p>
+  
+  <p><b>Cell</b><br>
+  A Cell is a placeholder for a Tile in the grid. A Cell also stores information to aid the Wave Function Collapse algorithm such as, whether the cell collasped, list of compatible tiles that could fill the cell, index of the cell in the grid, etc.</p>
+  
+  <p><b>Grid</b><br>
+  We setup a grid in Unity composed of Cells. Every other row of Cells is offset in order to properly tesselate the hexagon grid pattern. The grid also holds values used in the Wave Function Collapse algorithm like, number of cells collapsed and functions that access or modify multiple cells.</p>
+  
+  <p>Creating a grid and filling it with random tiles</p>
+  <img src="/img/step1.PNG">
+  
+  <p>
+    Some references we used: 
+    <a href="https://catlikecoding.com/unity/tutorials/hex-map/part-1/">Catlike Coding Hex Grid</a>, 
+    <a href="https://www.redblobgames.com/grids/hexagons/">Red Blob Games Hexagonal Grid</a>
+  </p>
+</details>
+
+<details>
+  <summary><b>Wave Function Collapse</b></summary>
+  
+  <p><h3>Some terminology</h3>
+  <b>Entropy</b>: Entropy of a cell is the total number of tiles that could be placed in the cell, while maintaining the neighboring cells' constraints. The available tiles start as all the tiles. As cells collapse, the entropy starts to decrease and incompatible tiles are removed from the available tiles list.
+  <br><br><b>Collapse</b>: A cell is collapsed if it contains an instance of a tile. The goal is to collapse all cells. Thus, once a cell is collapsed, its entropy is set to a very large value so that it does not impact the search for cells with minimum entropy.
+  <br><br><b>Propagate Entropy</b>: This happens after a cell collapses. As part of propagate, we update the avaiable tiles list for each neighboring cell of the collapsed cell. Once the tile list is updated, the cell's entropy is updated to the size of the tile list.
+  </p>
+  
+  <p><h3>Wave Function Collapse Steps</h3>
+  <b>Generate Seeds</b><br>
+  We start with placing random seeds on the grid, i.e. collapse some random cells with random tiles. Then we propogate the entropy from the seeds.</p>
+  <p><b>Main loop</b>
+  <br>- Get cells with minimun entropy.
+  <br>- For each of those cells, pick a random tile from the list of available compatible tiles.
+  <br>- Collpase the cell with the picked tile.
+  <br>- Propagate entropy accross the grid.
+  <br>- Break if all cells are collapsed.
+  </p>
+  
+  <p>This is a grid filled with the inital 7 tiles using the Wave Function Collapse Algorithm. Number of seeds = 5</p>
+  <img src="/img/step2.PNG">
+  
+  <br><p>This output is after we added procedural rotation to the 7 inital tiles (resulting in 42 total tiles). Number of seeds = 10</p>
+  <img src="/img/step3.PNG">
+  
+  <br><p>We wanted to extend the implementation to more features, so we introduced mountain tiles. For this we just added 7 new textures and prefabs, and a new feature color value in the lookup.</p>
+  <img src="/img/step4.PNG">
+  
+  <p><h3>Observations & Next steps</h3></p>
+  <p>During this process we noticed some holes appearing in our output. Upon analysis we noticed the following 2 possible enhacements to get rid of these artifacts:
+  <br>- Added more assets for special cases like rivers, etc.
+  <br>- Adding backtracking to our WFC implementation to avoid a case where a cell has no possible tile it could pick.
+  </p>
+  
+  <p>Another feature step we would like to implement is adding probability to our features & tiles. We noticed the output right now is more or less a uniform distribution of each feature. As this is undesireable for the look we want, adding varied probability should help us get larger landmasses and oceans.</p>
+</details>
+
+<details>
+  <summary><b>Rendering Prototype</b></summary>
+  <br><p>The rendering work for this milestone can be found in the "Milestone_1_Rendering" branch. The basic rendering process consists of three passes to get the desired output. Although the order of these passes may change, the current sequence is:
+  <br>
+  <br>1. Color pass
+  <br>2. Asset pass
+  <br>3. Edge/Outline pass
+  <br>
+  <br>The Wave Function Collapse algorithm will output a grid with colored hexagonal tiles. Each color serves as an ID representing distinct terrain features such as land, water, mountains, forests, etc. The color pass will take these ID colors and map them to the desired output color for that feature. The asset pass will scatter assets in designated areas according to color (e.g. a brown area indicates mountains in which several mountains will be scattered). The outline pass will draw outlines around each feature. </p>
+  <details>
+    <summary><b>Unity Setup</b></summary>
+    <br>
+    <p><b>Step 1.</b> Create basic grid setup and camera for rendering</p>
+    <p>I started by creating a new Unity project so that I could test out rendering techniques without affecting the main Wave Function Collapse project. Using the basic assets (tiles) we created, I manually placed and constructed a hexagon grid for testing the post-process effects. Since the post-process effects would operate on a camera, I created a new Orthographic camera called "Top Down Camera" so that I could attach any scripts and shaders I made to it.</p>
+    <img src="/img/unity_camera_setup.PNG">
+    <br>
+    <br>
+    <p><b>Step 2.</b> Create post-process script and setup color pass shader</p>
+    <p>In order to apply a post-process effect to the camera image, I needed a script that would tell the camera to pass the output image through a shader before rendering the result to the screen. To do this, I made a very simple script that sends the camera output to a shader, and then sends the result to the screen. To see if this worked, I created a new shader that would take the base color of the tiles and apply FBM to it.</p>
+    <img src="/img/unity_color_pass_only.PNG">
+    <br>
+    <br>
+    <p><b>Step 3.</b> Create edge/outline shader</p>
+    <p>Now that one shader was setup, I added another shader to test outlines. I created a basic Sobel filter that would create outlines based on color differences within an image.</p>
+    <img src="/img/unity_edge_pass_only.PNG">
+    <br>
+    <br>
+    <p><b>Step 4.</b> Execute both shaders at the same time</p>
+    <p>After I got each individual shader working, I tested them together. Each shader is executed sequentially and uses the output of the previous shader as its input. In this case, the output of the color pass will be used as the input to the edge pass. This was a critical step because our pipeline depends on the ability to execute multiple passes at once. The look of the Unity shaders will be refined more in the following milestone, but the infrastructure is in place to handle multiple effects at once.</p>
+    <img src="/img/unity_prototype.PNG">
+  </details>
+  <details>
+    <summary><b>Shadertoy Prototype</b></summary>
+    <br><p>I made a Shadertoy prototype to further experiment with different looks and algorithms without worrying about the Unity shader interface. I mimicked the shader pipeline that I had setup by using different Buffers. The shader can be viewed <a href="https://www.shadertoy.com/view/ddj3Wd">here</a>.</p>
+    <br>
+    <br>
+    <p><b>Step 1.</b> Color output from Wave Function Collapse</p>
+    <p>Buffer A outputs a possible result from the Wave Function Collapse algorithm. In our setup, green areas are land, blue areas are sea, and brown areas are mountains. The brown areas are not meant to show up in the final rendering; they are simply a mask to indicate where we should scatter mountain assets.</p>
+    <img src="/img/wfc_color_map.PNG">
+    <br>
+    <br>
+    <p><b>Step 2.</b> Grid pass</p>
+    <p>In order to randomly place assets within an area, I first split the screen into a uniform grid using fract(GRID_SIZE * uv). I used an approach similar to stratified sampling in path tracing and to the grid layout described in <a href="https://www.youtube.com/watch?v=rvDo9LvfoVE">this Art of Code tutorial</a>. Modifying the grid size will control the density of assets placed in the masked areas.</p>
+    <img src="/img/uniform_grid.PNG">
+    <br>
+    <br>
+    <p><b>Step 3.</b> Uniformly sample grid</p>
+    <p>To start, I placed one sample in the center of each grid cell. Each of the circles is an SDF, which I am planning to use to procedurally draw the assets for the next milestone.</p>
+    <img src="/img/uniform_sampling.PNG">   
+    <br>
+    <br>
+    <p><b>Step 4.</b> Stratified sampling of grid</p>
+    <p>Instead of placing the sample in the cell center, I jittered the position using a 1D noise function to create a more organic look.</p>
+    <img src="/img/stratified_sampling.PNG"> 
+    <br><p>Here is the same result without the grid lines:</p>
+    <img src="/img/sample_placement_no_grid.PNG">
+    <br>
+    <br>
+    <p><b>Step 5.</b> Constrain to masked areas</p>
+    <p>Now that the samples were randomly placed, I needed to constrain them to the desired areas. I have implemented the naive way of doing this, which simply looks at the base color, decides whether or not it matches the mask color, and places a circle SDF there if it does. I am trying to figure out a more advanced way of doing this, since it cuts off portions of the SDF that lie outside of the mask. The desired output would finish drawing those pieces, even if they are out of bounds. My first solution was to iterate through each cell's neighbors and add the SDF contribution from the neighboring cells. This worked, but when I added the mask back in, the cutoff problem persisted.</p>
+    <img src="/img/constrained_asset_placement.PNG">
+    <br>
+    <br>
+    <p><b>Step 6.</b> Coloring and outlines</p>
+    <p>Here are some example outputs with more interesting coloring and outlines. The color and outline passes are the same as the ones in Unity. The main difference is that this outline pass operates on a greyscale version of the image, to create black outlines instead of colored outlines. 
+
+In the next milestone, these circles will be replaced with more advanced assets and shapes that represent actual terrain features.</p>
+    <img src="/img/color_map_asset_mask.PNG">
+    <img src="/img/colored_map_no_mask.PNG">
+  </details>
+  
+  <p><b>Observations & Next steps</b></p>
+  <p>For the next milestone, I will first focus on porting the Shadertoy prototype to my Unity setup. Then, I will work on refining each of the post-process effects and asset drawings. This includes creating SDFs for mountains, forests, and a compass, as well as refining the color and edge passes to include more effects from our reference images. Some effects I hope to incorporate are the burnt-edge look, the hatching next to coastlines, and an erosion effect to create a smudged/painterly paper look. 
+  </p>
+</details>
+
