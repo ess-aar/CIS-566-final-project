@@ -171,27 +171,62 @@ Final Submission:
 
 <details>
   <summary><b>Rendering Prototype</b></summary>
+  <br><p>The basic rendering process consists of a three passes to get the desired output. Although the order of these passes may change, the current sequence is:
+  <br>
+  <br>1. Color pass
+  <br>2. Asset pass
+  <br>3. Edge/Outline pass
+  <br>
+  <br>The Wave Function Collapse algorithm will output a grid with colored hexagonal tiles. Each color serves as an ID representing distinct terrain features such as land, water, mountains, forests, etc. The color pass will take these ID colors and map them to the desired output color for that feature. The asset pass will scatter assets in designated areas according to color (e.g. a brown area indicates mountains in which several mountains will be scattered). The outline pass will draw outlines around each feature. </p>
   <details>
     <summary><b>Unity Setup</b></summary>
-    <br><p>Step 1 - Unity setup</p>
+    <br>
+    <p><b>Step 1.</b> Create basic grid setup and camera for rendering</p>
+    <p>I started by creating a new Unity project so that I could test out rendering techniques without affecting the main Wave Function Collapse project. Using the basic assets (tiles) we created, I manually placed and constructed a hexagon grid for testing the post-process effects. Since the post-process effects would operate on a camera, I created a new Orthographic camera called "Top Down Camera" so that I could attach any scripts and shaders I made to it.</p>
     <img src="/img/unity_prototype.PNG">
   </details>
   <details>
     <summary><b>Shadertoy Prototype</b></summary>
-    <br><p>Step 2 - Shadertoy algorithm setup</p>
+    <br><p>I made a Shadertoy prototype to further experiment with different looks and algorithms without worrying about the Unity shader interface. I mimicked the shader pipeline that I had setup by using different Buffers. The shader can be viewed <a href="https://www.shadertoy.com/view/ddj3Wd">here</a>.</p>
+    <br>
+    <br>
+    <p><b>Step 1.</b> Color output from Wave Function Collapse</p>
+    <p>Buffer A outputs a possible result from the Wave Function Collapse algorithm. In our setup, green areas are land, blue areas are sea, and brown areas are mountains. The brown areas are not meant to show up in the final rendering; they are simply a mask to indicate where we should scatter mountain assets.</p>
     <img src="/img/wfc_color_map.PNG">
-    <br><p>Step 3 - Added rotation to the tiles to fill the whole grid</p>
+    <br>
+    <br>
+    <p><b>Step 2.</b> Grid pass</p>
+    <p>In order to randomly place assets within an area, I first split the screen into a uniform grid using fract(GRID_SIZE * uv). I used an approach similar to stratified sampling in path tracing and to the grid layout described in <a href="https://www.youtube.com/watch?v=rvDo9LvfoVE">this Art of Code tutorial</a>. Modifying the grid size will control the density of assets placed in the masked areas.</p>
     <img src="/img/uniform_grid.PNG">
-    <br><p>Step 4 - Introduced a new feature (mountains)</p>
+    <br>
+    <br>
+    <p><b>Step 3.</b> Uniformly sample grid</p>
+    <p>To start, I placed one sample in the center of each grid cell. Each of the circles is an SDF, which I am planning to use to procedurally draw the assets for the next milestone.</p>
     <img src="/img/uniform_sampling.PNG">   
-    <br><p>Step 5 - Introduced a new feature (mountains)</p>
+    <br>
+    <br>
+    <p><b>Step 4.</b> Stratified sampling of grid</p>
+    <p>Instead of placing the sample in the cell center, I jittered the position using a 1D noise function to create a more organic look.</p>
     <img src="/img/stratified_sampling.PNG"> 
-    <br><p>Step 6 - Introduced a new feature (mountains)</p>
+    <br><p>Here is the same result without the grid lines:</p>
     <img src="/img/sample_placement_no_grid.PNG">
-    <br><p>Step 7 - Introduced a new feature (mountains)</p>
+    <br>
+    <br>
+    <p><b>Step 5.</b> Constrain to masked areas</p>
+    <p>Now that the samples were randomly placed, I needed to constrain them to the desired areas. I have implemented the naive way of doing this, which simply looks at the base color, decides whether or not it matches the mask color, and places a circle SDF there if it does. I am trying to figure out a more advanced way of doing this, since it cuts off portions of the SDF that lie outside of the mask. The desired output would finish drawing those pieces, even if they are out of bounds. My first solution was to iterate through each cell's neighbors and add the SDF contribution from the neighboring cells. This worked, but when I added the mask back in, the cutoff problem persisted.</p>
     <img src="/img/constrained_asset_placement.PNG">
+    <br>
+    <br>
+    <p><b>Step 6.</b> Coloring and outlines</p>
+    <p>Here are some example outputs with more interesting coloring and outlines. The color and outline passes are the same as the ones in Unity. The main difference is that this outline pass operates on a greyscale version of the image, to create black outlines instead of colored outlines. 
+
+In the next milestone, these circles will be replaced with more advanced assets and shapes that represent actual terrain features.</p>
     <img src="/img/color_map_asset_mask.PNG">
     <img src="/img/colored_map_no_mask.PNG">
   </details>
+  
+  <p><b>Observations & Next steps</b></p>
+  <p>For the next milestone, I will first focus on porting the Shadertoy prototype to my Unity setup. Then, I will work on refining each of the post-process effects and asset drawings. This includes creating SDFs for mountains, forests, and a compass, as well as refining the color and edge passes to include more effects from our reference images. Some effects I hope to incorporate are the burnt-edge look, the hatching next to coastlines, and an erosion effect to create a smudged/painterly paper look. 
+  </p>
 </details>
 
