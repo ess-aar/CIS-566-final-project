@@ -131,3 +131,29 @@ Final Submission:
   <img src="/img/step4.PNG">
 </details>
 
+<details>
+  <summary><b>Rendering Prototype</b></summary>
+  <details>
+    <summary><b>Unity Setup</b></summary>
+    <br><p>Step 1 - Unity setup</p>
+    <img src="/img/unity_prototype.PNG">
+  </details>
+  <details>
+    <summary><b>Shadertoy Prototype</b></summary>
+    <br><p>Step 2 - Shadertoy algorithm setup</p>
+    <img src="/img/wfc_color_map.PNG">
+    <br><p>Step 3 - Added rotation to the tiles to fill the whole grid</p>
+    <img src="/img/uniform_grid.PNG">
+    <br><p>Step 4 - Introduced a new feature (mountains)</p>
+    <img src="/img/uniform_sampling.PNG">   
+    <br><p>Step 5 - Introduced a new feature (mountains)</p>
+    <img src="/img/stratified_sampling.PNG"> 
+    <br><p>Step 6 - Introduced a new feature (mountains)</p>
+    <img src="/img/sample_placement_no_grid.PNG">
+    <br><p>Step 7 - Introduced a new feature (mountains)</p>
+    <img src="/img/constrained_asset_placement.PNG">
+    <img src="/img/color_map_asset_mask.PNG">
+    <img src="/img/colored_map_no_mask.PNG">
+  </details>
+</details>
+
