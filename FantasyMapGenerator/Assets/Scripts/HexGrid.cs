@@ -9,6 +9,7 @@ public class HexGrid : MonoBehaviour
     public int height = 10;
 	public bool is_grid_collapsed = false;
 	public int collapsedCellCount = 0;
+	public int max_retries = 0;
 
 	public HexCell cellPrefab;
 
@@ -28,6 +29,7 @@ public class HexGrid : MonoBehaviour
 		{
 			this.tile_prefabs.Add(t);
         }
+		this.max_retries = this.tile_prefabs.Count;
         //Debug.Log("Grid Tile Prefabs Length: " + this.tile_prefabs.Count);
 
         for (int z = 0, i = 0; z < height; z++)
@@ -89,12 +91,56 @@ public class HexGrid : MonoBehaviour
     {
 		if (cell.available_tiles.Count == 0)
 		{
+			Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
 			this.collapsedCellCount++;
 			cell.is_cell_collapsed = true;
 			return null;
 		}
 
-		return cell.available_tiles[Random.Range(0, cell.available_tiles.Count - 1)];
+		//Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
+
+		Vector2 cell_pos = new Vector2(cell.x, cell.z);
+
+		bool can_place_tile = true;
+		TileInterface potential_tile = null;
+		int num_cur_retry = 0;
+		do
+		{
+			Random.seed = System.DateTime.Now.Millisecond;
+			potential_tile = cell.available_tiles[Random.Range(0, cell.available_tiles.Count - 1)];
+
+			foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
+			{
+				Vector2 hex_coord = HexMetrics.getNeighborOffset(dir, (int)cell_pos.y);
+				hex_coord += cell_pos;
+
+				if (hex_coord.x >= 0 && hex_coord.x < this.width && hex_coord.y >= 0 && hex_coord.y < this.height)
+				{
+					//Debug.Log("Cell Position Neighbor: " + hex_coord.x + " " + hex_coord.y);
+					HexCell neighbor = this.cells[(int)hex_coord.x + (int)hex_coord.y * this.width];
+
+					if (!neighbor.is_cell_collapsed)
+					{
+
+						if (!neighbor.neighboring_features[(int)potential_tile.edge_map[dir]] && neighbor.num_unique_neighboring_features == 2)
+						{
+							Debug.Log("Tile " + potential_tile.prefab.name+ " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+							can_place_tile = false;
+							break;
+						}
+					}
+				}
+			}
+			num_cur_retry++;
+		}
+		while (!can_place_tile && num_cur_retry < this.max_retries);
+
+		if (num_cur_retry >= this.max_retries && !can_place_tile)
+        {
+			Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+			potential_tile = null;
+        }
+		return potential_tile;
     }
 
 	public void propagate(TileInterface t, Vector2 cell_pos)

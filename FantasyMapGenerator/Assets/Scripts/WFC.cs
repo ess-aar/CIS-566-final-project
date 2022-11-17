@@ -11,6 +11,7 @@ public class WFC : MonoBehaviour
     public Tile[] original_tile_prefabs;
     public TileInterface[] tile_prefabs;
     public int num_seeds = 0;
+    public int cur_iter = 0;
 
 
 
@@ -26,9 +27,9 @@ public class WFC : MonoBehaviour
         //num_seeds = 4;
         generateSeeds();
 
+        InvokeRepeating("performWFC", 1.0f, 0.1f);
 
 
-        performWFC();
         //testFillGrid();
         //testAllTiles();
     }
@@ -36,7 +37,10 @@ public class WFC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if (cur_iter >= (int)(this.grid.height * this.grid.width))
+        {
+            CancelInvoke();
+        }
     }
 
     void generateTilesWithRotation()
@@ -94,33 +98,35 @@ public class WFC : MonoBehaviour
     void performWFC()
     {
         //while (!this.grid.is_grid_collapsed)
-        for(int i = 0; i < (int)(this.grid.height * this.grid.width); i++)
-        {
+        //for(int i = 0; i < (int)(this.grid.height * this.grid.width); i++)
+        //{
             //Debug.Log("============== LOOP " + i + " =============");
             // get cells with the minimum entropy this iteration
-            List<HexCell> cells_to_collapse = this.grid.getCellsWithMinEntropy();
-            //Debug.Log("Cells to collapse: " + cells_to_collapse.Count);
 
-            if (cells_to_collapse.Count == 0)
+        List<HexCell> cells_to_collapse = this.grid.getCellsWithMinEntropy();
+        //Debug.Log("Cells to collapse: " + cells_to_collapse.Count);
+
+        if (cells_to_collapse.Count == 0)
+            return;
+
+        foreach (HexCell cell in cells_to_collapse)
+        {
+            // pick tile based on rules and neighbors
+            TileInterface tile_to_instantiate = this.grid.pickTileToInstantiate(cell);
+
+            if (tile_to_instantiate == null)
                 break;
 
-            foreach (HexCell cell in cells_to_collapse)
-            {
-                // pick tile based on rules and neighbors
-                TileInterface tile_to_instantiate = this.grid.pickTileToInstantiate(cell);
+            // collapse each cell
+            cell.collapseCell(tile_to_instantiate);
+            this.grid.collapsedCellCount++;
 
-                if (tile_to_instantiate == null)
-                    break;
-
-                // collapse each cell
-                cell.collapseCell(tile_to_instantiate);
-                this.grid.collapsedCellCount++;
-
-                // propogate entropy decrease to neighbors
-                this.grid.propagate(tile_to_instantiate, cell.getPosition());
-            }
-            this.grid.checkIfGridIsCollapsed();
+            // propogate entropy decrease to neighbors
+            this.grid.propagate(tile_to_instantiate, cell.getPosition());
         }
+        this.grid.checkIfGridIsCollapsed();
+        cur_iter++;
+        //}
     }
 
     void testFillGrid()

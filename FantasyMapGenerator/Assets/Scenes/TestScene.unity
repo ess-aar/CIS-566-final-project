@@ -152,10 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238de7289fd51464ab340aaa22625476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 50
-  height: 50
+  width: 15
+  height: 15
   is_grid_collapsed: 0
   collapsedCellCount: 0
+  max_retries: 0
   cellPrefab: {fileID: -1915333941536036059, guid: c4ea1198054c5314b823f9727af86dc3, type: 3}
   cells: []
   tile_prefabs: []
@@ -315,6 +316,7 @@ MonoBehaviour:
   - {fileID: 270771672366215606, guid: 360eb009e6214774ca17e4ffaefe337b, type: 3}
   tile_prefabs: []
   num_seeds: 5
+  cur_iter: 0
 --- !u!4 &1714802307
 Transform:
   m_ObjectHideFlags: 0
