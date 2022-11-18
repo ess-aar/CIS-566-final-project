@@ -130,6 +130,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   id: 0
+  weighting: 1
 --- !u!23 &7409120733156163207
 MeshRenderer:
   m_ObjectHideFlags: 0

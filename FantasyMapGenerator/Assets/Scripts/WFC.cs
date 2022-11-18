@@ -27,7 +27,7 @@ public class WFC : MonoBehaviour
         //num_seeds = 4;
         generateSeeds();
 
-        InvokeRepeating("performWFC", 1.0f, 0.1f);
+        InvokeRepeating("performWFC", 1.0f, 0.0001f);
 
 
         //testFillGrid();
@@ -48,8 +48,34 @@ public class WFC : MonoBehaviour
         //Debug.Log("Tile Prefab size before: " + tile_prefabs.Length);
         for (int i = 0; i < original_tile_prefabs.Length; ++i)
         {
-            List<TileInterface> new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
-            tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();        
+            List<TileInterface> new_tiles;
+            new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+            tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+            
+            /*int before_le = tile_prefabs.Length;
+            for (int j = 0; j < original_tile_prefabs[i].weighting; ++j)
+            {
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+            }
+            if (i == 0 || i ==1)
+            {
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+                new_tiles = original_tile_prefabs[i].GenerateRotatedTiles(tile_interface);
+                tile_prefabs = tile_prefabs.Concat(new_tiles.ToArray()).ToArray();
+            }
+            int after_le = tile_prefabs.Length;
+            int thesize = after_le - before_le;*/
+            //Debug.Log("Added tiles: " + i + " " + thesize);
         }
         //Debug.Log("Tile Prefab size after: " + tile_prefabs.Length);
     }
@@ -71,6 +97,7 @@ public class WFC : MonoBehaviour
 
         for (int i = 0; i < num_seeds; ++i)
         {
+
             int rand_index = Random.Range(0, tile_prefabs.Length - 1);
             //int rand_index = 13;
             TileInterface t = tile_prefabs[rand_index];

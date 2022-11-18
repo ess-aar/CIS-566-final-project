@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class HexGrid : MonoBehaviour
 {
@@ -16,6 +17,8 @@ public class HexGrid : MonoBehaviour
     public HexCell[] cells;
 	public List<TileInterface> tile_prefabs;
 
+	public System.Random rng_engine = new System.Random();
+
 	void Awake()
 	{
 		// create new hecx prefabs spanning the grid
@@ -29,7 +32,6 @@ public class HexGrid : MonoBehaviour
 		{
 			this.tile_prefabs.Add(t);
         }
-		this.max_retries = this.tile_prefabs.Count;
         //Debug.Log("Grid Tile Prefabs Length: " + this.tile_prefabs.Count);
 
         for (int z = 0, i = 0; z < height; z++)
@@ -97,19 +99,42 @@ public class HexGrid : MonoBehaviour
 			return null;
 		}
 
+		int total_weight = 0;
+		foreach (TileInterface tile in cell.available_tiles)
+        {
+			total_weight += tile.prefab.weighting;
+        }
+
 		//Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
 
 		Vector2 cell_pos = new Vector2(cell.x, cell.z);
 
 		bool can_place_tile = true;
 		TileInterface potential_tile = null;
+		this.max_retries = cell.available_tiles.Count;
 		int num_cur_retry = 0;
 		do
 		{
-			Random.seed = System.DateTime.Now.Millisecond;
-			potential_tile = cell.available_tiles[Random.Range(0, cell.available_tiles.Count - 1)];
 
-			foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
+			int rand_number = rng_engine.Next(0, total_weight);
+			int rand_accum = 0;
+			foreach (TileInterface tile in cell.available_tiles)
+            {
+				if (tile.prefab.weighting + rand_accum < rand_number)
+                {
+					rand_accum += tile.prefab.weighting;
+				}
+				else
+                {
+					potential_tile = tile;
+					break;
+                }
+            }
+			//Random.seed = System.DateTime.Now.Millisecond;
+			//potential_tile = cell.available_tiles[Random.Range(0, cell.available_tiles.Count)];
+			//potential_tile = cell.available_tiles[];
+
+			/*foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
 			{
 				Vector2 hex_coord = HexMetrics.getNeighborOffset(dir, (int)cell_pos.y);
 				hex_coord += cell_pos;
@@ -131,7 +156,8 @@ public class HexGrid : MonoBehaviour
 					}
 				}
 			}
-			num_cur_retry++;
+			num_cur_retry++;*/
+			break ;
 		}
 		while (!can_place_tile && num_cur_retry < this.max_retries);
 

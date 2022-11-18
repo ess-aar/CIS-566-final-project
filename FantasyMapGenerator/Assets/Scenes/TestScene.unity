@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238de7289fd51464ab340aaa22625476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 15
-  height: 15
+  width: 20
+  height: 20
   is_grid_collapsed: 0
   collapsedCellCount: 0
   max_retries: 0
