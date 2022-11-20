@@ -191,3 +191,7 @@ Received Import Request.
   path: Assets/Prefabs/Tile 6.prefab
   artifactKey: Guid(6ca163363d991244c87a3b25f4ed09d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
 Start importing Assets/Prefabs/Tile 6.prefab using Guid(6ca163363d991244c87a3b25f4ed09d1) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'b5b8cff2efbfd8ac1e9245c0aef96934') in 0.037518 seconds 
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0

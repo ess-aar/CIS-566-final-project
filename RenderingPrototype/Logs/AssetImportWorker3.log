@@ -185,3 +185,8 @@ Received Import Request.
   path: Assets/Prefabs/Tile 4.prefab
   artifactKey: Guid(c620876d70cdea14ca1da26cbfb93237) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
 Start importing Assets/Prefabs/Tile 4.prefab using Guid(c620876d70cdea14ca1da26cbfb93237) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '33d1dba178b1d7cf902c1ed160398edb') in 0.036921 seconds 
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0
