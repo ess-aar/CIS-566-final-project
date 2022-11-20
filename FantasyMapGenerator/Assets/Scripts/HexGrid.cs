@@ -88,9 +88,9 @@ public class HexGrid : MonoBehaviour
 		}
 		return cells_with_min_entropy;
 	}
-
+	
 	public TileInterface pickTileToInstantiate(HexCell cell)
-    {
+  {
 		if (cell.available_tiles.Count == 0)
 		{
 			Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
@@ -99,54 +99,37 @@ public class HexGrid : MonoBehaviour
 			return null;
 		}
 
-		int total_weight = 0;
-		foreach (TileInterface tile in cell.available_tiles)
-        {
-			total_weight += tile.prefab.weighting;
-        }
-
-		//Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
+		Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
 
 		Vector2 cell_pos = new Vector2(cell.x, cell.z);
 
-		bool can_place_tile = true;
 		TileInterface potential_tile = null;
+		bool can_place_tile = true;
+
 		this.max_retries = cell.available_tiles.Count;
+		Debug.Log("Cell + (" + cell.x + ", " + cell.z + ") : " + "Available tile count = " + this.max_retries );
 		int num_cur_retry = 0;
+
 		do
 		{
-
-			int rand_number = rng_engine.Next(0, total_weight);
-			int rand_accum = 0;
-			foreach (TileInterface tile in cell.available_tiles)
-            {
-				if (tile.prefab.weighting + rand_accum < rand_number)
-                {
-					rand_accum += tile.prefab.weighting;
-				}
-				else
-                {
-					potential_tile = tile;
-					break;
-                }
-            }
+      potential_tile = getRandomTileBasedOnWeight(cell);
+      
 			//Random.seed = System.DateTime.Now.Millisecond;
 			//potential_tile = cell.available_tiles[Random.Range(0, cell.available_tiles.Count)];
 			//potential_tile = cell.available_tiles[];
 
-			/*foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
+			foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
 			{
-				Vector2 hex_coord = HexMetrics.getNeighborOffset(dir, (int)cell_pos.y);
-				hex_coord += cell_pos;
+				Vector2 neighbor_coord = HexMetrics.getNeighborOffset(dir, (int)cell_pos.y);
+				neighbor_coord += cell_pos;
 
-				if (hex_coord.x >= 0 && hex_coord.x < this.width && hex_coord.y >= 0 && hex_coord.y < this.height)
+				if (neighbor_coord.x >= 0 && neighbor_coord.x < this.width && neighbor_coord.y >= 0 && neighbor_coord.y < this.height)
 				{
 					//Debug.Log("Cell Position Neighbor: " + hex_coord.x + " " + hex_coord.y);
-					HexCell neighbor = this.cells[(int)hex_coord.x + (int)hex_coord.y * this.width];
+					HexCell neighbor = this.cells[(int)neighbor_coord.x + (int)neighbor_coord.y * this.width];
 
 					if (!neighbor.is_cell_collapsed)
 					{
-
 						if (!neighbor.neighboring_features[(int)potential_tile.edge_map[dir]] && neighbor.num_unique_neighboring_features == 2)
 						{
 							Debug.Log("Tile " + potential_tile.prefab.name+ " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
@@ -156,18 +139,48 @@ public class HexGrid : MonoBehaviour
 					}
 				}
 			}
-			num_cur_retry++;*/
-			break ;
+			num_cur_retry++;
+			//break ;
 		}
 		while (!can_place_tile && num_cur_retry < this.max_retries);
 
 		if (num_cur_retry >= this.max_retries && !can_place_tile)
-        {
+    {
 			Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 			potential_tile = null;
-        }
-		return potential_tile;
     }
+
+		Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name);
+		return potential_tile;
+  }
+
+  TileInterface getRandomTileBasedOnWeight(HexCell cell)
+  {
+		TileInterface picked_tile = null;
+
+    int total_weight = 0;
+		foreach (TileInterface tile in cell.available_tiles)
+    {
+      total_weight += tile.prefab.weighting;
+    }
+  
+    int rand_number = rng_engine.Next(0, total_weight);
+    int rand_accum = 0;
+    foreach (TileInterface tile in cell.available_tiles)
+    {
+      if (tile.prefab.weighting + rand_accum < rand_number)
+      {
+        rand_accum += tile.prefab.weighting;
+      }
+      else
+      {
+        picked_tile = tile;
+        break;
+      }
+    }
+
+    return picked_tile;
+  }
 
 	public void propagate(TileInterface t, Vector2 cell_pos)
     {
