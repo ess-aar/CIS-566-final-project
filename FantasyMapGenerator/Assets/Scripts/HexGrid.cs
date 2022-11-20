@@ -133,7 +133,7 @@ public class HexGrid : MonoBehaviour
 					{
 						if (!neighbor.neighboring_features[(int)potential_tile.edge_map[dir]] && neighbor.num_unique_neighboring_features == 2)
 						{
-							Debug.Log("Tile " + potential_tile.prefab.name+ " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+							Debug.Log(potential_tile.prefab.name + ", " + potential_tile.rotateAngle + " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 							can_place_tile = false;
 							break;
 						}
@@ -152,7 +152,7 @@ public class HexGrid : MonoBehaviour
       return null;
     }
 
-		Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name);
+		Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name + ", " + potential_tile.rotateAngle);
 		return potential_tile;
   }
 
@@ -216,21 +216,28 @@ public class HexGrid : MonoBehaviour
 
 			if (hex_coord.x >= 0 && hex_coord.x < this.width && hex_coord.y >= 0 && hex_coord.y < this.height)
 			{
-        neighbors.Add(this.cells[(int)hex_coord.x + (int)hex_coord.y * this.width]);
-			}
-		}
-
-    foreach(HexCell neighbor in neighbors)
-    {
-      HexMetrics.NeighborDirections dir = (HexMetrics.NeighborDirections)neighbors.IndexOf(neighbor);
-      int new_entropy = neighbor.checkIfCanUpdateEntropy(t, dir);
+        int new_entropy = this.cells[(int)hex_coord.x + (int)hex_coord.y * this.width].checkIfCanUpdateEntropy(t, dir);
 
         if(new_entropy == 0)
         {
           can_propagate = false;
           break;
         }
-    }
+			}
+		}
+
+    // foreach(HexCell neighbor in neighbors)
+    // {
+    //   HexMetrics.NeighborDirections dir = (HexMetrics.NeighborDirections)neighbors.IndexOf(neighbor);
+    //   Debug.Log("Checking entropy for neighbor (" + neighbor.x + ", " + neighbor.y + ") in direction " + dir);
+    //   int new_entropy = neighbor.checkIfCanUpdateEntropy(t, dir);
+
+    //     if(new_entropy == 0)
+    //     {
+    //       can_propagate = false;
+    //       break;
+    //     }
+    // }
     
     return can_propagate;
 	}

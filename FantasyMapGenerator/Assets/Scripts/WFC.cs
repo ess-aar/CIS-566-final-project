@@ -26,8 +26,9 @@ public class WFC : MonoBehaviour
         //num_seeds = Random.Range(1, 5);
         //num_seeds = 4;
         generateSeeds();
+        // generateTestSeeds();
 
-        InvokeRepeating("performWFC", 1.0f, 0.05f);
+        InvokeRepeating("performWFC2", 1.0f, 0.005f);
 
 
         //testFillGrid();
@@ -61,6 +62,31 @@ public class WFC : MonoBehaviour
             tile_prefabs[i].GenerateTileEdgeFeatures();
             
         }
+    }
+
+    void generateTestSeeds()
+    {
+      HexCell seed1 = this.grid.cells[0 + 2 * this.grid.width];
+      TileInterface t1 = this.grid.tile_prefabs[84];
+      seed1.collapseCell(t1);
+
+      HexCell seed2 = this.grid.cells[1 + 2 * this.grid.width];
+      TileInterface t2 = this.grid.tile_prefabs[14];
+      seed2.collapseCell(t2);
+
+      HexCell seed3 = this.grid.cells[1 + 1 * this.grid.width];
+      TileInterface t3 = this.grid.tile_prefabs[23];
+      seed3.collapseCell(t3);
+
+      HexCell seed4 = this.grid.cells[1 + 0 * this.grid.width];
+      TileInterface t4 = this.grid.tile_prefabs[93];
+      seed4.collapseCell(t4);
+
+      this.grid.propagate(t1, seed1.getPosition());
+      this.grid.propagate(t2, seed2.getPosition());
+      this.grid.propagate(t3, seed3.getPosition());
+      this.grid.propagate(t4, seed4.getPosition());
+
     }
 
     void generateSeeds()
@@ -103,7 +129,7 @@ public class WFC : MonoBehaviour
             }
         }
     }
-    
+
     void performWFC()
     {
         //while (!this.grid.is_grid_collapsed)
