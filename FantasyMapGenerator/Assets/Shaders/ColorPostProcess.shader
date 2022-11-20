@@ -20,6 +20,7 @@ Shader "Hidden/ColorPostProcess"
             #define LAND_COLOR        float4(0.807843137254902f, 0.909803921568627f, 0.513725490196078f, 1.f)
             #define WATER_COLOR       float4(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1.f)
             #define MOUNTAIN_COLOR    float4(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1.f)
+            #define FOREST_COLOR      float4(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1.f)
             #define SCATTER_GRID_SIZE 20.0
 
             float noise2Df(float2 p) {
@@ -60,10 +61,18 @@ Shader "Hidden/ColorPostProcess"
                 float4 color = base;
 
                 if (distance(base, LAND_COLOR) <= 0.5) {
-                    color = float4(0.73, 0.58, 0.39, 1.0);
+                    color = float4(0.68, 0.54, 0.39, 1.0);
+                    //color = float4(0.0, 1.0, 0.0, 1.0);
                 }
                 else if (distance(base, WATER_COLOR) <= 0.5) {
-                    color = float4(0.74, 0.76, 0.69, 1.0);
+                    color = float4(0.74, 0.76, 0.89, 1.0);
+                    //color = float4(0.0, 0.0, 1.0, 1.0);
+                }
+                else if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
+                    //color = float4(1.0, 0.0, 0.0, 1.0);
+                }
+                else if (distance(base, FOREST_COLOR) <= 100.0) {
+                    //color = float4(1.0, 0.0, 1.0, 1.0);
                 }
 
                 // Scatter assets over the map
