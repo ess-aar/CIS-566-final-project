@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using System.Linq;
 
 public class HexGrid : MonoBehaviour
 {
@@ -148,6 +149,7 @@ public class HexGrid : MonoBehaviour
     {
 			Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 			potential_tile = null;
+      return null;
     }
 
 		Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name);
@@ -164,7 +166,7 @@ public class HexGrid : MonoBehaviour
       total_weight += tile.prefab.weighting;
     }
   
-    int rand_number = rng_engine.Next(0, total_weight);
+    int rand_number = rng_engine.Next(1, total_weight + 1);
     int rand_accum = 0;
     foreach (TileInterface tile in cell.available_tiles)
     {
@@ -177,6 +179,12 @@ public class HexGrid : MonoBehaviour
         picked_tile = tile;
         break;
       }
+    }
+
+    if (rand_accum >= total_weight)
+    {
+      Debug.Log("force picking last tile");
+      picked_tile = cell.available_tiles.Last();
     }
 
     return picked_tile;
@@ -195,6 +203,36 @@ public class HexGrid : MonoBehaviour
 				this.cells[(int)hex_coord.x + (int)hex_coord.y * this.width].updateEntropy(t, dir);
 			}
 		}
+	}
+  public bool checkPropagate(TileInterface t, Vector2 cell_pos)
+  {
+    bool can_propagate = true;
+    List<HexCell> neighbors = new List<HexCell>();
+
+		foreach (HexMetrics.NeighborDirections dir in HexMetrics.neighbor_directions.Keys)
+		{
+			Vector2 hex_coord = HexMetrics.getNeighborOffset(dir, (int)cell_pos.y);
+			hex_coord += cell_pos;
+
+			if (hex_coord.x >= 0 && hex_coord.x < this.width && hex_coord.y >= 0 && hex_coord.y < this.height)
+			{
+        neighbors.Add(this.cells[(int)hex_coord.x + (int)hex_coord.y * this.width]);
+			}
+		}
+
+    foreach(HexCell neighbor in neighbors)
+    {
+      HexMetrics.NeighborDirections dir = (HexMetrics.NeighborDirections)neighbors.IndexOf(neighbor);
+      int new_entropy = neighbor.checkIfCanUpdateEntropy(t, dir);
+
+        if(new_entropy == 0)
+        {
+          can_propagate = false;
+          break;
+        }
+    }
+    
+    return can_propagate;
 	}
 
 	public bool checkIfGridIsCollapsed()

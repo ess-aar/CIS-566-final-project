@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
 
 public class HexCell : MonoBehaviour
 {
@@ -66,6 +67,14 @@ public class HexCell : MonoBehaviour
         this.entropy = 1000000;
     }
 
+    public void removeCell()
+    {
+      Destroy(this.tile);
+      this.tile = null;
+      this.is_cell_collapsed = false;
+      this.entropy = this.available_tiles.Count;
+    }
+
     public void updateEntropy(TileInterface t, HexMetrics.NeighborDirections dir)
     {
         if (this.is_cell_collapsed)
@@ -83,5 +92,20 @@ public class HexCell : MonoBehaviour
         this.entropy = this.available_tiles.Count;
     }
 
-    
+    public int checkIfCanUpdateEntropy(TileInterface t, HexMetrics.NeighborDirections dir)
+    {
+        // if (this.is_cell_collapsed)
+        // {
+        //     Debug.Log("this neighbor is collapsed!");
+        //     return 0;
+        // }
+
+        HexMetrics.TerrainFeature this_edge_feature_constraint = t.edge_map[dir];
+
+        // List<TileInterface> copy_list = new List<TileInterface>(this.available_tiles);
+
+        int tiles_left = this.available_tiles.Count(tile => tile.edge_map[HexMetrics.inverse_neighbor_dir[dir]] == this_edge_feature_constraint);
+        
+        return tiles_left;
+    }
 }
