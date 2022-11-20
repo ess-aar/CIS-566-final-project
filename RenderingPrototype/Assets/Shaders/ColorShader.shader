@@ -53,7 +53,7 @@ Shader "Hidden/ColorShader"
             {
                 // Get uv coordinates
                 float2 texUV = input.uv;
-                float2 gridUV = input.uv; // TODO: change this to ndc
+                float2 gridUV = input.uv; // TODO: divide UV by screen dims to avoid stretching
                 
                 // Sample color texture and map color ID to final color
                 float4 base = tex2D(_MainTex, texUV);
@@ -85,7 +85,7 @@ Shader "Hidden/ColorShader"
 
                 //if (cellCoord.x > 0.38 || cellCoord.y > 0.38) color = float4(0.4, 0.3, 1.0, 1.0);
                 
-                return color; // * fbm2D(10.0 * input.uv); // TODO: divide UV by screen dims to avoid stretching
+                return color;
             }
             ENDCG
         }

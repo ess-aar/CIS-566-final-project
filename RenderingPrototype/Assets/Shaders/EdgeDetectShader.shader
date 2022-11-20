@@ -84,7 +84,7 @@ Shader "Hidden/EdgeDetectShader"
                                     }; 
 
                 float4 baseColor = tex2D(_MainTex, input.uv);
-                float4 color = float4(0.0, 0.0, 0.0, 0.0);
+                float4 color = baseColor;
                     
                 // Outline thickness
                 float2 delta = float2(0.002, 0.002);
@@ -107,12 +107,17 @@ Shader "Hidden/EdgeDetectShader"
                 }
                 
                 float sum = 1.0 - sqrt(horizontalSum * horizontalSum + verticalSum * verticalSum);
-                color = float4(sum, sum, sum, 1); 
+                float3 sumColor = float3(sum, sum, sum); 
+
+                // Any outline should be black
+                if (length(sumColor.xyz) <= 1.5) color = float4(0.0, 0.0, 0.0, 0.0);
 
                 // FBM pass for paper look
                 float fbm = fbm2D(4.0 * input.uv);
 
-                return lerp(baseColor, color, 0.5) * fbm;
+                //return lerp(baseColor, color, 0.5) * fbm;
+                //return float4(convertToGreyscale(baseColor));
+                return color * fbm;
             }	
 
 			ENDCG
