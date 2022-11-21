@@ -152,10 +152,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 238de7289fd51464ab340aaa22625476, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  width: 50
-  height: 50
+  width: 20
+  height: 20
   is_grid_collapsed: 0
   collapsedCellCount: 0
+  max_retries: 0
   cellPrefab: {fileID: -1915333941536036059, guid: c4ea1198054c5314b823f9727af86dc3, type: 3}
   cells: []
   tile_prefabs: []
@@ -174,6 +175,118 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1255959639
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1255959642}
+  - component: {fileID: 1255959641}
+  - component: {fileID: 1255959640}
+  - component: {fileID: 1255959643}
+  - component: {fileID: 1255959644}
+  m_Layer: 0
+  m_Name: Top-Down Camera
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &1255959640
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255959639}
+  m_Enabled: 1
+--- !u!20 &1255959641
+Camera:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255959639}
+  m_Enabled: 1
+  serializedVersion: 2
+  m_ClearFlags: 1
+  m_BackGroundColor: {r: 0.19215687, g: 0.3019608, b: 0.4745098, a: 0}
+  m_projectionMatrixMode: 1
+  m_GateFitMode: 2
+  m_FOVAxisMode: 0
+  m_SensorSize: {x: 36, y: 24}
+  m_LensShift: {x: 0, y: 0}
+  m_FocalLength: 50
+  m_NormalizedViewPortRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
+  near clip plane: 0.3
+  far clip plane: 1000
+  field of view: 60
+  orthographic: 0
+  orthographic size: 5
+  m_Depth: 0
+  m_CullingMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RenderingPath: -1
+  m_TargetTexture: {fileID: 0}
+  m_TargetDisplay: 0
+  m_TargetEye: 3
+  m_HDR: 1
+  m_AllowMSAA: 1
+  m_AllowDynamicResolution: 0
+  m_ForceIntoRT: 0
+  m_OcclusionCulling: 1
+  m_StereoConvergence: 10
+  m_StereoSeparation: 0.022
+--- !u!4 &1255959642
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255959639}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 16.3, y: 31.3, z: 14.4}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &1255959643
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255959639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e367597ece0e1c54f95cc4da68dca287, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 86778777dda0b7145938a8de57c00ff0, type: 2}
+--- !u!114 &1255959644
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255959639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e367597ece0e1c54f95cc4da68dca287, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  material: {fileID: 2100000, guid: 364bb18648b622a4881cba68c903796c, type: 2}
 --- !u!1 &1475613061
 GameObject:
   m_ObjectHideFlags: 0
@@ -313,8 +426,15 @@ MonoBehaviour:
   - {fileID: 6729980669966993966, guid: dd7091b7e58f298439b946626c0fae4a, type: 3}
   - {fileID: 3682314530620577835, guid: 998582db455140744ac7add271882a27, type: 3}
   - {fileID: 270771672366215606, guid: 360eb009e6214774ca17e4ffaefe337b, type: 3}
+  - {fileID: 1766401711957666590, guid: 031766dabddea4e699b86ce0043fd5d8, type: 3}
+  - {fileID: 7618811961417310815, guid: f7af8a8d702af4b25a92c8cbb1afc033, type: 3}
+  - {fileID: 1128419382307010914, guid: d93d5ab0c63304987984b64d5a2ad308, type: 3}
+  - {fileID: 5482475556831152003, guid: 45bad47f4d8b64fc9a56e5778cb3fa24, type: 3}
+  - {fileID: 1906363795144300311, guid: e3a4bdfd2d7ff47ad9f2e85cd502a66d, type: 3}
+  - {fileID: 3955403251835936700, guid: 0f1e7c8fabea44cbba45c81eec8242d5, type: 3}
   tile_prefabs: []
   num_seeds: 5
+  cur_iter: 0
 --- !u!4 &1714802307
 Transform:
   m_ObjectHideFlags: 0

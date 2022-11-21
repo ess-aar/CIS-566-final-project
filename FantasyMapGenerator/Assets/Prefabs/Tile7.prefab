@@ -23,6 +23,10 @@ PrefabInstance:
       propertyPath: id
       value: 6
       objectReference: {fileID: 0}
+    - target: {fileID: 4113033252204199701, guid: d402c90e86406c94690ea50b32953672, type: 3}
+      propertyPath: weighting
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4211826542441846108, guid: d402c90e86406c94690ea50b32953672, type: 3}
       propertyPath: m_RootOrder
       value: 0

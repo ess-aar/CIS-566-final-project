@@ -36,7 +36,7 @@ public class HexMetrics : MonoBehaviour
     };
 
 
-    public enum TerrainFeature { Water, Land, Mountain };
+    public enum TerrainFeature { Water, Land, Mountain, Forest };
 
     public static Dictionary<Color, TerrainFeature> color_to_feature = new Dictionary<Color, TerrainFeature>
     {
@@ -45,6 +45,7 @@ public class HexMetrics : MonoBehaviour
         { new Color(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1f), TerrainFeature.Water },
         { new Color(0.470588235294118f, 0.313725490196078f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
         { new Color(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
+        { new Color(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1f), TerrainFeature.Forest },
     };
 
     public static Dictionary<NeighborDirections, Vector2> direction_to_textureUV = new Dictionary<NeighborDirections, Vector2>

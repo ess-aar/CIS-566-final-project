@@ -5,6 +5,7 @@ using UnityEngine;
 public class Tile : MonoBehaviour
 {
     public int id;
+    public int weighting = 1;
     // Start is called before the first frame update
     void Start()
     {
