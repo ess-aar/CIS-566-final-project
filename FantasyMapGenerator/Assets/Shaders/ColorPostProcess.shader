@@ -21,7 +21,7 @@ Shader "Hidden/ColorPostProcess"
             #define WATER_COLOR       float4(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1.f)
             #define MOUNTAIN_COLOR    float4(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1.f)
             #define FOREST_COLOR      float4(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1.f)
-            #define SCATTER_GRID_SIZE 20.0
+            #define SCATTER_GRID_SIZE 10.0
 
             float noise2Df(float2 p) {
                 return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);
@@ -54,7 +54,10 @@ Shader "Hidden/ColorPostProcess"
             {
                 // Get uv coordinates
                 float2 texUV = input.uv;
-                float2 gridUV = input.uv; // TODO: divide UV by screen dims to avoid stretching
+                //float2 gridUV = input.uv; // TODO: divide UV by screen dims to avoid stretching
+
+                float2 fragCoord = input.uv * _ScreenParams.xy;
+                float2 gridUV = (2.0 * fragCoord.xy - _ScreenParams.xy) / _ScreenParams.y;
                 
                 // Sample color texture and map color ID to final color
                 float4 base = tex2D(_MainTex, texUV);
