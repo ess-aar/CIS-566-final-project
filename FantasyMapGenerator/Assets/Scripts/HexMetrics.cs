@@ -40,12 +40,17 @@ public class HexMetrics : MonoBehaviour
 
     public static Dictionary<Color, TerrainFeature> color_to_feature = new Dictionary<Color, TerrainFeature>
     {
-        { new Color(0.807843137254902f, 0.909803921568627f, 0.513725490196078f, 1f), TerrainFeature.Land },
-        { new Color(0.541176470588235f, 0.894117647058824f, 0.972549019607843f, 1f), TerrainFeature.Water },
-        { new Color(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1f), TerrainFeature.Water },
-        { new Color(0.470588235294118f, 0.313725490196078f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
-        { new Color(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
-        { new Color(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1f), TerrainFeature.Forest },
+        // { new Color(0.807843137254902f, 0.909803921568627f, 0.513725490196078f, 1f), TerrainFeature.Land },
+        // { new Color(0.541176470588235f, 0.894117647058824f, 0.972549019607843f, 1f), TerrainFeature.Water },
+        // { new Color(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1f), TerrainFeature.Water },
+        // { new Color(0.470588235294118f, 0.313725490196078f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
+        // { new Color(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1f), TerrainFeature.Mountain },
+        // { new Color(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1f), TerrainFeature.Forest },
+
+        { new Color(0.0f, 1.0f, 0.0f, 1.0f), TerrainFeature.Land },
+        { new Color(0.0f, 0.0f, 1.0f, 1.0f), TerrainFeature.Water },
+        { new Color(1.0f, 0.0f, 0.0f, 1.0f), TerrainFeature.Mountain },
+        { new Color(1.0f, 1.0f, 0.0f, 1.0f), TerrainFeature.Forest },
     };
 
     public static Dictionary<NeighborDirections, Vector2> direction_to_textureUV = new Dictionary<NeighborDirections, Vector2>
