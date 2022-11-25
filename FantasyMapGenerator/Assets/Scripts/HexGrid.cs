@@ -95,8 +95,8 @@ public class HexGrid : MonoBehaviour
 		if (cell.available_tiles.Count == 0)
 		{
 			Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
-			this.collapsedCellCount++;
-			cell.is_cell_collapsed = true;
+			//this.collapsedCellCount++;
+			//cell.is_cell_collapsed = true;
 			return null;
 		}
 

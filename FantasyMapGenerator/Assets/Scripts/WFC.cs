@@ -28,7 +28,7 @@ public class WFC : MonoBehaviour
         generateSeeds();
         // generateTestSeeds();
 
-        InvokeRepeating("performWFC2", 1.0f, 0.005f);
+        InvokeRepeating("performWFC2", 1.0f, 0.0005f);
 
 
         //testFillGrid();
@@ -150,10 +150,15 @@ public class WFC : MonoBehaviour
             TileInterface tile_to_instantiate = this.grid.pickTileToInstantiate(cell);
 
             if (tile_to_instantiate == null)
-                break;
+            {
+                cell.collapseCell(this.grid.tile_prefabs[0]);
+            }
+            else
+            {
+                // collapse each cell
+                cell.collapseCell(tile_to_instantiate);
+            }
 
-            // collapse each cell
-            cell.collapseCell(tile_to_instantiate);
             this.grid.collapsedCellCount++;
 
             // propogate entropy decrease to neighbors
