@@ -144,10 +144,21 @@ public class WFC : MonoBehaviour
 
     void propagateSeeds()
     {
-      foreach(HexCell seedCell in seedManager.getSeeds())
+      TileInterface t = tile_prefabs[0];
+      foreach(SeedCell seedCell in seedManager.getSeeds())
       {
           this.grid.collapsedCellCount++;
-          // this.grid.propagate(t, seedCell.getPosition());
+
+          if(seedCell.feature == HexMetrics.TerrainFeature.Water)
+              t = tile_prefabs[0];
+          else if(seedCell.feature == HexMetrics.TerrainFeature.Land)
+              t = tile_prefabs[6];
+          else if(seedCell.feature == HexMetrics.TerrainFeature.Mountain)
+              t = tile_prefabs[42];
+          else if(seedCell.feature == HexMetrics.TerrainFeature.Forest)
+              t = tile_prefabs[84];
+
+          this.grid.propagate(t, seedCell.cell.getPosition());
       }
     }
 

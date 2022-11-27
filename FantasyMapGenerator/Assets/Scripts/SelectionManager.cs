@@ -3,6 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+[System.Serializable]
+public class SeedCell
+{
+    public HexCell cell;
+    public HexMetrics.TerrainFeature feature;
+}
+
+
 public class SelectionManager : MonoBehaviour
 {
     public Camera cam;
@@ -11,7 +19,7 @@ public class SelectionManager : MonoBehaviour
     public List<Tile> tilePrefabs;
     public List<Sprite> sprites;
     private int activeTileIdx = 0;
-    private List<HexCell> selection = new List<HexCell>();
+    private List<SeedCell> selection = new List<SeedCell>();
     private Coroutine selectionRoutine;
 
     void Update()
@@ -48,7 +56,7 @@ public class SelectionManager : MonoBehaviour
         seedUIImage.sprite = sprites[activeTileIdx];
     }
 
-    public List<HexCell> getSeeds()
+    public List<SeedCell> getSeeds()
     {
       return selection;
     }
@@ -87,7 +95,12 @@ public class SelectionManager : MonoBehaviour
                 cell.fillCell(tilePrefabs[activeTileIdx]);
                 // cell.tile.GetComponent<Renderer>().material = selectionMaterial;
                 Debug.Log("Raycast: " + cell.x + ", " + cell.z);
-                if(!selection.Contains(cell)) selection.Add(cell);
+
+                var seedCell = new SeedCell();
+                seedCell.cell = cell;
+                seedCell.feature = (HexMetrics.TerrainFeature)activeTileIdx;
+
+                if(!selection.Contains(seedCell)) selection.Add(seedCell);
             }
     
             yield return null;
