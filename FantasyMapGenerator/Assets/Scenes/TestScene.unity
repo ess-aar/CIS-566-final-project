@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44657898, g: 0.4964133, b: 0.5748178, a: 1}
+  m_IndirectSpecularColor: {r: 0.44657815, g: 0.49641192, b: 0.57481617, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -174,6 +174,57 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &759144605
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 759144607}
+  - component: {fileID: 759144606}
+  m_Layer: 0
+  m_Name: Selection
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &759144606
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759144605}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 44f5abad72242444da7591d95e9f483f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cam: {fileID: 1255959641}
+  selectionMaterial: {fileID: 2100000, guid: 4969b7cbb5ca74aa89159c0dfba5d8b9, type: 2}
+  tilePrefabs:
+  - {fileID: -8741093752008912707, guid: 06cc6ac8d1c3de34291a67f9a3485256, type: 3}
+  - {fileID: 8705989519417168777, guid: 95dc44dc06391b04d9e48e9b6ff27e02, type: 3}
+  - {fileID: -5581210478195332944, guid: babc3fc9db299d745b8f9e2e65529040, type: 3}
+  - {fileID: 1766401711957666590, guid: 031766dabddea4e699b86ce0043fd5d8, type: 3}
+--- !u!4 &759144607
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 759144605}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1255959639
 GameObject:
@@ -411,6 +462,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   grid: {fileID: 290387603}
+  seedManager: {fileID: 759144606}
   tile_interface: {fileID: 2195883973050597191, guid: 3efaa0838aa2b224bbdb25b7b420a666, type: 3}
   original_tile_prefabs:
   - {fileID: -8741093752008912707, guid: 06cc6ac8d1c3de34291a67f9a3485256, type: 3}
@@ -475,7 +527,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1944858175}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1944858177
 Camera:
   m_ObjectHideFlags: 0

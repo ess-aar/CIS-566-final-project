@@ -35,7 +35,7 @@ public class HexGrid : MonoBehaviour
         }
         //Debug.Log("Grid Tile Prefabs Length: " + this.tile_prefabs.Count);
 
-        for (int z = 0, i = 0; z < height; z++)
+    for (int z = 0, i = 0; z < height; z++)
 		{
 			for (int x = 0; x < width; x++)
 			{
@@ -94,13 +94,13 @@ public class HexGrid : MonoBehaviour
   {
 		if (cell.available_tiles.Count == 0)
 		{
-			Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
+			// Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
 			this.collapsedCellCount++;
 			cell.is_cell_collapsed = true;
 			return null;
 		}
 
-		Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
+		// Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
 
 		Vector2 cell_pos = new Vector2(cell.x, cell.z);
 
@@ -108,7 +108,7 @@ public class HexGrid : MonoBehaviour
 		bool can_place_tile = true;
 
 		this.max_retries = cell.available_tiles.Count;
-		Debug.Log("Cell + (" + cell.x + ", " + cell.z + ") : " + "Available tile count = " + this.max_retries );
+		// Debug.Log("Cell + (" + cell.x + ", " + cell.z + ") : " + "Available tile count = " + this.max_retries );
 		int num_cur_retry = 0;
 
 		do
@@ -133,7 +133,7 @@ public class HexGrid : MonoBehaviour
 					{
 						if (!neighbor.neighboring_features[(int)potential_tile.edge_map[dir]] && neighbor.num_unique_neighboring_features == 2)
 						{
-							Debug.Log(potential_tile.prefab.name + ", " + potential_tile.rotateAngle + " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+							// Debug.Log(potential_tile.prefab.name + ", " + potential_tile.rotateAngle + " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 							can_place_tile = false;
 							break;
 						}
@@ -147,12 +147,12 @@ public class HexGrid : MonoBehaviour
 
 		if (num_cur_retry >= this.max_retries && !can_place_tile)
     {
-			Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+			// Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 			potential_tile = null;
       return null;
     }
 
-		Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name + ", " + potential_tile.rotateAngle);
+		// Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name + ", " + potential_tile.rotateAngle);
 		return potential_tile;
   }
 
@@ -183,7 +183,7 @@ public class HexGrid : MonoBehaviour
 
     if (rand_accum >= total_weight)
     {
-      Debug.Log("force picking last tile");
+      // Debug.Log("force picking last tile");
       picked_tile = cell.available_tiles.Last();
     }
 

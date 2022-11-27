@@ -7,6 +7,7 @@ public class WFC : MonoBehaviour
 {
 
     public HexGrid grid;
+    public SelectionManager seedManager;
     public TileInterface tile_interface;
     public Tile[] original_tile_prefabs;
     public TileInterface[] tile_prefabs;
@@ -23,21 +24,32 @@ public class WFC : MonoBehaviour
         generateTileEdgeData();
         this.grid.SetupGrid(tile_prefabs);
 
-        //num_seeds = Random.Range(1, 5);
-        //num_seeds = 4;
-        generateSeeds();
-        // generateTestSeeds();
-
-        InvokeRepeating("performWFC2", 1.0f, 0.005f);
-
-
-        //testFillGrid();
-        //testAllTiles();
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyUp(KeyCode.Return))
+        {
+            //num_seeds = Random.Range(1, 5);
+            //num_seeds = 4;
+
+            if (seedManager.getSeeds().Count == 0)
+            {
+              generateSeeds();
+              // generateTestSeeds();
+            }
+            else {
+              propagateSeeds();
+            }
+
+            InvokeRepeating("performWFC2", 1.0f, 0.005f);
+
+
+            //testFillGrid();
+            //testAllTiles();
+        }
+
         if (cur_iter >= (int)(this.grid.height * this.grid.width))
         {
             CancelInvoke();
@@ -109,7 +121,7 @@ public class WFC : MonoBehaviour
                 //Debug.Log("Tile Selected as Seed: " + rand_index);
                 
                 can_use_seed = this.grid.checkPropagate(t, this_cell_pos);
-                Debug.Log("can use tile : " + t.prefab.name + " at (" + this_cell_pos.x + ", " + this_cell_pos.y + ") ? " + can_use_seed);
+                // Debug.Log("can use tile : " + t.prefab.name + " at (" + this_cell_pos.x + ", " + this_cell_pos.y + ") ? " + can_use_seed);
 
                 if(can_use_seed)
                 {
@@ -128,6 +140,15 @@ public class WFC : MonoBehaviour
                 }
             }
         }
+    }
+
+    void propagateSeeds()
+    {
+      foreach(HexCell seedCell in seedManager.getSeeds())
+      {
+          this.grid.collapsedCellCount++;
+          // this.grid.propagate(t, seedCell.getPosition());
+      }
     }
 
     void performWFC()
@@ -191,7 +212,7 @@ public class WFC : MonoBehaviour
                     break;
 
                 bool can_propagate = this.grid.checkPropagate(tile_to_instantiate, cell.getPosition());
-                Debug.Log("can use tile : " + tile_to_instantiate.prefab.name + " with angle " + tile_to_instantiate.rotateAngle + " at (" + cell.getPosition().x + ", " + cell.getPosition().y + ") ? " + can_propagate);
+                // Debug.Log("can use tile : " + tile_to_instantiate.prefab.name + " with angle " + tile_to_instantiate.rotateAngle + " at (" + cell.getPosition().x + ", " + cell.getPosition().y + ") ? " + can_propagate);
 
                 if (can_propagate)
                 {
