@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class SelectionManager : MonoBehaviour
 {
     public Camera cam;
     public Material selectionMaterial;
+    public Image seedUIImage;
     public List<Tile> tilePrefabs;
+    public List<Sprite> sprites;
     private int activeTileIdx = 0;
     private List<HexCell> selection = new List<HexCell>();
     private Coroutine selectionRoutine;
@@ -15,8 +18,9 @@ public class SelectionManager : MonoBehaviour
     {   
         if(Input.GetKeyUp(KeyCode.Tab))
         {
-          activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
-          Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
+            activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
+            Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
+            seedUIImage.sprite = sprites[activeTileIdx];
         }
 
         if(Input.GetMouseButtonDown(0))
@@ -29,11 +33,19 @@ public class SelectionManager : MonoBehaviour
         {
             EndSelection();
             Debug.Log("End!");
-            // foreach (var cell in selection)
-            // {
-            //   Debug.Log("Cell: " + cell.x + ", " + cell.z);
-            // }
         }
+
+        if(Input.GetKeyUp(KeyCode.Return))
+        {
+            Destroy(seedUIImage);
+        }
+    }
+
+    public void changeSeed()
+    {
+        activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
+        Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
+        seedUIImage.sprite = sprites[activeTileIdx];
     }
 
     public List<HexCell> getSeeds()
