@@ -24,7 +24,7 @@ public class HexCell : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+		    this.gameObject.layer = LayerMask.NameToLayer("Cell");
     }
 
     void Awake()

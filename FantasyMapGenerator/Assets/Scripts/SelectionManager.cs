@@ -19,6 +19,7 @@ public class SelectionManager : MonoBehaviour
     public List<Tile> tilePrefabs;
     public List<Sprite> sprites;
     private int activeTileIdx = 0;
+    private int layerMask = 1 << 6; //LayerMask.GetMask("Cell");
     private List<SeedCell> selection = new List<SeedCell>();
     private Coroutine selectionRoutine;
 
@@ -27,32 +28,36 @@ public class SelectionManager : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.Tab))
         {
             activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
-            Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
+            // Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
             seedUIImage.sprite = sprites[activeTileIdx];
-        }
-
-        if(Input.GetMouseButtonDown(0))
-        {
-            Debug.Log("Start!");
-            StartSelection(); 
-        }
-
-        if(Input.GetMouseButtonUp(0))
-        {
-            EndSelection();
-            Debug.Log("End!");
         }
 
         if(Input.GetKeyUp(KeyCode.Return))
         {
             Destroy(seedUIImage);
         }
+
+    }
+
+    void FixedUpdate()
+    {
+        if(Input.GetMouseButtonDown(0))
+        {
+            // Debug.Log("Start!");
+            StartSelection(); 
+        }
+
+        if(Input.GetMouseButtonUp(0))
+        {
+            EndSelection();
+            // Debug.Log("End!");
+        }
     }
 
     public void changeSeed()
     {
         activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
-        Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
+        // Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
         seedUIImage.sprite = sprites[activeTileIdx];
     }
 
@@ -81,20 +86,20 @@ public class SelectionManager : MonoBehaviour
     private IEnumerator SelectionRoutine()
     {
         // selection.Clear();
-        Debug.Log("Starting coroutine");
+        // Debug.Log("Starting coroutine");
         
         while(true)
         {
             var ray = cam.ScreenPointToRay(Input.mousePosition);
          
-            if(Physics.Raycast(ray, out var hit))
+            if(Physics.Raycast(ray, out var hit, 50, layerMask))
             {
                 // Debug.Log("Raycast: " + hit.transform);
                 // hit.transform.GetComponent<Renderer>().material = selectionMaterial;
                 var cell = hit.transform.GetComponent<HexCell>();
                 cell.fillCell(tilePrefabs[activeTileIdx]);
                 // cell.tile.GetComponent<Renderer>().material = selectionMaterial;
-                Debug.Log("Raycast: " + cell.x + ", " + cell.z);
+                // Debug.Log("Raycast: " + cell.x + ", " + cell.z);
 
                 var seedCell = new SeedCell();
                 seedCell.cell = cell;
