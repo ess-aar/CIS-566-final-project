@@ -112,7 +112,7 @@ Shader "Hidden/ColorPostProcess"
                 if (pointInTriangle(uv, A, B, C)) {
                     if (uv.x < p.x - jitter && uv.x > C.x) {  
                         float t = (uv.x - C.x) / (p.x - jitter - C.x);                       
-                        float3 fadeColor = lerp(float3(1.0, 1.0, 1.0), float3(0.5, 0.5, 0.5), t);
+                        float3 fadeColor = lerp(col, float3(0.3, 0.3, 0.3), t);
                         col = fadeColor;
                     }
                     else {
@@ -140,11 +140,6 @@ Shader "Hidden/ColorPostProcess"
                             col = drawMountain(col, SCATTER_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
                             float e = mountainOutlineSDF(SCATTER_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
                             if (e > 0.0) col = lerp(col, float4(0.0, 0.0, 0.0, 0.0), 1.0);
-
-                            // float d = sdCircle(cellCoord - neighborOffset - uvOffset, 0.15);
-                            // if (d < 0.0) {
-                            //     return float4(1.0, 0.0, 0.0, 1.0);
-                            // }
                         }
                     }
                 }
@@ -199,6 +194,7 @@ Shader "Hidden/ColorPostProcess"
 
                 //if (cellCoord.x > 0.38 || cellCoord.y > 0.38) color = float4(0.4, 0.3, 1.0, 1.0);
 
+                // Uncomment for test mountain
                 // color = float4(1.0, 1.0, 1.0, 1.0);
                 // color = drawMountain(color, SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
                 // float e = mountainOutlineSDF(SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
