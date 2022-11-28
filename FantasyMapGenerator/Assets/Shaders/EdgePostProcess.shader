@@ -83,7 +83,12 @@ Shader "Hidden/EdgePostProcess"
                                       -1.0, -2.0, -1.0 
                                     }; 
 
-                float4 baseColor = tex2D(_MainTex, input.uv);
+                float2 texUV = input.uv;
+
+                float2 fragCoord = input.uv * _ScreenParams.xy;
+                float2 gridUV = (2.0 * fragCoord.xy - _ScreenParams.xy) / _ScreenParams.y;
+
+                float4 baseColor = tex2D(_MainTex, texUV);
                 float4 color = baseColor;
                     
                 // Outline thickness
@@ -101,8 +106,8 @@ Shader "Hidden/EdgePostProcess"
                         float2 offset = float2(i, j);
 
                         // Sample input texture
-                        horizontalSum += convertToGreyscale(tex2D(_MainTex, (input.uv + offset * delta))) * horizontal[kx + 3 * ky];
-                        verticalSum += convertToGreyscale(tex2D(_MainTex, (input.uv + offset * delta))) * vertical[kx + 3 * ky];
+                        horizontalSum += convertToGreyscale(tex2D(_MainTex, (texUV + offset * delta))) * horizontal[kx + 3 * ky];
+                        verticalSum += convertToGreyscale(tex2D(_MainTex, (texUV + offset * delta))) * vertical[kx + 3 * ky];
                     }
                 }
                 
@@ -113,11 +118,11 @@ Shader "Hidden/EdgePostProcess"
                 if (length(sumColor.xyz) <= 1.5) color = float4(0.0, 0.0, 0.0, 0.0);
 
                 // FBM pass for paper look
-                float fbm = pow(fbm2D(10.0 * input.uv), 1.2);
+                float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
 
                 //return lerp(baseColor, color, 0.5) * fbm;
                 //return float4(convertToGreyscale(baseColor));
-                return color * fbm;
+                return color;
             }	
 
 			ENDCG

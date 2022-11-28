@@ -1,4 +1,4 @@
-Shader "Hidden/ColorPostProcess"
+Shader "Hidden/AssetPostProcess"
 {
     Properties
     {
@@ -21,8 +21,8 @@ Shader "Hidden/ColorPostProcess"
             #define WATER_COLOR       float4(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1.f)
             #define MOUNTAIN_COLOR    float4(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1.f)
             #define FOREST_COLOR      float4(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1.f)
-            #define SCATTER_GRID_SIZE 2.0
-            #define ASSETS_PER_CELL   3
+            #define SCATTER_GRID_SIZE 4.0
+            #define ASSETS_PER_CELL   5
 
             float noise1Df(float x) {
                 return sin(2.0 * x) + sin(PI * x);
@@ -112,11 +112,11 @@ Shader "Hidden/ColorPostProcess"
                 if (pointInTriangle(uv, A, B, C)) {
                     if (uv.x < p.x - jitter && uv.x > C.x) {  
                         float t = (uv.x - C.x) / (p.x - jitter - C.x);                       
-                        float3 fadeColor = lerp(col, float3(0.3, 0.3, 0.3), t);
+                        float3 fadeColor = lerp(col, float3(0.3, 0.3, 0.3) * col, t);
                         col = fadeColor;
                     }
                     else {
-                        col = baseCol;
+                        col = float4(1.0, 0.9, 0.7, 1.0);
                     }      
                 }
                 
@@ -147,6 +147,49 @@ Shader "Hidden/ColorPostProcess"
                 return col;
             }
 
+            float cosineInterpolate(float a, float b, float t)
+            {
+                float cos_t = (1.f - cos(t * PI)) * 0.5f;
+                return lerp(a, b, cos_t);
+            }
+
+            float interpolateNoise2D(float x, float y) 
+            {
+                // Get integer and fractional components of current position
+                int intX = int(floor(x));
+                float fractX = frac(x);
+                int intY = int(floor(y));
+                float fractY = frac(y);
+
+                // Get noise value at each of the 4 vertices
+                float v1 = noise2Df(float2(intX, intY));
+                float v2 = noise2Df(float2(intX + 1, intY));
+                float v3 = noise2Df(float2(intX, intY + 1));
+                float v4 = noise2Df(float2(intX + 1, intY + 1));
+
+                // Interpolate in the X, Y directions
+                float i1 = cosineInterpolate(v1, v2, fractX);
+                float i2 = cosineInterpolate(v3, v4, fractX);
+                return cosineInterpolate(i1, i2, fractY);
+            }
+
+            float fbm2D(float2 p) 
+            {
+                float total = 0.f;
+                float persistence = 0.5f;
+                int octaves = 4;
+
+                for(int i = 1; i <= octaves; i++)
+                {
+                    float freq = pow(2.f, float(i));
+                    float amp = pow(persistence, float(i));
+
+                    float perlin = interpolateNoise2D(p.x * freq, p.y * freq);
+                    total += amp * (0.5 * (perlin + 1.0));
+                }
+                return total;
+            }
+
             float4 frag (v2f_img input) : COLOR
             {
                 // Get uv coordinates
@@ -160,19 +203,8 @@ Shader "Hidden/ColorPostProcess"
                 float4 base = tex2D(_MainTex, texUV);
                 float4 color = base;
 
-                if (distance(base, LAND_COLOR) <= 0.5) {
+                if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
                     color = float4(1.0, 0.9, 0.7, 1.0);
-                    //color = float4(0.0, 1.0, 0.0, 1.0);
-                }
-                else if (distance(base, WATER_COLOR) <= 0.5) {
-                    color = float4(0.74, 0.76, 0.89, 1.0);
-                    //color = float4(0.0, 0.0, 1.0, 1.0);
-                }
-                else if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
-                    //color = float4(1.0, 0.0, 0.0, 1.0);
-                }
-                else if (distance(base, FOREST_COLOR) <= 100.0) {
-                    //color = float4(1.0, 0.0, 1.0, 1.0);
                 }
 
                 // Scatter assets over the map
@@ -180,13 +212,13 @@ Shader "Hidden/ColorPostProcess"
                 float2 gridId = floor(SCATTER_GRID_SIZE * gridUV);
 
                 // If the base color ID matches the mountains color, then scatter mountains
-                // bool drawMountains = false;
-                // if (distance(base, LAND_COLOR) <= 0.5) { // this should match the feature mask color
-                //     drawMountains = true;
-                // }
-                // if (drawMountains) {
-                //     color = placeMountains(color, gridUV, gridId);
-                // }  
+                bool drawMountains = false;
+                if (distance(base, MOUNTAIN_COLOR) <= 0.5) { // this should match the feature mask color
+                    drawMountains = true;
+                }
+                if (drawMountains) {
+                    color = placeMountains(color, gridUV, gridId);
+                }  
 
                 // Uncomment for visualizing grid values
                 //color.rg += gridId * 0.1;
@@ -200,7 +232,10 @@ Shader "Hidden/ColorPostProcess"
                 // float e = mountainOutlineSDF(SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
                 // if (e > 0.0) color = lerp(color, float4(0.0, 0.0, 0.0, 0.0), 1.0);
                 
-                return color;
+                // FBM pass for paper look
+                float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
+
+                return color * fbm;
             }
             ENDCG
         }
