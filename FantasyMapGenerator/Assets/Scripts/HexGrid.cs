@@ -65,13 +65,12 @@ public class HexGrid : MonoBehaviour
 		cells[i].setTilePrefabs(this.tile_prefabs);
 		cells[i].entropy = this.tile_prefabs.Count;
 		if (cells[i].tile != null)
-        {
+    {
 			Destroy(cells[i].tile.gameObject);
 		}
 		cells[i].tile = null;
 		cells[i].initializeNeighboringFeatures();
 		cells[i].is_cell_collapsed = false;
-
 	}
 
 	public void CreateCell(int x, int z, int i)

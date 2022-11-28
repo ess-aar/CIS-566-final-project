@@ -35,6 +35,7 @@ public class SelectionManager : MonoBehaviour
         if(Input.GetKeyUp(KeyCode.Return))
         {
             Destroy(seedUIImage);
+            // seedUIImage.sprite = null;
         }
 
     }
@@ -64,6 +65,22 @@ public class SelectionManager : MonoBehaviour
     public List<SeedCell> getSeeds()
     {
       return selection;
+    }
+
+    public void clearSeeds()
+    {
+      foreach(var seedCell in selection)
+      {
+        Destroy(seedCell.cell.tile.gameObject);
+      }
+      selection.Clear();
+      Debug.Log("seed list count = " + selection.Count);
+    }
+
+    public void resetSeedUI()
+    {
+      activeTileIdx = 0;
+      seedUIImage.sprite = sprites[activeTileIdx];
     }
 
     public void StartSelection()

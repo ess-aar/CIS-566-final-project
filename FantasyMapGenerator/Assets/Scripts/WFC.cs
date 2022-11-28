@@ -48,7 +48,16 @@ public class WFC : MonoBehaviour
         {
             CancelInvoke();
             resetWFC();
-            generateSeeds();
+
+            if (seedManager.getSeeds().Count == 0)
+            {
+              generateSeeds();
+              // generateTestSeeds();
+            }
+            else {
+              propagateSeeds();
+            }
+
             InvokeRepeating("performWFC2", 0.1f, 0.0005f);
 
             restart_button = false;
@@ -56,6 +65,7 @@ public class WFC : MonoBehaviour
         else if (clear_button)
         {
             CancelInvoke();
+            seedManager.clearSeeds();
             resetWFC();
             clear_button = false;
         }
@@ -74,6 +84,7 @@ public class WFC : MonoBehaviour
     {
         this.cur_iter = 0;
         this.grid.resetGrid();
+        this.seedManager.resetSeedUI();
     }
 
     public void initiateRestart()

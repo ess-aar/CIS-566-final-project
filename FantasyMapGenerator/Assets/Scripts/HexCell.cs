@@ -59,7 +59,6 @@ public class HexCell : MonoBehaviour
 
     public void collapseCell(TileInterface t)
     {
-        
         this.tile = Instantiate<Tile>(t.prefab);
         this.tile.transform.SetParent(transform, false);
         this.tile.transform.rotation = Quaternion.AngleAxis(-90 + t.rotateAngle, Vector3.up);
@@ -69,7 +68,6 @@ public class HexCell : MonoBehaviour
     
     public void fillCell(Tile t)
     {
-        
         this.tile = Instantiate<Tile>(t);
         this.tile.transform.SetParent(transform, false);
         this.tile.transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
