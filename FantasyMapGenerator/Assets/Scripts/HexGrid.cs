@@ -26,6 +26,21 @@ public class HexGrid : MonoBehaviour
 		cells = new HexCell[height * width];
 	}
 
+	public void resetGrid()
+    {
+		this.collapsedCellCount = 0;
+		this.is_grid_collapsed = false;
+
+		for (int z = 0, i = 0; z < height; z++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				// create cell and set the position of this instance
+				ResetCell(x, z, i++);
+			}
+		}
+	}
+
 	public void SetupGrid(TileInterface[] t_prefabs)
 	{
 		this.tile_prefabs = new List<TileInterface>();
@@ -44,6 +59,20 @@ public class HexGrid : MonoBehaviour
 			}
 		}
     }
+
+	public void ResetCell(int x, int z, int i)
+	{
+		cells[i].setTilePrefabs(this.tile_prefabs);
+		cells[i].entropy = this.tile_prefabs.Count;
+		if (cells[i].tile != null)
+        {
+			Destroy(cells[i].tile.gameObject);
+		}
+		cells[i].tile = null;
+		cells[i].initializeNeighboringFeatures();
+		cells[i].is_cell_collapsed = false;
+
+	}
 
 	public void CreateCell(int x, int z, int i)
 	{

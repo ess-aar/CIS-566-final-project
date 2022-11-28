@@ -79,7 +79,7 @@ public class HexCell : MonoBehaviour
 
     public void removeCell()
     {
-      Destroy(this.tile);
+      Destroy(this.tile.gameObject);
       this.tile = null;
       this.is_cell_collapsed = false;
       this.entropy = this.available_tiles.Count;

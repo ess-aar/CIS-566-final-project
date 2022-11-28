@@ -13,17 +13,18 @@ public class WFC : MonoBehaviour
     public TileInterface[] tile_prefabs;
     public int num_seeds = 0;
     public int cur_iter = 0;
+    public bool restart_button = false;
+    public bool clear_button = false;
+    public bool done = false;
 
 
 
     // Start is called before the first frame update
     void Start()
     {
- 
         generateTilesWithRotation();
         generateTileEdgeData();
         this.grid.SetupGrid(tile_prefabs);
-
     }
 
     // Update is called once per frame
@@ -31,9 +32,6 @@ public class WFC : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.Return))
         {
-            //num_seeds = Random.Range(1, 5);
-            //num_seeds = 4;
-
             if (seedManager.getSeeds().Count == 0)
             {
               generateSeeds();
@@ -44,15 +42,53 @@ public class WFC : MonoBehaviour
             }
 
             InvokeRepeating("performWFC2", 1.0f, 0.005f);
-
-
-            //testFillGrid();
-            //testAllTiles();
         }
 
-        if (cur_iter >= (int)(this.grid.height * this.grid.width))
+        if (restart_button)
         {
             CancelInvoke();
+            resetWFC();
+            generateSeeds();
+            InvokeRepeating("performWFC2", 0.1f, 0.0005f);
+
+            restart_button = false;
+        }
+        else if (clear_button)
+        {
+            CancelInvoke();
+            resetWFC();
+            clear_button = false;
+        }
+        else
+        {
+            List<HexCell> cells_to_collapse = this.grid.getCellsWithMinEntropy();
+
+            if (cells_to_collapse.Count == 0)
+            {
+                CancelInvoke();
+            }
+        }
+    }
+
+    void resetWFC()
+    {
+        this.cur_iter = 0;
+        this.grid.resetGrid();
+    }
+
+    public void initiateRestart()
+    {
+        if (!restart_button)
+        {
+            restart_button = true;
+        }
+    }
+
+    public void initiateClear()
+    {
+        if (!clear_button)
+        {
+            clear_button = true;
         }
     }
 
@@ -125,6 +161,7 @@ public class WFC : MonoBehaviour
 
                 if(can_use_seed)
                 {
+                    
                   // collapse cell
                   seedCell.collapseCell(t);
                   this.grid.collapsedCellCount++;
@@ -176,16 +213,22 @@ public class WFC : MonoBehaviour
         if (cells_to_collapse.Count == 0)
             return;
 
+        
         foreach (HexCell cell in cells_to_collapse)
         {
             // pick tile based on rules and neighbors
             TileInterface tile_to_instantiate = this.grid.pickTileToInstantiate(cell);
 
             if (tile_to_instantiate == null)
-                break;
+            {
+                cell.collapseCell(this.grid.tile_prefabs[0]);
+            }
+            else
+            {
+                // collapse each cell
+                cell.collapseCell(tile_to_instantiate);
+            }
 
-            // collapse each cell
-            cell.collapseCell(tile_to_instantiate);
             this.grid.collapsedCellCount++;
 
             // propogate entropy decrease to neighbors
@@ -201,14 +244,17 @@ public class WFC : MonoBehaviour
         //while (!this.grid.is_grid_collapsed)
         //for(int i = 0; i < (int)(this.grid.height * this.grid.width); i++)
         //{
-            //Debug.Log("============== LOOP " + i + " =============");
-            // get cells with the minimum entropy this iteration
+        //Debug.Log("============== LOOP " + i + " =============");
+        // get cells with the minimum entropy this iteration
+
 
         List<HexCell> cells_to_collapse = this.grid.getCellsWithMinEntropy();
         //Debug.Log("Cells to collapse: " + cells_to_collapse.Count);
 
         if (cells_to_collapse.Count == 0)
+        {
             return;
+        }
 
         foreach (HexCell cell in cells_to_collapse)
         {
