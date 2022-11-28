@@ -17,6 +17,8 @@ Shader "Hidden/EdgePostProcess"
             uniform sampler2D _MainTex;
 
             #define PI                3.1415926535897932384626433832795
+            #define MOUNTAIN_COLOR    float4(1.f, 0.f, 0.f, 1.f)
+            #define FOREST_COLOR      float4(1.f, 1.f, 0.f, 1.f)
 
             float noise2Df(float2 p) {
                 return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);
@@ -90,9 +92,17 @@ Shader "Hidden/EdgePostProcess"
 
                 float4 baseColor = tex2D(_MainTex, texUV);
                 float4 color = baseColor;
+
+                // If asset mask, we should not apply outlines
+                if (distance(baseColor, MOUNTAIN_COLOR) <= 0.5) {
+                    return baseColor;
+                }
+                if (distance(baseColor, FOREST_COLOR) <= 0.5) {
+                    return baseColor;
+                }
                     
                 // Outline thickness
-                float2 delta = float2(0.002, 0.002);
+                float2 delta = float2(0.001, 0.001);
                 float4 horizontalSum = float4(0.0, 0.0, 0.0, 0.0);
                 float4 verticalSum = float4(0.0, 0.0, 0.0, 0.0);
 

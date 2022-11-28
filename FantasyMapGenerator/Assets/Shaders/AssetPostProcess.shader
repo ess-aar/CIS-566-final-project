@@ -23,8 +23,8 @@ Shader "Hidden/AssetPostProcess"
             #define FOREST_COLOR       float4(1.f, 1.f, 0.f, 1.f)
             #define MOUNTAIN_GRID_SIZE 5.0
             #define MOUNTAINS_PER_CELL 7
-            #define FOREST_GRID_SIZE   8.0
-            #define TREES_PER_CELL     7
+            #define FOREST_GRID_SIZE   6.0
+            #define TREES_PER_CELL     10
 
             float noise1Df(float x) {
                 return sin(2.0 * x) + sin(PI * x);
@@ -139,7 +139,7 @@ Shader "Hidden/AssetPostProcess"
                         col = fadeColor;
                     }
                     else {
-                        col = float4(1.0, 0.9, 0.7, 1.0);
+                        col = float4(0.93, 0.75, 0.55, 1.0);
                     }      
                 }
                 
@@ -186,7 +186,7 @@ Shader "Hidden/AssetPostProcess"
                             col = lerp(float4(0.4, 0.4, 0.4, 1.0), baseCol,  1.0 - (gridId.x - uv.x) * 15.0);
                         }
                         else {
-                            col = float4(1.0, 0.9, 0.7, 1.0);
+                            col = float4(0.9, 0.93, 0.7, 1.0);
                         }
                     }
                 }
@@ -272,10 +272,10 @@ Shader "Hidden/AssetPostProcess"
                 float4 color = base;
 
                 if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
-                    color = float4(1.0, 0.9, 0.7, 1.0);
+                    color = float4(0.93, 0.75, 0.55, 1.0);
                 }
                 if (distance(base, FOREST_COLOR) <= 0.5) {
-                    color = float4(1.0, 0.9, 0.7, 1.0);
+                    color = float4(0.9, 0.93, 0.7, 1.0);
                 }
 
                 // Scatter assets over the map
