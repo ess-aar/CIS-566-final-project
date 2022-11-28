@@ -52,13 +52,13 @@ public class WFC : MonoBehaviour
             if (seedManager.getSeeds().Count == 0)
             {
               generateSeeds();
-              // generateTestSeeds();
             }
             else {
+              setSeeds();
               propagateSeeds();
             }
 
-            InvokeRepeating("performWFC2", 0.1f, 0.0005f);
+            InvokeRepeating("performWFC2", 1.0f, 0.005f);
 
             restart_button = false;
         }
@@ -84,7 +84,6 @@ public class WFC : MonoBehaviour
     {
         this.cur_iter = 0;
         this.grid.resetGrid();
-        this.seedManager.resetSeedUI();
     }
 
     public void initiateRestart()
@@ -188,6 +187,26 @@ public class WFC : MonoBehaviour
                 }
             }
         }
+    }
+
+    void setSeeds()
+    {
+      TileInterface t = tile_prefabs[0];
+      foreach(SeedCell seedCell in seedManager.getSeeds())
+      {
+          this.grid.collapsedCellCount++;
+
+          if(seedCell.feature == HexMetrics.TerrainFeature.Water)
+              t = tile_prefabs[0];
+          else if(seedCell.feature == HexMetrics.TerrainFeature.Land)
+              t = tile_prefabs[6];
+          else if(seedCell.feature == HexMetrics.TerrainFeature.Mountain)
+              t = tile_prefabs[42];
+          else if(seedCell.feature == HexMetrics.TerrainFeature.Forest)
+              t = tile_prefabs[84];
+
+          seedCell.cell.collapseCell(t);
+      }
     }
 
     void propagateSeeds()

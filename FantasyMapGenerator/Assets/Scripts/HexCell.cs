@@ -68,6 +68,8 @@ public class HexCell : MonoBehaviour
     
     public void fillCell(Tile t)
     {
+        if (this.tile != null) return;
+        
         this.tile = Instantiate<Tile>(t);
         this.tile.transform.SetParent(transform, false);
         this.tile.transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);

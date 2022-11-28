@@ -18,6 +18,7 @@ public class SelectionManager : MonoBehaviour
     public Image seedUIImage;
     public List<Tile> tilePrefabs;
     public List<Sprite> sprites;
+    public Sprite nullSprite;
     private int activeTileIdx = 0;
     private int layerMask = 1 << 6; //LayerMask.GetMask("Cell");
     private List<SeedCell> selection = new List<SeedCell>();
@@ -34,8 +35,10 @@ public class SelectionManager : MonoBehaviour
 
         if(Input.GetKeyUp(KeyCode.Return))
         {
-            Destroy(seedUIImage);
-            // seedUIImage.sprite = null;
+            // clearSeeds();
+            // resetSeedUI();
+            //Destroy(seedUIImage);
+            seedUIImage.sprite = nullSprite;
         }
 
     }
@@ -69,12 +72,8 @@ public class SelectionManager : MonoBehaviour
 
     public void clearSeeds()
     {
-      foreach(var seedCell in selection)
-      {
-        Destroy(seedCell.cell.tile.gameObject);
-      }
       selection.Clear();
-      Debug.Log("seed list count = " + selection.Count);
+      resetSeedUI();
     }
 
     public void resetSeedUI()
