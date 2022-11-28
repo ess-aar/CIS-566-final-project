@@ -118,7 +118,7 @@ Shader "Hidden/EdgePostProcess"
                 if (length(sumColor.xyz) <= 1.5) color = float4(0.0, 0.0, 0.0, 0.0);
 
                 // FBM pass for paper look
-                float fbm = pow(fbm2D(10.0 * gridUV), 1.2);
+                float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
 
                 //return lerp(baseColor, color, 0.5) * fbm;
                 //return float4(convertToGreyscale(baseColor));
