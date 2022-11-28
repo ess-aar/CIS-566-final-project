@@ -203,7 +203,7 @@ public class WFC : MonoBehaviour
           else if(seedCell.feature == HexMetrics.TerrainFeature.Mountain)
               t = tile_prefabs[42];
           else if(seedCell.feature == HexMetrics.TerrainFeature.Forest)
-              t = tile_prefabs[84];
+              t = tile_prefabs[78];
 
           seedCell.cell.collapseCell(t);
       }
@@ -223,7 +223,7 @@ public class WFC : MonoBehaviour
           else if(seedCell.feature == HexMetrics.TerrainFeature.Mountain)
               t = tile_prefabs[42];
           else if(seedCell.feature == HexMetrics.TerrainFeature.Forest)
-              t = tile_prefabs[84];
+              t = tile_prefabs[78];
 
           this.grid.propagate(t, seedCell.cell.getPosition());
       }

@@ -20,6 +20,7 @@ public class SelectionManager : MonoBehaviour
     public List<Sprite> sprites;
     public Sprite nullSprite;
     private int activeTileIdx = 0;
+    private bool isSeedUIActive = true;
     private int layerMask = 1 << 6; //LayerMask.GetMask("Cell");
     private List<SeedCell> selection = new List<SeedCell>();
     private Coroutine selectionRoutine;
@@ -28,9 +29,7 @@ public class SelectionManager : MonoBehaviour
     {   
         if(Input.GetKeyUp(KeyCode.Tab))
         {
-            activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
-            // Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
-            seedUIImage.sprite = sprites[activeTileIdx];
+            changeSeed();
         }
 
         if(Input.GetKeyUp(KeyCode.Return))
@@ -39,6 +38,7 @@ public class SelectionManager : MonoBehaviour
             // resetSeedUI();
             //Destroy(seedUIImage);
             seedUIImage.sprite = nullSprite;
+            isSeedUIActive = false;
         }
 
     }
@@ -60,9 +60,12 @@ public class SelectionManager : MonoBehaviour
 
     public void changeSeed()
     {
-        activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
-        // Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
-        seedUIImage.sprite = sprites[activeTileIdx];
+        if(isSeedUIActive)
+        {
+            activeTileIdx = (activeTileIdx + 1) % tilePrefabs.Count;
+            // Debug.Log("====== " + tilePrefabs[activeTileIdx].name + " =======");
+            seedUIImage.sprite = sprites[activeTileIdx];
+        }
     }
 
     public List<SeedCell> getSeeds()
@@ -80,6 +83,7 @@ public class SelectionManager : MonoBehaviour
     {
       activeTileIdx = 0;
       seedUIImage.sprite = sprites[activeTileIdx];
+      isSeedUIActive = true;
     }
 
     public void StartSelection()
@@ -107,9 +111,11 @@ public class SelectionManager : MonoBehaviour
         while(true)
         {
             var ray = cam.ScreenPointToRay(Input.mousePosition);
+            Debug.Log("Mouse: " + Input.mousePosition.x + ", " + Input.mousePosition.y);
          
-            if(Physics.Raycast(ray, out var hit, 50, layerMask))
+            if(Physics.Raycast(ray, out var hit, 100, layerMask))
             {
+              Debug.DrawLine(cam.transform.position, Input.mousePosition, Color.green);
                 // Debug.Log("Raycast: " + hit.transform);
                 // hit.transform.GetComponent<Renderer>().material = selectionMaterial;
                 var cell = hit.transform.GetComponent<HexCell>();

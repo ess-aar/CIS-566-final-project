@@ -62,15 +62,8 @@ public class HexGrid : MonoBehaviour
 
 	public void ResetCell(int x, int z, int i)
 	{
-		cells[i].setTilePrefabs(this.tile_prefabs);
-		cells[i].entropy = this.tile_prefabs.Count;
-		if (cells[i].tile != null)
-    {
-			Destroy(cells[i].tile.gameObject);
-		}
-		cells[i].tile = null;
-		cells[i].initializeNeighboringFeatures();
-		cells[i].is_cell_collapsed = false;
+		// cells[i].setTilePrefabs(this.tile_prefabs);
+    cells[i].resetCell();
 	}
 
 	public void CreateCell(int x, int z, int i)
@@ -90,6 +83,7 @@ public class HexGrid : MonoBehaviour
         cell.z = z;
 		cell.transform.SetParent(transform, false);
 		cell.transform.localPosition = position;
+    cell.transform.rotation = Quaternion.AngleAxis(90, Vector3.right);
 		cells[i].setTilePrefabs(this.tile_prefabs);
 		cell.entropy = this.tile_prefabs.Count;
 		
