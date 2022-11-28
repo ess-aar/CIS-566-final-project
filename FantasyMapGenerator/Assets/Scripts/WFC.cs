@@ -12,6 +12,9 @@ public class WFC : MonoBehaviour
     public TileInterface[] tile_prefabs;
     public int num_seeds = 0;
     public int cur_iter = 0;
+    public bool restart_button = false;
+    public bool clear_button = false;
+    public bool done = false;
 
 
 
@@ -38,9 +41,56 @@ public class WFC : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (cur_iter >= (int)(this.grid.height * this.grid.width))
+
+        if (restart_button)
         {
             CancelInvoke();
+            resetWFC();
+            generateSeeds();
+            InvokeRepeating("performWFC2", 0.1f, 0.0005f);
+
+            restart_button = false;
+        }
+        else if (clear_button)
+        {
+            CancelInvoke();
+            resetWFC();
+            clear_button = false;
+        }
+        else
+        {
+            List<HexCell> cells_to_collapse = this.grid.getCellsWithMinEntropy();
+
+            if (cells_to_collapse.Count == 0)
+            {
+                CancelInvoke();
+            }
+            else
+            {
+
+            }
+        }
+    }
+
+    void resetWFC()
+    {
+        this.cur_iter = 0;
+        this.grid.resetGrid();
+    }
+
+    public void initiateRestart()
+    {
+        if (!restart_button)
+        {
+            restart_button = true;
+        }
+    }
+
+    public void initiateClear()
+    {
+        if (!clear_button)
+        {
+            clear_button = true;
         }
     }
 
@@ -109,10 +159,11 @@ public class WFC : MonoBehaviour
                 //Debug.Log("Tile Selected as Seed: " + rand_index);
                 
                 can_use_seed = this.grid.checkPropagate(t, this_cell_pos);
-                Debug.Log("can use tile : " + t.prefab.name + " at (" + this_cell_pos.x + ", " + this_cell_pos.y + ") ? " + can_use_seed);
+                //Debug.Log("can use tile : " + t.prefab.name + " at (" + this_cell_pos.x + ", " + this_cell_pos.y + ") ? " + can_use_seed);
 
                 if(can_use_seed)
                 {
+                    
                   // collapse cell
                   seedCell.collapseCell(t);
                   this.grid.collapsedCellCount++;
@@ -144,6 +195,7 @@ public class WFC : MonoBehaviour
         if (cells_to_collapse.Count == 0)
             return;
 
+        
         foreach (HexCell cell in cells_to_collapse)
         {
             // pick tile based on rules and neighbors
@@ -174,14 +226,17 @@ public class WFC : MonoBehaviour
         //while (!this.grid.is_grid_collapsed)
         //for(int i = 0; i < (int)(this.grid.height * this.grid.width); i++)
         //{
-            //Debug.Log("============== LOOP " + i + " =============");
-            // get cells with the minimum entropy this iteration
+        //Debug.Log("============== LOOP " + i + " =============");
+        // get cells with the minimum entropy this iteration
+
 
         List<HexCell> cells_to_collapse = this.grid.getCellsWithMinEntropy();
         //Debug.Log("Cells to collapse: " + cells_to_collapse.Count);
 
         if (cells_to_collapse.Count == 0)
+        {
             return;
+        }
 
         foreach (HexCell cell in cells_to_collapse)
         {
@@ -196,7 +251,7 @@ public class WFC : MonoBehaviour
                     break;
 
                 bool can_propagate = this.grid.checkPropagate(tile_to_instantiate, cell.getPosition());
-                Debug.Log("can use tile : " + tile_to_instantiate.prefab.name + " with angle " + tile_to_instantiate.rotateAngle + " at (" + cell.getPosition().x + ", " + cell.getPosition().y + ") ? " + can_propagate);
+                //Debug.Log("can use tile : " + tile_to_instantiate.prefab.name + " with angle " + tile_to_instantiate.rotateAngle + " at (" + cell.getPosition().x + ", " + cell.getPosition().y + ") ? " + can_propagate);
 
                 if (can_propagate)
                 {

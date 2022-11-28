@@ -26,6 +26,21 @@ public class HexGrid : MonoBehaviour
 		cells = new HexCell[height * width];
 	}
 
+	public void resetGrid()
+    {
+		this.collapsedCellCount = 0;
+		this.is_grid_collapsed = false;
+
+		for (int z = 0, i = 0; z < height; z++)
+		{
+			for (int x = 0; x < width; x++)
+			{
+				// create cell and set the position of this instance
+				ResetCell(x, z, i++);
+			}
+		}
+	}
+
 	public void SetupGrid(TileInterface[] t_prefabs)
 	{
 		this.tile_prefabs = new List<TileInterface>();
@@ -44,6 +59,20 @@ public class HexGrid : MonoBehaviour
 			}
 		}
     }
+
+	public void ResetCell(int x, int z, int i)
+	{
+		cells[i].setTilePrefabs(this.tile_prefabs);
+		cells[i].entropy = this.tile_prefabs.Count;
+		if (cells[i].tile != null)
+        {
+			Destroy(cells[i].tile.gameObject);
+		}
+		cells[i].tile = null;
+		cells[i].initializeNeighboringFeatures();
+		cells[i].is_cell_collapsed = false;
+
+	}
 
 	public void CreateCell(int x, int z, int i)
 	{
@@ -94,13 +123,13 @@ public class HexGrid : MonoBehaviour
   {
 		if (cell.available_tiles.Count == 0)
 		{
-			Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
+			//Debug.Log("=================== No Tiles for Cell + (" + cell.x + ", " + cell.z + ")  :( ==================");
 			//this.collapsedCellCount++;
 			//cell.is_cell_collapsed = true;
 			return null;
 		}
 
-		Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
+		//Debug.Log("=================== Picking Tile for Cell + (" + cell.x + ", " + cell.z + ") ==================");
 
 		Vector2 cell_pos = new Vector2(cell.x, cell.z);
 
@@ -108,7 +137,7 @@ public class HexGrid : MonoBehaviour
 		bool can_place_tile = true;
 
 		this.max_retries = cell.available_tiles.Count;
-		Debug.Log("Cell + (" + cell.x + ", " + cell.z + ") : " + "Available tile count = " + this.max_retries );
+		//Debug.Log("Cell + (" + cell.x + ", " + cell.z + ") : " + "Available tile count = " + this.max_retries );
 		int num_cur_retry = 0;
 
 		do
@@ -133,7 +162,7 @@ public class HexGrid : MonoBehaviour
 					{
 						if (!neighbor.neighboring_features[(int)potential_tile.edge_map[dir]] && neighbor.num_unique_neighboring_features == 2)
 						{
-							Debug.Log(potential_tile.prefab.name + ", " + potential_tile.rotateAngle + " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+							//Debug.Log(potential_tile.prefab.name + ", " + potential_tile.rotateAngle + " Rejected for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 							can_place_tile = false;
 							break;
 						}
@@ -147,12 +176,12 @@ public class HexGrid : MonoBehaviour
 
 		if (num_cur_retry >= this.max_retries && !can_place_tile)
     {
-			Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
+			//Debug.Log("Couldn't find Tile to place for Cell + (" + cell.x + ", " + cell.z + ")  :( ");
 			potential_tile = null;
       return null;
     }
 
-		Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name + ", " + potential_tile.rotateAngle);
+		//Debug.Log("Picked Tile for Cell + (" + cell.x + ", " + cell.z + ") : " + potential_tile.prefab.name + ", " + potential_tile.rotateAngle);
 		return potential_tile;
   }
 
@@ -183,7 +212,7 @@ public class HexGrid : MonoBehaviour
 
     if (rand_accum >= total_weight)
     {
-      Debug.Log("force picking last tile");
+      //Debug.Log("force picking last tile");
       picked_tile = cell.available_tiles.Last();
     }
 

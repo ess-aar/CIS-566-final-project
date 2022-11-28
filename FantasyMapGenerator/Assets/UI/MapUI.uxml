@@ -1,7 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:VisualElement>
-        <ui:VisualElement name="GuiBox" style="left: auto;">
-            <ui:Button text="Button" display-tooltip-when-elided="true" />
+        <ui:VisualElement name="GuiBox" style="left: auto; align-items: flex-end;">
+            <ui:Button text="Restart" display-tooltip-when-elided="true" name="RestartButton" />
+            <ui:Button text="Clear" display-tooltip-when-elided="true" name="ClearButton" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

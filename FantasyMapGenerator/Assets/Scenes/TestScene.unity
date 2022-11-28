@@ -435,6 +435,8 @@ MonoBehaviour:
   tile_prefabs: []
   num_seeds: 5
   cur_iter: 0
+  restart_button: 0
+  done: 0
 --- !u!4 &1714802307
 Transform:
   m_ObjectHideFlags: 0
@@ -475,7 +477,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1944858175}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!20 &1944858177
 Camera:
   m_ObjectHideFlags: 0
@@ -544,6 +546,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2133228135}
   - component: {fileID: 2133228134}
+  - component: {fileID: 2133228136}
   m_Layer: 5
   m_Name: UIDocument
   m_TagString: Untagged
@@ -582,3 +585,16 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2133228136
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2133228133}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd0d0780a6aabe741840d8ba5f2777fb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wfc_engine: {fileID: 1714802306}
