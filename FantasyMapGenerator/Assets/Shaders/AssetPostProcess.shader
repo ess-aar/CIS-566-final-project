@@ -17,12 +17,12 @@ Shader "Hidden/AssetPostProcess"
             uniform sampler2D _MainTex;
 
             #define PI                3.1415926535897932384626433832795
-            #define LAND_COLOR        float4(0.807843137254902f, 0.909803921568627f, 0.513725490196078f, 1.f)
-            #define WATER_COLOR       float4(0.537254901960784f, 0.894117647058824f, 0.968627450980392f, 1.f)
-            #define MOUNTAIN_COLOR    float4(0.470588235294118f, 0.317647058823529f, 0.156862745098039f, 1.f)
-            #define FOREST_COLOR      float4(0.156862745098039f, 0.470588235294118f, 0.223529411764706f, 1.f)
-            #define SCATTER_GRID_SIZE 4.0
-            #define ASSETS_PER_CELL   5
+            #define LAND_COLOR        float4(0.f, 1.f, 0.f, 1.f)
+            #define WATER_COLOR       float4(0.f, 0.f, 1.f, 1.f)
+            #define MOUNTAIN_COLOR    float4(1.f, 0.f, 0.f, 1.f)
+            #define FOREST_COLOR      float4(1.f, 1.f, 0.f, 1.f)
+            #define SCATTER_GRID_SIZE 5.0
+            #define ASSETS_PER_CELL   7
 
             float noise1Df(float x) {
                 return sin(2.0 * x) + sin(PI * x);
