@@ -16,13 +16,15 @@ Shader "Hidden/AssetPostProcess"
 
             uniform sampler2D _MainTex;
 
-            #define PI                3.1415926535897932384626433832795
-            #define LAND_COLOR        float4(0.f, 1.f, 0.f, 1.f)
-            #define WATER_COLOR       float4(0.f, 0.f, 1.f, 1.f)
-            #define MOUNTAIN_COLOR    float4(1.f, 0.f, 0.f, 1.f)
-            #define FOREST_COLOR      float4(1.f, 1.f, 0.f, 1.f)
-            #define SCATTER_GRID_SIZE 5.0
-            #define ASSETS_PER_CELL   7
+            #define PI                 3.1415926535897932384626433832795
+            #define LAND_COLOR         float4(0.f, 1.f, 0.f, 1.f)
+            #define WATER_COLOR        float4(0.f, 0.f, 1.f, 1.f)
+            #define MOUNTAIN_COLOR     float4(1.f, 0.f, 0.f, 1.f)
+            #define FOREST_COLOR       float4(1.f, 1.f, 0.f, 1.f)
+            #define MOUNTAIN_GRID_SIZE 5.0
+            #define MOUNTAINS_PER_CELL 7
+            #define FOREST_GRID_SIZE   8.0
+            #define TREES_PER_CELL     7
 
             float noise1Df(float x) {
                 return sin(2.0 * x) + sin(PI * x);
@@ -52,6 +54,27 @@ Shader "Hidden/AssetPostProcess"
                 float2 ba = b - a;
                 float h = clamp(dot(pa, ba) / dot(ba, ba), 0.0, 1.0);
                 return length(pa - ba * h);
+            }
+
+            float sdEgg(in float2 p, in float ra, in float rb)
+            {
+                const float k = sqrt(3.0);
+                p.x = abs(p.x);
+                float r = ra - rb;
+                return ((p.y<0.0)       ? length(float2(p.x,  p.y    )) - r :
+                        (k*(p.x+r)<p.y) ? length(float2(p.x,  p.y-k*r)) :
+                                        length(float2(p.x+r,p.y    )) - 2.0*r) - rb;
+            }
+
+            float sdUnevenCapsule(float2 p, float r1, float r2, float h)
+            {
+                p.x = abs(p.x);
+                float b = (r1-r2)/h;
+                float a = sqrt(1.0-b*b);
+                float k = dot(p,float2(-b,a));
+                if( k < 0.0 ) return length(p) - r1;
+                if( k > a*h ) return length(p-float2(0.0,h)) - r2;
+                return dot(p, float2(a,b) ) - r1;
             }
 
             float triangleArea(float2 a, float2 b, float2 c)
@@ -128,7 +151,7 @@ Shader "Hidden/AssetPostProcess"
             {
                 float4 col = baseColor;
                 // Place a circular sample randomly within each cell
-                for (int n = 0; n < ASSETS_PER_CELL; ++n) {
+                for (int n = 0; n < MOUNTAINS_PER_CELL; ++n) {
                     float r = rand(float2(n, n));
                     float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
                     for (int y = -1; y <= 1; ++y) {
@@ -137,9 +160,54 @@ Shader "Hidden/AssetPostProcess"
                             float jitter = noise2Df(gridId + neighborOffset + r);
                             float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
                             //uvOffset = vec2(r, yValues[n]) - vec2(0.5);
-                            col = drawMountain(col, SCATTER_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
-                            float e = mountainOutlineSDF(SCATTER_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
+                            col = drawMountain(col, MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
+                            float e = mountainOutlineSDF(MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
                             if (e > 0.0) col = lerp(col, float4(0.0, 0.0, 0.0, 0.0), 1.0);
+                        }
+                    }
+                }
+
+                return col;
+            }
+
+            float4 drawTree(in float4 baseCol, float2 uv, float2 gridId, float ra, in float rb)
+            {
+                float4 col = baseCol;
+
+                float leaves_sdf = sdEgg( uv - gridId, 0.09, 0.01 );
+                float tree_sdf = sdUnevenCapsule( uv - gridId + float2(0, 0.2), 0.02, 0.02, 0.175 );
+                float min_sdf = min(tree_sdf, leaves_sdf);
+                
+                if (min_sdf <= 0.0) {
+                    col = float4(0, 0, 0, 0);
+                    if (leaves_sdf < -0.025 || tree_sdf < -0.015) {
+                        if (uv.x < gridId.x) {
+                            
+                            col = lerp(float4(0.4, 0.4, 0.4, 1.0), baseCol,  1.0 - (gridId.x - uv.x) * 15.0);
+                        }
+                        else {
+                            col = float4(1.0, 0.9, 0.7, 1.0);
+                        }
+                    }
+                }
+                
+                return col;
+            }
+
+            float4 placeTrees(float4 baseColor, float2 uv, float2 gridId)
+            {
+                float4 col = baseColor;
+                // Place a circular sample randomly within each cell
+                for (int n = 0; n < TREES_PER_CELL; ++n) {
+                    float r = rand(float2(n, n));
+                    float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
+                    for (int y = -1; y <= 1; ++y) {
+                        for (int x = -1; x <= 1; ++x) {
+                            float2 neighborOffset = float2(x, y);
+                            float jitter = noise2Df(gridId + neighborOffset + r);
+                            float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
+                            //uvOffset = vec2(r, yValues[n]) - vec2(0.5);
+                            col = drawTree(col, FOREST_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.0, 0.0);
                         }
                     }
                 }
@@ -206,19 +274,34 @@ Shader "Hidden/AssetPostProcess"
                 if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
                     color = float4(1.0, 0.9, 0.7, 1.0);
                 }
+                if (distance(base, FOREST_COLOR) <= 0.5) {
+                    color = float4(1.0, 0.9, 0.7, 1.0);
+                }
 
                 // Scatter assets over the map
-                float2 cellCoord = frac(SCATTER_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
-                float2 gridId = floor(SCATTER_GRID_SIZE * gridUV);
+                float2 cellCoordMountain = frac(MOUNTAIN_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
+                float2 gridIdMountain = floor(MOUNTAIN_GRID_SIZE * gridUV);
+
+                float2 cellCoordTree = frac(FOREST_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
+                float2 gridIdTree = floor(FOREST_GRID_SIZE * gridUV);
 
                 // If the base color ID matches the mountains color, then scatter mountains
                 bool drawMountains = false;
+                bool drawTrees = false;
+
                 if (distance(base, MOUNTAIN_COLOR) <= 0.5) { // this should match the feature mask color
                     drawMountains = true;
                 }
+                else if (distance(base, FOREST_COLOR) <= 0.5) {
+                    drawTrees = true;
+                }
+
                 if (drawMountains) {
-                    color = placeMountains(color, gridUV, gridId);
+                    color = placeMountains(color, gridUV, gridIdMountain);
                 }  
+                if (drawTrees) {
+                    color = placeTrees(color, gridUV, gridIdTree);
+                }
 
                 // Uncomment for visualizing grid values
                 //color.rg += gridId * 0.1;
