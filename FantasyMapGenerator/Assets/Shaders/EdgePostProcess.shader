@@ -122,7 +122,7 @@ Shader "Hidden/EdgePostProcess"
 
                 //return lerp(baseColor, color, 0.5) * fbm;
                 //return float4(convertToGreyscale(baseColor));
-                return color * fbm;
+                return color;
             }	
 
 			ENDCG
