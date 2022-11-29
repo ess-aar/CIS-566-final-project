@@ -251,3 +251,54 @@ In the next milestone, these circles will be replaced with more advanced assets 
   </p>
 </details>
 
+
+
+### Milestone 2
+
+#### Progress & Outputs
+
+<details>
+  <summary><b>Assets</b></summary>
+  <p>In this milestone we added another feature for forests, which interfaces with the land feature only (much like the mountain feature).
+  <br>We also changed the colors we used for our textures to use colors that were as distinct from each other as possible, to avoid artifacts in the post-process rendering steps.
+  <br>4 features - land(green), water(blue), mountains(red), forests(yellow)</p>
+  <br><img src="/img/basic_assets_2.png">
+</details>
+
+<details>
+  <summary><b>Wave Function Collapse</b></summary>
+  
+  <p><h3>Backtracking</h3>
+  As mentioned in the observations and outputs of Milestone 1, we were seeing some scenarios where we end up with holes. To avoid this, we implemented a simple backtracking method that checks ahead for one level of propagation before making a decision. This method seems to works for majority of the scenarios.
+  </p>
+  
+  <p><b>WFC logic with backtracking:</b>
+  <br>- Get cells with minimun entropy.
+  <br>- For each of those cells, pick a random tile from the list of available compatible tiles.
+  <br>- <b>Before collapsing the cell, check if using the picked tile will make any of the neighboring cells' entropy 0<b>.
+  <br>- If yes, pick a different random tile from the list of available compatible tiles.
+  <br>- If no, collpase the cell with the picked tile.
+  <br>- Propagate entropy accross the grid.
+  <br>- Break if all cells are collapsed or if we've retried picking a random tile a certain number of times.
+  </p>
+  
+  <p>Output with backtracking, 4 features and randomly generated seeds. Number of seeds = 5</p>
+  <img src="/img/step7.png">
+  
+  <p><h3>Observations & Next steps</h3></p>
+  <p>Our current backtracking solution still doesn't solve all problems and we do sometimes end up with an uncollapsable grid. This happens in situations where there is a need for a tile that does not exist (e.g., a tile with both mountain and forest edges). We do not intend to fix this by adding the "missing" tile assets, as we do not want to such interfacing between features to exist on the map.
+    <br>We plan to use a brute force solution to get by this issue, for example - placing a tile (that may not match the constraints) to update the entropy of the grid so that the WFC can resume to collapse the whole grid.
+  </p>
+  
+</details>
+
+<details>
+  <summary><b>User Interface</b></summary>
+  
+  <p><h3>Placing seeds</h3>
+  To add some interactivity, we let the user place tiles as seeds for the WFC. The user can use the mouse by <b>clicking & draging</b> to populate the grid cells with tiles of any of the 4 features. The user can cycle through the tiles by clicking on the active seed tile preview on the upper right corner or by pressing <b>tab</b> on the keyboard.
+  <br>Once the user is satisfied with the seed placements, they can start the WFC by pressing <b>enter</b> on the keyboard.</p>
+  
+https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-abc7-859f3f20c5d6.mov
+
+</details>
