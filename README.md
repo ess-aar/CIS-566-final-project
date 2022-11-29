@@ -3,7 +3,7 @@
 **University of Pennsylvania CIS 566 Fall 2022, Final Project**
 * Megan Reddy, Nick Moon, and Sakshi Rathore
 
-### Design Document
+## Design Document
 
 #### Introduction
 Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. We would like to develop a tool for visualizing and creating these maps procedurally. We want to allow users to be able to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
@@ -103,7 +103,7 @@ Final Submission:
   - Finalize README and presentation
 
 
-### Milestone 1
+## Milestone 1
 
 #### Progress & Outputs
 
@@ -253,7 +253,7 @@ In the next milestone, these circles will be replaced with more advanced assets 
 
 
 
-### Milestone 2
+## Milestone 2
 
 #### Progress & Outputs
 
