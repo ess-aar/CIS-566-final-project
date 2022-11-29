@@ -333,3 +333,35 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
     
   </details> 
 </details>
+
+<details>
+  <summary><b>Rendering Updates</b></summary>
+  <br><p>This milestone, we worked on porting the first milestone's Shadertoy work to Unity, polishing the color and edge post-processes, and working on asset placement and rendering.
+  <p><h4>Porting to Unity (Megan)</h4>
+  During the first milestone, I made a Shadertoy protoype to test how each post-process pass would interact with each other. The shader can be viewed <a href="https://www.shadertoy.com/view/ddj3Wd">here</a>. Once this was finished, I integrated it into the basic Unity shader setup I had created for Milestone 1. After integration, the initial result looked like this: </p>
+  <img src="/img/step6.PNG">
+  <br><p>However, the color matching looked off. In order to assign a color to a fragment, I checked to see how similar the fragment color was (by using a distance metric) to each feature color (light green, light blue, brown, and dark green). If it matched, then I would assign the appropriate map color to that fragment. Since I was using a distance metric, some fragments matched to multiple colors since the mathematical distance could be close even if they were visually different. To fix this, we made the Wave Function Collapse tile colors drastically different (red, yellow, green, blue) so that they would not overlap much when using the distance metric. This made the result a lot cleaner: </p>
+  <img src="/img/after_color_id.PNG">
+  <br><p>Another minor detail I fixed was the screen-space coordinate calculation in the shaders. Beforehand, the uv calculation was causing the objects to look "stretched" onscreen.</p>
+  <img src="/img/uv_stretched.PNG">
+  <p>Here is the result after the fix:</p>
+  <img src="/img/uv_fixed.PNG">
+  <p><h4>Color and Edge Post-Process Polish (Megan)</h4>
+  Most of the core functionality of these shaders was in place during Milestone 1, however, there are a couple of key updates that I made to the look. The largest update was the tile color and ID matching described above, which helped make the render much cleaner. The second is that the edge post-process skips any areas that are designated as "mountain" or "forest" since we do not want these areas to be demarcated. Unfortunately, there is still a thin outline at the boundaries of these areas since it is hard to properly detect the fragment's color ID at transition zones. </p>
+  <p><h4>Asset Placement and Mountain Rendering (Megan)</h4>
+  The last area I worked on was updates to the asset placement and mountain rendering. The main issue I saw from Milestone 1 was that assets were being cut off when they went outside of the masked area. There were two solutions I thought of to this problem: cull the mountains that were too close to the edges or continue drawing outside of the boundaries. For the first approach, I did another edge pass to determine the boundaries of the masked areas, then culled all the assets that were within some distance from the boundary. Unfortunately, this still led to some assets being cut off. For the second solution, I attempted to take each local random grid cell point I was drawing at and convert it to a global coordinate relative to the bounds of the screen. If the point fell within the mask, I would draw an asset at that global point. This worked to some extent, but there are still some bugs I have to resolve. Therefore, I left the current scheme as is (with the cut offs) until I work out a better solution. </p>
+  For the mountain asset, I created a new Shadertoy to test out the look and placement. The body of the mountain is an equilateral triangle centered at a point p. The center point p will be the global coordinate described above. Once we know p, we can calculate the distance to each vertex, which we can use to find vertices A, B, and C of the triangle. All fragments that lie to the left of p.x are in shadow, whereas fragments that are to the right of p.x are illuminated. To create the central ridge, I added a slight sine-wave jitter to p.x. I noticed that points closer to the ridge are more in shadow than points farther away, so I added a gradient from right to left on the shadowed part of the ridge. The outlines on the top two edges of the triangle are created with line segment SDFs. The Shadertoy can be viewed <a href="https://www.shadertoy.com/view/dsfSzB">here</a>.</p>
+  Shadertoy prototype:
+    <img src="/img/mountain_shadertoy.PNG">
+  Unity render:
+    <img src="/img/mountains_unity.PNG">
+  <p><h4>Forest Rendering (Nick)</h4>
+  <p>Forest assets were prototyped in ShaderToy, based off the mountain asset creation file. The trees are made using the egg sdf and the uneven capsule sdf from Inigo Quilez. The outline of the trees is generated based on the value of the sdf within the negative value space of the function: if a position has a negative value above a threshold, it is made a dark grey color. Otherwise, if the SDF value is negative and not an outline case, the trees have a hard-coded shading based on the x value of the position. Positions on the right relative to the center position of the SDF inherit the background color, while positions on the left gradually fade to dark grey based on distance from the center.</p>
+  ShaderToy prototype of the tree assets:
+  <img src="/img/forest.PNG">
+
+  The tree assets used in Unity on the map where the forest tiles are.
+  <img src="/img/trees.PNG">
+
+</details>
+
