@@ -259,7 +259,7 @@ In the next milestone, these circles will be replaced with more advanced assets 
 
 <details>
   <summary><b>Assets</b></summary>
-  <p>In this milestone we added another feature for forests, which interfaces with the land feature only (much like the mountain feature).
+  <br><p>In this milestone we added another feature for forests, which interfaces with the land feature only (much like the mountain feature).
   <br>We also changed the colors we used for our textures to use colors that were as distinct from each other as possible, to avoid artifacts in the post-process rendering steps.
   <br>4 features - land(green), water(blue), mountains(red), forests(yellow)</p>
   <br><img src="/img/basic_assets_2.png">
@@ -268,8 +268,8 @@ In the next milestone, these circles will be replaced with more advanced assets 
 <details>
   <summary><b>Wave Function Collapse</b></summary>
   <details>
-    <summary>Backtracking</summary>
-    <p>As mentioned in the observations and outputs of Milestone 1, we were seeing some scenarios where we end up with holes. To avoid this, we implemented a simple backtracking method that checks ahead for one level of propagation before making a decision. This method seems to works for majority of the scenarios.</p>
+    <summary>Backtracking (Nick & Sakshi)</summary>
+    <br><p>As mentioned in the observations and outputs of Milestone 1, we were seeing some scenarios where we end up with holes. To avoid this, we implemented a simple backtracking method that checks ahead for one level of propagation before making a decision. This method seems to works for majority of the scenarios.</p>
 
   <p><b>WFC logic with backtracking:</b>
   <br>- Get cells with minimun entropy.
@@ -290,8 +290,8 @@ In the next milestone, these circles will be replaced with more advanced assets 
   </p> 
   </details>
   <details>
-    <summary>Tile Weighting</summary>
-    <p>One big addition to the Wave Function Collapse made for this milestone was a tile weighting system. Now, each tile is assigned a weight, integer value greater that 0, and that weight is used when determing which tile to pick of the available tiles while collapsing a cell. For example, if all tiles default to weight 1, and the 6 sided land tile is given weight 100, then that will be 100x more likely to be picked as a tile to collapse into during the WFC loop. The way a tile is picked now utilizes an algorithm to the lottery scheduling algorithm taught in OS classes, where a total weight of all available tiles is computed, an rng number is generated in the range 0 to the total weight, and the tiles are looped over, adding their weight to the accumulated sum. If the addition for a tile causes the accumulated sum to go over or equal the random number, then the tile is picked. This ensures that tiles with more weights will have appropriately a higher chance of being picked.
+    <summary>Tile Weighting (Nick & Sakshi)</summary>
+    <br><p>One big addition to the Wave Function Collapse made for this milestone was a tile weighting system. Now, each tile is assigned a weight, integer value greater that 0, and that weight is used when determing which tile to pick of the available tiles while collapsing a cell. For example, if all tiles default to weight 1, and the 6 sided land tile is given weight 100, then that will be 100x more likely to be picked as a tile to collapse into during the WFC loop. The way a tile is picked now utilizes an algorithm to the lottery scheduling algorithm taught in OS classes, where a total weight of all available tiles is computed, an rng number is generated in the range 0 to the total weight, and the tiles are looped over, adding their weight to the accumulated sum. If the addition for a tile causes the accumulated sum to go over or equal the random number, then the tile is picked. This ensures that tiles with more weights will have appropriately a higher chance of being picked.
     </p>
     
   Coastline tiles have a much higher weight that the rest of the tiles:
@@ -312,17 +312,17 @@ In the next milestone, these circles will be replaced with more advanced assets 
 <details>
   <summary><b>User Interface</b></summary>
   <details>
-    <summary>Placing seeds</summary>
-  <p>To add some interactivity, we let the user place tiles as seeds for the WFC. The user can use the mouse by <b>clicking & draging</b> to populate the grid cells with tiles of any of the 4 features. The user can cycle through the tiles by clicking on the active seed tile preview on the upper right corner or by pressing <b>tab</b> on the keyboard.
+    <summary>Placing seeds (Sakshi)</summary>
+  <br><p>To add some interactivity, we let the user place tiles as seeds for the WFC. The user can use the mouse by <b>clicking & draging</b> to populate the grid cells with tiles of any of the 4 features. The user can cycle through the tiles by clicking on the active seed tile preview on the upper right corner or by pressing <b>tab</b> on the keyboard.
   <br>Once the user is satisfied with the seed placements, they can start the WFC by pressing <b>enter</b> on the keyboard.</p>
   
 https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-abc7-859f3f20c5d6.mov
 
   </details> 
   <details>
-    <summary>Restart and Clear Buttons</summary>
+    <summary>Restart and Clear Buttons (Nick)</summary>
     
-  <p>Buttons were added in this milestone as GUI elements for the tool. These are made using the UIDocument Unity feature, and expose two functions to the user: Restart and Clear. Clear empties the wave function collapse and grid, and thus results in a blank screen that the user can then paint different seeds onto. The Restart button restarts the wave function collapse algorithm with the same seeds, but due to the RNG nature of the algorithm and the possible tiles to place, generates a new board. Alternatively, if no seeds have been manually placed by the user, the button instead also regenerates the seeds randomly each button press.</p>
+  <br><p>Buttons were added in this milestone as GUI elements for the tool. These are made using the UIDocument Unity feature, and expose two functions to the user: Restart and Clear. Clear empties the wave function collapse and grid, and thus results in a blank screen that the user can then paint different seeds onto. The Restart button restarts the wave function collapse algorithm with the same seeds, but due to the RNG nature of the algorithm and the possible tiles to place, generates a new board. Alternatively, if no seeds have been manually placed by the user, the button instead also regenerates the seeds randomly each button press.</p>
     
     
   The "Restart" and "Clear" buttons used in the Game mode:
