@@ -15,6 +15,7 @@ public class HexCell : MonoBehaviour
     public int num_unique_neighboring_features;
 
     public List<TileInterface> available_tiles; // tiles available to be placed in this cell
+    private List<TileInterface> original_tiles;
 
     public Vector2 getPosition()
     {
@@ -24,7 +25,7 @@ public class HexCell : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+		    this.gameObject.layer = LayerMask.NameToLayer("Cell");
     }
 
     void Awake()
@@ -50,6 +51,7 @@ public class HexCell : MonoBehaviour
 
     public void setTilePrefabs(List<TileInterface> t_prefabs)
     {
+        this.original_tiles = t_prefabs;
         this.available_tiles = new List<TileInterface>();
         foreach (TileInterface t in t_prefabs)
         {
@@ -57,19 +59,47 @@ public class HexCell : MonoBehaviour
         }
     }
 
+    public void resetCell()
+    {
+        this.setTilePrefabs(original_tiles);
+        this.entropy = this.available_tiles.Count;
+        if (this.tile != null)
+        {
+          Destroy(this.tile.gameObject);
+        }
+        this.tile = null;
+        this.initializeNeighboringFeatures();
+        this.is_cell_collapsed = false;
+    }
+
     public void collapseCell(TileInterface t)
     {
-        
+        if (this.tile != null)
+        {
+          resetCell();
+        }
+
         this.tile = Instantiate<Tile>(t.prefab);
         this.tile.transform.SetParent(transform, false);
         this.tile.transform.rotation = Quaternion.AngleAxis(-90 + t.rotateAngle, Vector3.up);
         this.is_cell_collapsed = true;
         this.entropy = 1000000;
     }
+    
+    public void fillCell(Tile t)
+    {
+        if (this.tile != null) return;
+
+        this.tile = Instantiate<Tile>(t);
+        this.tile.transform.SetParent(transform, false);
+        this.tile.transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
+        this.is_cell_collapsed = true;
+        this.entropy = 1000000;
+    }
 
     public void removeCell()
     {
-      Destroy(this.tile);
+      Destroy(this.tile.gameObject);
       this.tile = null;
       this.is_cell_collapsed = false;
       this.entropy = this.available_tiles.Count;
@@ -96,24 +126,24 @@ public class HexCell : MonoBehaviour
     {
         if (this.is_cell_collapsed)
         {
-            Debug.Log("this neighbor is collapsed!");
+            // Debug.Log("this neighbor is collapsed!");
             return -1;
         }
 
         HexMetrics.TerrainFeature this_edge_feature_constraint = t.edge_map[dir];
-        Debug.Log("Checking for : " + this_edge_feature_constraint + ", in seed's direction : " + dir);
+        // Debug.Log("Checking for : " + this_edge_feature_constraint + ", in seed's direction : " + dir);
 
         // List<TileInterface> copy_list = new List<TileInterface>(this.available_tiles);
 
         int tiles_left = this.available_tiles.Count(tile => tile.edge_map[HexMetrics.inverse_neighbor_dir[dir]] == this_edge_feature_constraint);
-        Debug.Log("Old entropy for cell (" + this.x + ", " + this.z + ") = " + this.available_tiles.Count);
-        Debug.Log("New entropy for cell (" + this.x + ", " + this.z + ") = " + tiles_left);
+        // Debug.Log("Old entropy for cell (" + this.x + ", " + this.z + ") = " + this.available_tiles.Count);
+        // Debug.Log("New entropy for cell (" + this.x + ", " + this.z + ") = " + tiles_left);
 
         if (tiles_left == 0)
         {
           foreach(TileInterface tile in this.available_tiles)
           {
-            Debug.Log("From AT list: " + tile.prefab.name +", " + tile.rotateAngle);
+            // Debug.Log("From AT list: " + tile.prefab.name +", " + tile.rotateAngle);
           }
         }
 
