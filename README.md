@@ -261,8 +261,8 @@ In the next milestone, these circles will be replaced with more advanced assets 
   <summary><b>Assets</b></summary>
   <br><p>In this milestone we added another feature for forests, which interfaces with the land feature only (much like the mountain feature).
   <br>We also changed the colors we used for our textures to use colors that were as distinct from each other as possible, to avoid artifacts in the post-process rendering steps.
-  <br>4 features - land(green), water(blue), mountains(red), forests(yellow)</p>
-  <br>(Sakshi)
+  <br>4 features - land(green), water(blue), mountains(red), forests(yellow)
+  <br>(Sakshi)</p>
   <br><img src="/img/basic_assets_2.png">
 </details>
 
