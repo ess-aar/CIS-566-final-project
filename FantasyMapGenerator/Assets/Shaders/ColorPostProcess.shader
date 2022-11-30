@@ -174,6 +174,9 @@ Shader "Hidden/ColorPostProcess"
                 else if (distance(base, FOREST_COLOR) <= 0.55) {
                     //color = float4(0.54, 0.76, 0.49, 1.0);
                 }
+                else {
+                    color = float4(0.0, 0.0, 0.0, 0.0);
+                }
 
                 // Scatter assets over the map
                 float2 cellCoord = frac(SCATTER_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
