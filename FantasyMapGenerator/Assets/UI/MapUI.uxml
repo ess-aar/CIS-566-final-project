@@ -1,8 +1,13 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <ui:VisualElement>
-        <ui:VisualElement name="GuiBox" style="left: auto; align-items: flex-end;">
+    <ui:VisualElement style="height: auto; width: auto; overflow: visible; flex-wrap: wrap;">
+        <ui:VisualElement name="GuiBox" focusable="false" style="left: auto; align-items: flex-end; height: auto; width: auto; justify-content: flex-start; right: auto;">
             <ui:Button text="Restart" display-tooltip-when-elided="true" name="RestartButton" />
             <ui:Button text="Clear" display-tooltip-when-elided="true" name="ClearButton" />
+            <ui:SliderInt picking-mode="Ignore" label="Land Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="LandWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
+            <ui:SliderInt picking-mode="Ignore" label="Water Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="WaterWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
+            <ui:SliderInt picking-mode="Ignore" label="Coast Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="CoastWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
+            <ui:SliderInt picking-mode="Ignore" label="Mountain Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="MountainWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
+            <ui:SliderInt picking-mode="Ignore" label="Forest Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="ForestWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
         </ui:VisualElement>
     </ui:VisualElement>
 </ui:UXML>

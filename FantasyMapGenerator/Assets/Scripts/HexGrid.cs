@@ -26,10 +26,16 @@ public class HexGrid : MonoBehaviour
 		cells = new HexCell[height * width];
 	}
 
-	public void resetGrid()
+	public void resetGrid(TileInterface[] t_prefabs)
     {
 		this.collapsedCellCount = 0;
 		this.is_grid_collapsed = false;
+
+		this.tile_prefabs = new List<TileInterface>();
+		foreach (TileInterface t in t_prefabs)
+		{
+			this.tile_prefabs.Add(t);
+		}
 
 		for (int z = 0, i = 0; z < height; z++)
 		{
@@ -63,7 +69,7 @@ public class HexGrid : MonoBehaviour
 	public void ResetCell(int x, int z, int i)
 	{
 		// cells[i].setTilePrefabs(this.tile_prefabs);
-    cells[i].resetCell();
+		cells[i].resetCell(tile_prefabs);
 	}
 
 	public void CreateCell(int x, int z, int i)
@@ -135,7 +141,7 @@ public class HexGrid : MonoBehaviour
 
 		do
 		{
-      potential_tile = getRandomTileBasedOnWeight(cell);
+      potential_tile = getRandomTileBasedOnWeight_2(cell);
       
 			//Random.seed = System.DateTime.Now.Millisecond;
 			//potential_tile = cell.available_tiles[Random.Range(0, cell.available_tiles.Count)];
@@ -178,7 +184,7 @@ public class HexGrid : MonoBehaviour
 		return potential_tile;
   }
 
-  TileInterface getRandomTileBasedOnWeight(HexCell cell)
+  public TileInterface getRandomTileBasedOnWeight(HexCell cell)
   {
 		TileInterface picked_tile = null;
 
@@ -211,6 +217,31 @@ public class HexGrid : MonoBehaviour
 
     return picked_tile;
   }
+
+	public TileInterface getRandomTileBasedOnWeight_2(HexCell cell)
+	{
+
+		int total_weight = 0;
+		foreach (TileInterface tile in cell.available_tiles)
+		{
+			total_weight += tile.prefab.weighting;
+		}
+
+		int rand_number = rng_engine.Next(0, total_weight);
+		foreach (TileInterface tile in cell.available_tiles)
+		{
+			if (rand_number < tile.prefab.weighting)
+			{
+				return tile;
+			}
+			else
+			{
+				rand_number -= tile.prefab.weighting;
+			}
+		}
+
+		return null;
+	}
 
 	public void propagate(TileInterface t, Vector2 cell_pos)
     {
