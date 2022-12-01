@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -19,6 +20,7 @@ public class UI : MonoBehaviour
         SliderInt slider_coast_weight = root.Q<SliderInt>("CoastWeight");
         SliderInt slider_mountain_weight = root.Q<SliderInt>("MountainWeight");
         SliderInt slider_forest_weight = root.Q<SliderInt>("ForestWeight");
+        TextField textfield_num_seeds = root.Q<TextField>("NumSeeds");
 
         button_restart.clicked += () => wfc_engine.initiateRestart();
         button_clear.clicked += () => wfc_engine.initiateClear();
@@ -28,6 +30,7 @@ public class UI : MonoBehaviour
         slider_coast_weight.RegisterValueChangedCallback(CoastWeightSliderCallback);
         slider_mountain_weight.RegisterValueChangedCallback(MountainWeightSliderCallback);
         slider_forest_weight.RegisterValueChangedCallback(ForestWeightSliderCallback);
+        textfield_num_seeds.RegisterValueChangedCallback(NumSeedsTextFieldCallback);
     }
 
     // Start is called before the first frame update
@@ -69,5 +72,14 @@ public class UI : MonoBehaviour
     private void ForestWeightSliderCallback(ChangeEvent<int> evt)
     {
         wfc_engine.setTileWeight(78, evt.newValue);
+    }
+
+    private void NumSeedsTextFieldCallback(ChangeEvent<string> evt)
+    {
+        int new_numSeeds = 5;
+        if (Int32.TryParse(evt.newValue, out new_numSeeds))
+        {
+            wfc_engine.setSeedNumber(new_numSeeds);
+        }
     }
 }

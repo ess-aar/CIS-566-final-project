@@ -3,6 +3,9 @@
         <ui:VisualElement name="GuiBox" focusable="false" style="left: auto; align-items: flex-end; height: auto; width: auto; justify-content: flex-start; right: auto;">
             <ui:Button text="Restart" display-tooltip-when-elided="true" name="RestartButton" />
             <ui:Button text="Clear" display-tooltip-when-elided="true" name="ClearButton" />
+            <ui:TextField picking-mode="Ignore" value="5" text="5" name="NumSeeds" max-length="3" style="flex-direction: row-reverse; color: rgb(51, 50, 50);">
+                <ui:Label text="Number of Seeds" display-tooltip-when-elided="true" style="-unity-text-align: middle-left; white-space: nowrap; color: rgb(229, 229, 229);" />
+            </ui:TextField>
             <ui:SliderInt picking-mode="Ignore" label="Land Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="LandWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
             <ui:SliderInt picking-mode="Ignore" label="Water Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="WaterWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />
             <ui:SliderInt picking-mode="Ignore" label="Coast Weighting" value="1" high-value="200" low-value="1" inverted="false" show-input-field="false" name="CoastWeight" style="width: 25%; flex-direction: column; color: rgb(255, 255, 255);" />

@@ -20,10 +20,26 @@ public class HexGrid : MonoBehaviour
 
 	public System.Random rng_engine = new System.Random();
 
+	public int[] feature_coverage;
+
 	void Awake()
 	{
 		// create new hecx prefabs spanning the grid
 		cells = new HexCell[height * width];
+		feature_coverage = new int[4]{ 0, 0, 0, 0 };
+	}
+
+	public void updateCoverage(TileInterface tile)
+    {	
+		HexMetrics.TerrainFeature feature = tile.edge_map.Values
+												.GroupBy(i => i)
+												.GroupBy(g => g.Count())
+												.OrderByDescending(g => g.Key)
+												.First()
+												.Select(g => g.Key)
+												.ToArray()[0];
+
+		feature_coverage[(int)feature] = feature_coverage[(int)feature] + 1;
 	}
 
 	public void resetGrid(TileInterface[] t_prefabs)

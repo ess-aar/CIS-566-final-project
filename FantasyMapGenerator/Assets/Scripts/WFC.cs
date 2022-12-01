@@ -78,8 +78,23 @@ public class WFC : MonoBehaviour
             if (cells_to_collapse.Count == 0)
             {
                 CancelInvoke();
+
+                //if (!done)
+                //{
+                //    Debug.Log("Coverage:");
+                //    for (int i = 0; i < this.grid.feature_coverage.Length; ++i)
+                //    {
+                //        Debug.Log(i + ": " + this.grid.feature_coverage[i]);
+                //    }
+                //    done = true;
+                //}
             }
         }
+    }
+
+    public void setSeedNumber(int new_numSeeds)
+    {
+        this.num_seeds = new_numSeeds;
     }
 
     public void resetTileWeights()
@@ -195,6 +210,7 @@ public class WFC : MonoBehaviour
                     
                   // collapse cell
                   seedCell.collapseCell(t);
+                  this.grid.updateCoverage(t);
                   this.grid.collapsedCellCount++;
 
                   // propogate entropy
@@ -326,6 +342,7 @@ public class WFC : MonoBehaviour
                 {
                     // collapse each cell
                     cell.collapseCell(tile_to_instantiate);
+                    this.grid.updateCoverage(tile_to_instantiate);
                     this.grid.collapsedCellCount++;
 
                     // propogate entropy decrease to neighbors

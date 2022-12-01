@@ -160,6 +160,7 @@ MonoBehaviour:
   cellPrefab: {fileID: -1915333941536036059, guid: c4ea1198054c5314b823f9727af86dc3, type: 3}
   cells: []
   tile_prefabs: []
+  feature_coverage: 
 --- !u!4 &290387604
 Transform:
   m_ObjectHideFlags: 0
@@ -843,7 +844,7 @@ MonoBehaviour:
   - {fileID: 1906363795144300311, guid: e3a4bdfd2d7ff47ad9f2e85cd502a66d, type: 3}
   - {fileID: 3955403251835936700, guid: 0f1e7c8fabea44cbba45c81eec8242d5, type: 3}
   tile_prefabs: []
-  num_seeds: 50
+  num_seeds: 5
   cur_iter: 0
   restart_button: 0
   clear_button: 0
