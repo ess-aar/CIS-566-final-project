@@ -43,9 +43,26 @@ Shader "Hidden/AssetPostProcess"
                 return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);
             }
 
+            float2x2 rotate2D(float angle)
+            {
+                return float2x2(cos(angle), -sin(angle), 
+                                sin(angle), cos(angle));
+            }
+
+            float2x2 identity()
+            {
+                return float2x2(1, 0,
+                                0, 1);
+            }
+
             float sdCircle(float2 p, float r)
             {
                 return length(p) - r;
+            }
+
+            float sdCirclePos(float2 queryPos, float2 p, float r)
+            {
+                return length(queryPos - p) - r;
             }
 
             float sdSegment(in float2 p, in float2 a, in float2 b)
@@ -94,6 +111,18 @@ Shader "Hidden/AssetPostProcess"
                 if (totalArea >= sum - 0.001) return true;
                 
                 return false;
+            }
+
+            float sdTriangleIsosceles(in float2 queryPos, in float2 pos, in float2 q, in float2x2 rot)
+            {
+                float2 p = mul(queryPos - pos, rot);
+                p.x = abs(p.x);
+                float2 a = p - q*clamp( dot(p,q)/dot(q,q), 0.0, 1.0 );
+                float2 b = p - q*float2( clamp( p.x/q.x, 0.0, 1.0 ), 1.0 );
+                float s = -sign( q.y );
+                float2 d = min( float2( dot(a,a), s*(p.x*q.y-p.y*q.x) ),
+                            float2( dot(b,b), s*(p.y-q.y)  ));
+                return -sqrt(d.x)*sign(d.y);
             }
 
             float mountainOutlineSDF(float2 uv, float2 p, float s, float thickness)
@@ -315,6 +344,41 @@ Shader "Hidden/AssetPostProcess"
                 if (drawTrees) {
                     color = placeTrees(color, gridUV, gridIdTree);
                 }
+
+                // Draw compass
+                float dMin = 1.0;
+                
+                // Outer circles
+                float innerCircle = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.2);
+                float outerCircle = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.3);
+                dMin = max(-innerCircle, outerCircle);
+                if (dMin < 0.0) color = float4(0.2, 0.3, 0.5, 1.0);
+                
+                // N, S, E, W needles
+                float north = sdTriangleIsosceles(gridUV, float2(-1.3, -0.05), float2(0.07, 0.4), rotate2D(2.0 * 1.5708));
+                if (north < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);
+                float south = sdTriangleIsosceles(gridUV, float2(-1.3, -0.95), float2(0.07, 0.4), identity()); 
+                if (south < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);
+                float east = sdTriangleIsosceles(gridUV, float2(-0.85, -0.5), float2(0.07, 0.4), rotate2D(1.5708));
+                if (east < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);
+                float west = sdTriangleIsosceles(gridUV, float2(-1.75, -0.5), float2(0.07, 0.4), rotate2D(-1.5708));
+                if (west < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);   
+                
+                // NE, NW, SE, SW needles
+                float southeast = sdTriangleIsosceles(gridUV, float2(-1.1, -0.7), float2(0.03, 0.2), rotate2D(0.785398));
+                if (southeast < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
+                float southwest = sdTriangleIsosceles(gridUV, float2(-1.5, -0.7), float2(0.03, 0.2), rotate2D(-0.785398));
+                if (southwest < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
+                float northeast = sdTriangleIsosceles(gridUV, float2(-1.1, -0.3), float2(0.03, 0.2), rotate2D(3.0 * 0.785398));
+                if (northeast < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
+                float northwest = sdTriangleIsosceles(gridUV, float2(-1.5, -0.3), float2(0.03, 0.2), rotate2D(-3.0 * 0.785398));
+                if (northwest < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
+                
+                // Innermost circles
+                float smallCircle1 = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.1);
+                if (smallCircle1 < 0.0) color = float4(0.2, 0.4, 0.2, 1.0);
+                float smallCircle2 = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.05);
+                if (smallCircle2 < 0.0) color = float4(0.8, 0.1, 0.2, 1.0);
 
                 // Uncomment for visualizing grid values
                 //color.rg += gridId * 0.1;
