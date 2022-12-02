@@ -162,11 +162,9 @@ Shader "Hidden/ColorPostProcess"
 
                 if (distance(base, LAND_COLOR) <= 0.5) {
                     color = float4(1.0, 0.9, 0.7, 1.0);
-                    //color = float4(0.0, 1.0, 0.0, 1.0);
                 }
                 else if (distance(base, WATER_COLOR) <= 0.55) {
                     color = float4(0.74, 0.76, 0.89, 1.0);
-                    //color = float4(0.0, 0.0, 1.0, 1.0);
                 }
                 else if (distance(base, MOUNTAIN_COLOR) <= 0.55) {
                     //color = float4(0.71, 0.54, 0.39, 1.0);
@@ -180,16 +178,7 @@ Shader "Hidden/ColorPostProcess"
 
                 // Scatter assets over the map
                 float2 cellCoord = frac(SCATTER_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
-                float2 gridId = floor(SCATTER_GRID_SIZE * gridUV);
-
-                // If the base color ID matches the mountains color, then scatter mountains
-                // bool drawMountains = false;
-                // if (distance(base, LAND_COLOR) <= 0.5) { // this should match the feature mask color
-                //     drawMountains = true;
-                // }
-                // if (drawMountains) {
-                //     color = placeMountains(color, cellCoord, gridId);
-                // }  
+                float2 gridId = floor(SCATTER_GRID_SIZE * gridUV); 
 
                 // Uncomment for visualizing grid values
                 //color.rg += gridId * 0.1;

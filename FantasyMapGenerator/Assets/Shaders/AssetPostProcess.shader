@@ -136,6 +136,7 @@ Shader "Hidden/AssetPostProcess"
                     if (uv.x < p.x - jitter && uv.x > C.x) {  
                         float t = (uv.x - C.x) / (p.x - jitter - C.x);                       
                         float3 fadeColor = lerp(col, float3(0.3, 0.3, 0.3) * col, t);
+                        //float3 fadeColor = lerp(float3(1.0, 1.0, 1.0), float3(0.5, 0.5, 0.5) * col, t);
                         col = fadeColor;
                     }
                     else {
@@ -149,6 +150,7 @@ Shader "Hidden/AssetPostProcess"
             //float4 placeMountains(float4 baseColor, float2 cellCoord, float2 gridId)
             float4 placeMountains(float4 baseColor, float2 uv, float2 gridId)
             {
+                float2 gridCellNum = (_ScreenParams.xy / _ScreenParams.y) * (2.0 * MOUNTAIN_GRID_SIZE);
                 float4 col = baseColor;
                 // Place a circular sample randomly within each cell
                 for (int n = 0; n < MOUNTAINS_PER_CELL; ++n) {
@@ -156,10 +158,21 @@ Shader "Hidden/AssetPostProcess"
                     float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
                     for (int y = -1; y <= 1; ++y) {
                         for (int x = -1; x <= 1; ++x) {
+                            //if (x == 0 && y == 0) continue;
+
                             float2 neighborOffset = float2(x, y);
                             float jitter = noise2Df(gridId + neighborOffset + r);
                             float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
-                            //uvOffset = vec2(r, yValues[n]) - vec2(0.5);
+                            
+                            // float2 drawPosition = gridId + uvOffset + neighborOffset;
+                            // float2 localFragCoord = 0.5 * ((drawPosition * _ScreenParams.y) + _ScreenParams.xy);
+                            // float2 localUV = localFragCoord / _ScreenParams.xy;
+                            // if (localFragCoord.x > 3.0) col = float4(0.0, 1.0, 0.0, 1.0);
+                            // if (distance(tex2D(_MainTex, localUV), MOUNTAIN_COLOR) >= 0.5) {
+                            //     col = float4(0.0, 1.0, 0.0, 1.0);
+                            //     continue;
+                            // }
+                            
                             col = drawMountain(col, MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
                             float e = mountainOutlineSDF(MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
                             if (e > 0.0) col = lerp(col, float4(0.0, 0.0, 0.0, 0.0), 1.0);
@@ -307,7 +320,7 @@ Shader "Hidden/AssetPostProcess"
                 //color.rg += gridId * 0.1;
                 //color += noise2Df(gridId);
 
-                //if (cellCoord.x > 0.38 || cellCoord.y > 0.38) color = float4(0.4, 0.3, 1.0, 1.0);
+                //if (cellCoordMountain.x > 0.48 || cellCoordMountain.y > 0.48) color = float4(0.4, 0.3, 1.0, 1.0);
 
                 // Uncomment for test mountain
                 // color = float4(1.0, 1.0, 1.0, 1.0);
