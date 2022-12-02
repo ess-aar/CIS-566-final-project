@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.44970685, g: 0.4997751, b: 0.57563174, a: 1}
+  m_IndirectSpecularColor: {r: 0.44970763, g: 0.49977607, b: 0.5756336, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -160,6 +160,7 @@ MonoBehaviour:
   cellPrefab: {fileID: -1915333941536036059, guid: c4ea1198054c5314b823f9727af86dc3, type: 3}
   cells: []
   tile_prefabs: []
+  feature_coverage: 
 --- !u!4 &290387604
 Transform:
   m_ObjectHideFlags: 0
