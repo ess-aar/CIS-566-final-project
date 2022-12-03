@@ -345,41 +345,6 @@ Shader "Hidden/AssetPostProcess"
                     color = placeTrees(color, gridUV, gridIdTree);
                 }
 
-                // Draw compass
-                float dMin = 1.0;
-                
-                // Outer circles
-                float innerCircle = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.2);
-                float outerCircle = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.3);
-                dMin = max(-innerCircle, outerCircle);
-                if (dMin < 0.0) color = float4(0.2, 0.3, 0.5, 1.0);
-                
-                // N, S, E, W needles
-                float north = sdTriangleIsosceles(gridUV, float2(-1.3, -0.05), float2(0.07, 0.4), rotate2D(2.0 * 1.5708));
-                if (north < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);
-                float south = sdTriangleIsosceles(gridUV, float2(-1.3, -0.95), float2(0.07, 0.4), identity()); 
-                if (south < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);
-                float east = sdTriangleIsosceles(gridUV, float2(-0.85, -0.5), float2(0.07, 0.4), rotate2D(1.5708));
-                if (east < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);
-                float west = sdTriangleIsosceles(gridUV, float2(-1.75, -0.5), float2(0.07, 0.4), rotate2D(-1.5708));
-                if (west < 0.0) color = float4(0.7, 0.5, 0.7, 1.0);   
-                
-                // NE, NW, SE, SW needles
-                float southeast = sdTriangleIsosceles(gridUV, float2(-1.1, -0.7), float2(0.03, 0.2), rotate2D(0.785398));
-                if (southeast < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
-                float southwest = sdTriangleIsosceles(gridUV, float2(-1.5, -0.7), float2(0.03, 0.2), rotate2D(-0.785398));
-                if (southwest < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
-                float northeast = sdTriangleIsosceles(gridUV, float2(-1.1, -0.3), float2(0.03, 0.2), rotate2D(3.0 * 0.785398));
-                if (northeast < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
-                float northwest = sdTriangleIsosceles(gridUV, float2(-1.5, -0.3), float2(0.03, 0.2), rotate2D(-3.0 * 0.785398));
-                if (northwest < 0.0) color = float4(0.5, 0.5, 0.5, 1.0);
-                
-                // Innermost circles
-                float smallCircle1 = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.1);
-                if (smallCircle1 < 0.0) color = float4(0.2, 0.4, 0.2, 1.0);
-                float smallCircle2 = sdCirclePos(gridUV, float2(-1.3, -0.5), 0.05);
-                if (smallCircle2 < 0.0) color = float4(0.8, 0.1, 0.2, 1.0);
-
                 // Uncomment for visualizing grid values
                 //color.rg += gridId * 0.1;
                 //color += noise2Df(gridId);
