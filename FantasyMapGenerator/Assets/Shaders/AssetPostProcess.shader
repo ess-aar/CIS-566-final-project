@@ -313,6 +313,77 @@ Shader "Hidden/AssetPostProcess"
                 return total;
             }
 
+            float4 drawCompass(float4 baseColor, float2 pos, float2 gridUV)
+            {
+                float4 color = baseColor;
+                float4 outerColor = float4(0.34, 0.26, 0.33, 1.0);
+                float4 cardinalColor = float4(0.72, 0.58, 0.55, 1.0);
+                float4 diagonalColor = float4(0.44, 0.39, 0.53, 1.0);
+                float4 largeCircleColor = float4(0.35, 0.4, 0.2, 1.0);
+                float4 smallCircleColor = float4(0.9, 0.93, 0.7, 1.0);
+
+                // Draw compass
+                float dMin = 1.0;
+                
+                // Outer circles
+                float innerCircle = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.11);
+                float outerCircle = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.15);
+                dMin = max(-innerCircle, outerCircle);
+                if (dMin < 0.0) {
+                    if (dMin < -0.008) {
+                        color = outerColor;     
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);   
+                    }
+                }
+
+                // NE, NW, SE, SW needles
+                float southeast = sdTriangleIsosceles(gridUV, pos + float2(-1.18, -0.62), float2(0.015, 0.12), rotate2D(0.785398));
+                float southwest = sdTriangleIsosceles(gridUV, pos + float2(-1.42, -0.62), float2(0.015, 0.12), rotate2D(-0.785398));
+                float northeast = sdTriangleIsosceles(gridUV, pos + float2(-1.18, -0.38), float2(0.015, 0.12), rotate2D(3.0 * 0.785398));
+                float northwest = sdTriangleIsosceles(gridUV, pos + float2(-1.42, -0.38), float2(0.015, 0.12), rotate2D(-3.0 * 0.785398));
+                if (southeast < 0.0 || southwest < 0.0 || northeast < 0.0 || northwest < 0.0) {
+                    color = diagonalColor;
+                }
+
+                // N, S, E, W needles
+                float north = sdTriangleIsosceles(gridUV, pos + float2(-1.3, -0.25), float2(0.03, 0.2), rotate2D(2.0 * 1.5708));
+                float south = sdTriangleIsosceles(gridUV, pos + float2(-1.3, -0.75), float2(0.03, 0.2), identity()); 
+                float east = sdTriangleIsosceles(gridUV, pos + float2(-1.05, -0.5), float2(0.03, 0.2), rotate2D(1.5708));
+                float west = sdTriangleIsosceles(gridUV, pos + float2(-1.55, -0.5), float2(0.03, 0.2), rotate2D(-1.5708)); 
+                if (north < 0.0 || south < 0.0 || east < 0.0 || west < 0.0) {
+                    if (north < -0.008 || south < -0.008 || east < -0.008 || west < -0.008) {
+                        color = cardinalColor;    
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);   
+                    }      
+                }  
+                
+                // Innermost circles
+                float smallCircle1 = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.07);
+                if (smallCircle1 < 0.0) {
+                    if (smallCircle1 < -0.008) {
+                        color = largeCircleColor;
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);
+                    }
+                }
+                float smallCircle2 = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.04);
+                if (smallCircle2 < 0.0) {
+                    if (smallCircle2 < -0.008) {
+                        color = smallCircleColor;
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);
+                    }
+                }
+
+                return color;
+            }
+
             float4 frag (v2f_img input) : COLOR
             {
                 // Get uv coordinates
@@ -347,6 +418,11 @@ Shader "Hidden/AssetPostProcess"
                 // color = drawMountain(color, SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
                 // float e = mountainOutlineSDF(SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
                 // if (e > 0.0) color = lerp(color, float4(0.0, 0.0, 0.0, 0.0), 1.0);
+
+                // Draw compass
+                float2 maxDim = _ScreenParams.xy / _ScreenParams.y;
+                float2 compassPos = float2(maxDim.x + 0.9, 0.0);
+                color = drawCompass(color, compassPos, gridUV);
                 
                 // FBM pass for paper look
                 float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
