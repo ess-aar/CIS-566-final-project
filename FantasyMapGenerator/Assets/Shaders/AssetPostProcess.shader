@@ -159,51 +159,52 @@ Shader "Hidden/AssetPostProcess"
                 
                 // Background color is map "paper" color
                 float3 col = baseCol;
+                float3 mountainCol = float3(0.93, 0.75, 0.55); // color of mountain region
                 float jitter = noise1Df(50.0 * uv.y) * 0.008;
                 
+                // Do shading within mountain body
                 if (pointInTriangle(uv, A, B, C)) {
                     if (uv.x < p.x - jitter && uv.x > C.x) {  
                         float t = (uv.x - C.x) / (p.x - jitter - C.x);                       
-                        float3 fadeColor = lerp(col, float3(0.3, 0.3, 0.3) * col, t);
-                        //float3 fadeColor = lerp(float3(1.0, 1.0, 1.0), float3(0.5, 0.5, 0.5) * col, t);
+                        float3 fadeColor = lerp(mountainCol, float3(0.3, 0.3, 0.3) * mountainCol, t);
                         col = fadeColor;
                     }
                     else {
-                        col = float4(0.93, 0.75, 0.55, 1.0);
+                        col = mountainCol;
                     }      
                 }
                 
                 return float4(col.xyz, 1.0);
             }
 
-            //float4 placeMountains(float4 baseColor, float2 cellCoord, float2 gridId)
             float4 placeMountains(float4 baseColor, float2 uv, float2 gridId)
             {
-                float2 gridCellNum = (_ScreenParams.xy / _ScreenParams.y) * (2.0 * MOUNTAIN_GRID_SIZE);
                 float4 col = baseColor;
-                // Place a circular sample randomly within each cell
+                if (distance(baseColor, MOUNTAIN_COLOR) <= 0.5) {
+                    col = float4(0.93, 0.75, 0.55, 1.0);
+                }
+                // Place a mountains randomly within each cell
                 for (int n = 0; n < MOUNTAINS_PER_CELL; ++n) {
                     float r = rand(float2(n, n));
                     float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
                     for (int y = -1; y <= 1; ++y) {
                         for (int x = -1; x <= 1; ++x) {
-                            //if (x == 0 && y == 0) continue;
-
                             float2 neighborOffset = float2(x, y);
                             float jitter = noise2Df(gridId + neighborOffset + r);
                             float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
                             
-                            // float2 drawPosition = gridId + uvOffset + neighborOffset;
-                            // float2 localFragCoord = 0.5 * ((drawPosition * _ScreenParams.y) + _ScreenParams.xy);
-                            // float2 localUV = localFragCoord / _ScreenParams.xy;
-                            // if (localFragCoord.x > 3.0) col = float4(0.0, 1.0, 0.0, 1.0);
-                            // if (distance(tex2D(_MainTex, localUV), MOUNTAIN_COLOR) >= 0.5) {
-                            //     col = float4(0.0, 1.0, 0.0, 1.0);
-                            //     continue;
-                            // }
+                            // Skip if center point of mountain is not within mountain region
+                            float2 drawPosition = gridId + uvOffset + neighborOffset;
+                            float2 localDrawPosition = drawPosition / MOUNTAIN_GRID_SIZE;
+                            float2 localFragCoord = 0.5 * ((localDrawPosition * _ScreenParams.y) + _ScreenParams.xy);
+                            float2 localUV = localFragCoord / _ScreenParams.xy;
+                            if (distance(tex2D(_MainTex, localUV), MOUNTAIN_COLOR) > 0.5) {
+                                continue;
+                            }
                             
-                            col = drawMountain(col, MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
-                            float e = mountainOutlineSDF(MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
+                            // Draw mountain body and outline
+                            col = drawMountain(col, MOUNTAIN_GRID_SIZE * uv, drawPosition, 0.5, 0.01);
+                            float e = mountainOutlineSDF(MOUNTAIN_GRID_SIZE * uv, drawPosition, 0.5, 0.01);
                             if (e > 0.0) col = lerp(col, float4(0.0, 0.0, 0.0, 0.0), 1.0);
                         }
                     }
@@ -216,15 +217,14 @@ Shader "Hidden/AssetPostProcess"
             {
                 float4 col = baseCol;
 
-                float leaves_sdf = sdEgg( uv - gridId, 0.09, 0.01 );
-                float tree_sdf = sdUnevenCapsule( uv - gridId + float2(0, 0.2), 0.02, 0.02, 0.175 );
+                float leaves_sdf = sdEgg(uv - gridId, 0.09, 0.01 );
+                float tree_sdf = sdUnevenCapsule(uv - gridId + float2(0, 0.2), 0.02, 0.02, 0.175 );
                 float min_sdf = min(tree_sdf, leaves_sdf);
                 
                 if (min_sdf <= 0.0) {
                     col = float4(0, 0, 0, 0);
                     if (leaves_sdf < -0.025 || tree_sdf < -0.015) {
-                        if (uv.x < gridId.x) {
-                            
+                        if (uv.x < gridId.x) {        
                             col = lerp(float4(0.4, 0.4, 0.4, 1.0), baseCol,  1.0 - (gridId.x - uv.x) * 15.0);
                         }
                         else {
@@ -239,7 +239,11 @@ Shader "Hidden/AssetPostProcess"
             float4 placeTrees(float4 baseColor, float2 uv, float2 gridId)
             {
                 float4 col = baseColor;
-                // Place a circular sample randomly within each cell
+                if (distance(baseColor, FOREST_COLOR) <= 0.5) {
+                    col = float4(0.9, 0.93, 0.7, 1.0);
+                }
+
+                // Place a tree randomly within each cell
                 for (int n = 0; n < TREES_PER_CELL; ++n) {
                     float r = rand(float2(n, n));
                     float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
@@ -248,7 +252,16 @@ Shader "Hidden/AssetPostProcess"
                             float2 neighborOffset = float2(x, y);
                             float jitter = noise2Df(gridId + neighborOffset + r);
                             float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
-                            //uvOffset = vec2(r, yValues[n]) - vec2(0.5);
+
+                            // Skip if center point of mountain is not within mountain region
+                            float2 drawPosition = gridId + uvOffset + neighborOffset;
+                            float2 localDrawPosition = drawPosition / FOREST_GRID_SIZE;
+                            float2 localFragCoord = 0.5 * ((localDrawPosition * _ScreenParams.y) + _ScreenParams.xy);
+                            float2 localUV = localFragCoord / _ScreenParams.xy;
+                            if (distance(tex2D(_MainTex, localUV), FOREST_COLOR) > 0.5) {
+                                continue;
+                            }
+
                             col = drawTree(col, FOREST_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.0, 0.0);
                         }
                     }
@@ -304,7 +317,6 @@ Shader "Hidden/AssetPostProcess"
             {
                 // Get uv coordinates
                 float2 texUV = input.uv;
-                //float2 gridUV = input.uv; // TODO: divide UV by screen dims to avoid stretching
 
                 float2 fragCoord = input.uv * _ScreenParams.xy;
                 float2 gridUV = (2.0 * fragCoord.xy - _ScreenParams.xy) / _ScreenParams.y;
@@ -313,13 +325,6 @@ Shader "Hidden/AssetPostProcess"
                 float4 base = tex2D(_MainTex, texUV);
                 float4 color = base;
 
-                if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
-                    color = float4(0.93, 0.75, 0.55, 1.0);
-                }
-                if (distance(base, FOREST_COLOR) <= 0.5) {
-                    color = float4(0.9, 0.93, 0.7, 1.0);
-                }
-
                 // Scatter assets over the map
                 float2 cellCoordMountain = frac(MOUNTAIN_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
                 float2 gridIdMountain = floor(MOUNTAIN_GRID_SIZE * gridUV);
@@ -327,28 +332,14 @@ Shader "Hidden/AssetPostProcess"
                 float2 cellCoordTree = frac(FOREST_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
                 float2 gridIdTree = floor(FOREST_GRID_SIZE * gridUV);
 
-                // If the base color ID matches the mountains color, then scatter mountains
-                bool drawMountains = false;
-                bool drawTrees = false;
-
-                if (distance(base, MOUNTAIN_COLOR) <= 0.5) { // this should match the feature mask color
-                    drawMountains = true;
-                }
-                else if (distance(base, FOREST_COLOR) <= 0.5) {
-                    drawTrees = true;
-                }
-
-                if (drawMountains) {
+                // Draw assets in appropriate areas on the map
+                bool screenBlack = distance(base, float4(0.0, 0.0, 0.0, 0.0)) <= 0.5;
+                if (!screenBlack) {
                     color = placeMountains(color, gridUV, gridIdMountain);
-                }  
-                if (drawTrees) {
                     color = placeTrees(color, gridUV, gridIdTree);
-                }
+                }  
 
                 // Uncomment for visualizing grid values
-                //color.rg += gridId * 0.1;
-                //color += noise2Df(gridId);
-
                 //if (cellCoordMountain.x > 0.48 || cellCoordMountain.y > 0.48) color = float4(0.4, 0.3, 1.0, 1.0);
 
                 // Uncomment for test mountain
