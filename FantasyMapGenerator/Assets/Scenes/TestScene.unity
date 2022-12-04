@@ -169,7 +169,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 290387602}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10.2, y: 0, z: 19}
+  m_LocalPosition: {x: 8.5, y: 0, z: 8.7}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -523,6 +523,7 @@ GameObject:
   - component: {fileID: 1255959643}
   - component: {fileID: 1255959644}
   - component: {fileID: 1255959645}
+  - component: {fileID: 1255959646}
   m_Layer: 0
   m_Name: Top-Down Camera
   m_TagString: Untagged
@@ -589,7 +590,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1255959639}
   m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 52, y: 32, z: 37}
+  m_LocalPosition: {x: 52, y: 32, z: 27.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -608,6 +609,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e367597ece0e1c54f95cc4da68dca287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_OrthographicCamera: {fileID: 1255959641}
   material: {fileID: 2100000, guid: 86778777dda0b7145938a8de57c00ff0, type: 2}
 --- !u!114 &1255959644
 MonoBehaviour:
@@ -621,6 +623,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e367597ece0e1c54f95cc4da68dca287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_OrthographicCamera: {fileID: 1255959641}
   material: {fileID: 2100000, guid: 364bb18648b622a4881cba68c903796c, type: 2}
 --- !u!114 &1255959645
 MonoBehaviour:
@@ -634,7 +637,24 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e367597ece0e1c54f95cc4da68dca287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_OrthographicCamera: {fileID: 1255959641}
   material: {fileID: 2100000, guid: 5a5c2e798b31c7245a6f8256d8eeb70c, type: 2}
+--- !u!114 &1255959646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1255959639}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0e966521361d89a4b9979431ae81b81d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_OrthographicCamera: {fileID: 1255959641}
+  m_user_is_dragging: 0
+  m_dragging_position: {x: 0, y: 0, z: 0}
+  isFreeCameraActive: 0
 --- !u!1 &1325893405
 GameObject:
   m_ObjectHideFlags: 0

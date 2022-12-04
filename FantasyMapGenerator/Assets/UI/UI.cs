@@ -30,6 +30,8 @@ public class UI : MonoBehaviour
         slider_coast_weight.RegisterValueChangedCallback(CoastWeightSliderCallback);
         slider_mountain_weight.RegisterValueChangedCallback(MountainWeightSliderCallback);
         slider_forest_weight.RegisterValueChangedCallback(ForestWeightSliderCallback);
+
+
         textfield_num_seeds.RegisterValueChangedCallback(NumSeedsTextFieldCallback);
     }
 
