@@ -120,17 +120,12 @@ Shader "Hidden/EdgePostProcess"
                 float4 baseColor = tex2D(_MainTex, texUV);
                 float4 color = baseColor;
 
-                bool isLand = false;
-
                 // If asset mask, we should not apply outlines
                 if (distance(baseColor, MOUNTAIN_COLOR) <= 0.75) {
                     return baseColor;
                 }
                 if (distance(baseColor, FOREST_COLOR) <= 0.75) {
                     return baseColor;
-                }
-                if (distance(baseColor, LAND_COLOR) <= 0.5) {
-                    isLand = true;
                 }
                     
                 // Outline thickness
@@ -165,7 +160,7 @@ Shader "Hidden/EdgePostProcess"
                 // Any outline should be black
                 if (length(sumColor.xyz) <= 1.5) color = float4(0.0, 0.0, 0.0, 0.0);
 
-                // Outline pass to determine whether or not to draw asset
+                // Coastline hatching
                 float deltaOffset = WorleyNoise(50.0 * texUV.xy) * 0.025;
                 delta = float2(0.002 + deltaOffset, 0.002); // outline thickness
                 horizontalSum = float4(0.0, 0.0, 0.0, 0.0);

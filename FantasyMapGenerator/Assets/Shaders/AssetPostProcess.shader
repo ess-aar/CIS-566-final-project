@@ -410,6 +410,11 @@ Shader "Hidden/AssetPostProcess"
                     color = placeTrees(color, gridUV, gridIdTree);
                 }  
 
+                // Draw compass
+                float2 maxDim = _ScreenParams.xy / _ScreenParams.y;
+                float2 compassPos = float2(maxDim.x + 0.9, 0.0);
+                color = drawCompass(color, compassPos, gridUV);
+
                 // Uncomment for visualizing grid values
                 //if (cellCoordMountain.x > 0.48 || cellCoordMountain.y > 0.48) color = float4(0.4, 0.3, 1.0, 1.0);
 
@@ -418,11 +423,6 @@ Shader "Hidden/AssetPostProcess"
                 // color = drawMountain(color, SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
                 // float e = mountainOutlineSDF(SCATTER_GRID_SIZE * gridUV, float2(0.0, 0.0), 0.5, 0.01);
                 // if (e > 0.0) color = lerp(color, float4(0.0, 0.0, 0.0, 0.0), 1.0);
-
-                // Draw compass
-                float2 maxDim = _ScreenParams.xy / _ScreenParams.y;
-                float2 compassPos = float2(maxDim.x + 0.9, 0.0);
-                color = drawCompass(color, compassPos, gridUV);
                 
                 // FBM pass for paper look
                 float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
