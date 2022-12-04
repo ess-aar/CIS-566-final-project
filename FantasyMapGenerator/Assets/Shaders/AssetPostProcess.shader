@@ -86,6 +86,12 @@ Shader "Hidden/AssetPostProcess"
                                         length(float2(p.x+r,p.y    )) - 2.0*r) - rb;
             }
 
+            float sdSquarePos(float2 queryPos, float2 p, float2 b)
+            {
+                float2 d = abs(queryPos - p) - b;
+                return length(max(d,0.0)) + min(max(d.x,d.y),0.0);
+            }
+
             float sdUnevenCapsule(float2 p, float r1, float r2, float h)
             {
                 p.x = abs(p.x);
@@ -316,6 +322,32 @@ Shader "Hidden/AssetPostProcess"
                 return total;
             }
 
+            float interpolateNoise1D(float x) {
+                int intX = int(floor(x));
+                float fractX = frac(x);
+
+                float v1 = noise1Df(float(intX));
+                float v2 = noise1Df(float(intX + 1));
+                return lerp(v1, v2, fractX);
+            }
+
+            float fbm1D(float x) 
+            {
+                float total = 0.f;
+                float persistence = 0.5f;
+                int octaves = 8;
+
+                for(int i = 1; i <= octaves; i++) {
+                    float freq = pow(2.f, float(i));
+                    float amp = pow(persistence, float(i));
+
+                    float perlin = interpolateNoise1D(x * freq);
+                    total += amp * (0.5 * (perlin + 1.0));
+                }
+
+                return total;
+            }
+
             float4 drawCompass(float4 baseColor, float2 pos, float2 gridUV)
             {
                 float4 color = baseColor;
@@ -387,6 +419,47 @@ Shader "Hidden/AssetPostProcess"
                 return color;
             }
 
+            float4 drawFrame(float4 color, float2 texUV)
+            {
+                // Frame
+                float thickness = 0.01;
+                float thickness2 = 0.007;
+                float offset = 0.02;
+                float offset2 = 0.07;
+                
+                float ybound = 0.87;
+                float xbound = 1.77;
+        
+                if (texUV.x < -xbound || texUV.x > xbound || texUV.y < -ybound || texUV.y > ybound)
+                {
+                    color = float4(1.0, 0.9, 0.7, 1.0);
+                }
+                
+                // Frame 1
+                float sdfFrame = sdSquarePos(texUV, float2(0.0, 0.0), float2(xbound + offset, ybound + offset));
+                if (sdfFrame < thickness && sdfFrame > 0.0) color = float4(0.0, 0.0, 0.0, 1.0);
+                
+                // Frame 2
+                sdfFrame = sdSquarePos(texUV, float2(0.0, 0.0), float2(xbound + 2.0 * offset, ybound + 2.0 * offset));
+                if (sdfFrame < thickness2 && sdfFrame > 0.0) color = float4(0.0, 0.0, 0.0, 1.0);
+                
+                // Edge
+                float noiseoffsetx = fbm1D(texUV.y * 1.79) * 0.07;
+                float noiseoffsety = fbm1D(texUV.x * 1.98) * 0.07;
+                if (texUV.x < -(xbound + offset2 + noiseoffsetx) || texUV.x > xbound + offset2 + noiseoffsetx || 
+                    texUV.y < -(ybound + offset2 + noiseoffsety) || texUV.y > ybound + offset2 + noiseoffsety)
+                {
+                            color = float4(0.0, 0.0, 0.0, 1.0);
+                }
+                
+                //Edge noise
+                float2 uvgrad = texUV / 0.9;
+                color = lerp(color, color * fbm2D(8.0 * texUV), smoothstep(0.8, 1.2, length(float2(texUV.x / 2.0, texUV.y / 1.0))));
+                color = lerp(color, color * fbm2D(3.0 * texUV), smoothstep(0.5, 0.4, length(sdSquarePos(texUV, float2(0.0, 0.0), 1.1 * float2(2.0, 1.2)))));
+
+                return color;
+            }
+
             float4 frag (v2f_img input) : COLOR
             {
                 // Get uv coordinates
@@ -429,6 +502,8 @@ Shader "Hidden/AssetPostProcess"
                 
                 // FBM pass for paper look
                 float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
+
+                color = drawFrame(color, gridUV);
 
                 return color * fbm;
             }
