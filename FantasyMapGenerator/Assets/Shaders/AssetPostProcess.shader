@@ -46,9 +46,26 @@ Shader "Hidden/AssetPostProcess"
                 return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);
             }
 
+            float2x2 rotate2D(float angle)
+            {
+                return float2x2(cos(angle), -sin(angle), 
+                                sin(angle), cos(angle));
+            }
+
+            float2x2 identity()
+            {
+                return float2x2(1, 0,
+                                0, 1);
+            }
+
             float sdCircle(float2 p, float r)
             {
                 return length(p) - r;
+            }
+
+            float sdCirclePos(float2 queryPos, float2 p, float r)
+            {
+                return length(queryPos - p) - r;
             }
 
             float sdSegment(in float2 p, in float2 a, in float2 b)
@@ -99,6 +116,18 @@ Shader "Hidden/AssetPostProcess"
                 return false;
             }
 
+            float sdTriangleIsosceles(in float2 queryPos, in float2 pos, in float2 q, in float2x2 rot)
+            {
+                float2 p = mul(queryPos - pos, rot);
+                p.x = abs(p.x);
+                float2 a = p - q*clamp( dot(p,q)/dot(q,q), 0.0, 1.0 );
+                float2 b = p - q*float2( clamp( p.x/q.x, 0.0, 1.0 ), 1.0 );
+                float s = -sign( q.y );
+                float2 d = min( float2( dot(a,a), s*(p.x*q.y-p.y*q.x) ),
+                            float2( dot(b,b), s*(p.y-q.y)  ));
+                return -sqrt(d.x)*sign(d.y);
+            }
+
             float mountainOutlineSDF(float2 uv, float2 p, float s, float thickness)
             {    
                 // Find distance to vertices and distance to midpoints
@@ -133,27 +162,31 @@ Shader "Hidden/AssetPostProcess"
                 
                 // Background color is map "paper" color
                 float3 col = baseCol;
+                float3 mountainCol = float3(0.93, 0.75, 0.55); // color of mountain region
                 float jitter = noise1Df(50.0 * uv.y) * 0.008;
                 
+                // Do shading within mountain body
                 if (pointInTriangle(uv, A, B, C)) {
                     if (uv.x < p.x - jitter && uv.x > C.x) {  
                         float t = (uv.x - C.x) / (p.x - jitter - C.x);                       
-                        float3 fadeColor = lerp(col, float3(0.3, 0.3, 0.3) * col, t);
+                        float3 fadeColor = lerp(mountainCol, float3(0.3, 0.3, 0.3) * mountainCol, t);
                         col = fadeColor;
                     }
                     else {
-                        col = float4(0.93, 0.75, 0.55, 1.0);
+                        col = mountainCol;
                     }      
                 }
                 
                 return float4(col.xyz, 1.0);
             }
 
-            //float4 placeMountains(float4 baseColor, float2 cellCoord, float2 gridId)
             float4 placeMountains(float4 baseColor, float2 uv, float2 gridId)
             {
                 float4 col = baseColor;
-                // Place a circular sample randomly within each cell
+                if (distance(baseColor, MOUNTAIN_COLOR) <= 0.5) {
+                    col = float4(0.93, 0.75, 0.55, 1.0);
+                }
+                // Place a mountains randomly within each cell
                 for (int n = 0; n < MOUNTAINS_PER_CELL; ++n) {
                     float r = rand(float2(n, n));
                     float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
@@ -162,9 +195,19 @@ Shader "Hidden/AssetPostProcess"
                             float2 neighborOffset = float2(x, y);
                             float jitter = noise2Df(gridId + neighborOffset + r);
                             float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
-                            //uvOffset = vec2(r, yValues[n]) - vec2(0.5);
-                            col = drawMountain(col, MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
-                            float e = mountainOutlineSDF(MOUNTAIN_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.5, 0.01);
+                            
+                            // Skip if center point of mountain is not within mountain region
+                            float2 drawPosition = gridId + uvOffset + neighborOffset;
+                            float2 localDrawPosition = drawPosition / MOUNTAIN_GRID_SIZE;
+                            float2 localFragCoord = 0.5 * ((localDrawPosition * _ScreenParams.y) + _ScreenParams.xy);
+                            float2 localUV = localFragCoord / _ScreenParams.xy;
+                            if (distance(tex2D(_MainTex, localUV), MOUNTAIN_COLOR) > 0.5) {
+                                continue;
+                            }
+                            
+                            // Draw mountain body and outline
+                            col = drawMountain(col, MOUNTAIN_GRID_SIZE * uv, drawPosition, 0.5, 0.01);
+                            float e = mountainOutlineSDF(MOUNTAIN_GRID_SIZE * uv, drawPosition, 0.5, 0.01);
                             if (e > 0.0) col = lerp(col, float4(0.0, 0.0, 0.0, 0.0), 1.0);
                         }
                     }
@@ -177,15 +220,14 @@ Shader "Hidden/AssetPostProcess"
             {
                 float4 col = baseCol;
 
-                float leaves_sdf = sdEgg( uv - gridId, 0.09, 0.01 );
-                float tree_sdf = sdUnevenCapsule( uv - gridId + float2(0, 0.2), 0.02, 0.02, 0.175 );
+                float leaves_sdf = sdEgg(uv - gridId, 0.09, 0.01 );
+                float tree_sdf = sdUnevenCapsule(uv - gridId + float2(0, 0.2), 0.02, 0.02, 0.175 );
                 float min_sdf = min(tree_sdf, leaves_sdf);
                 
                 if (min_sdf <= 0.0) {
                     col = float4(0, 0, 0, 0);
                     if (leaves_sdf < -0.025 || tree_sdf < -0.015) {
-                        if (uv.x < gridId.x) {
-                            
+                        if (uv.x < gridId.x) {        
                             col = lerp(float4(0.4, 0.4, 0.4, 1.0), baseCol,  1.0 - (gridId.x - uv.x) * 15.0);
                         }
                         else {
@@ -200,7 +242,11 @@ Shader "Hidden/AssetPostProcess"
             float4 placeTrees(float4 baseColor, float2 uv, float2 gridId)
             {
                 float4 col = baseColor;
-                // Place a circular sample randomly within each cell
+                if (distance(baseColor, FOREST_COLOR) <= 0.5) {
+                    col = float4(0.9, 0.93, 0.7, 1.0);
+                }
+
+                // Place a tree randomly within each cell
                 for (int n = 0; n < TREES_PER_CELL; ++n) {
                     float r = rand(float2(n, n));
                     float jitterScale = 10.0 * noise1Df(float(n)) + 10.0;
@@ -209,7 +255,16 @@ Shader "Hidden/AssetPostProcess"
                             float2 neighborOffset = float2(x, y);
                             float jitter = noise2Df(gridId + neighborOffset + r);
                             float2 uvOffset = float2(jitter, frac(jitterScale * jitter)) - float2(0.5, 0.5);
-                            //uvOffset = vec2(r, yValues[n]) - vec2(0.5);
+
+                            // Skip if center point of mountain is not within mountain region
+                            float2 drawPosition = gridId + uvOffset + neighborOffset;
+                            float2 localDrawPosition = drawPosition / FOREST_GRID_SIZE;
+                            float2 localFragCoord = 0.5 * ((localDrawPosition * _ScreenParams.y) + _ScreenParams.xy);
+                            float2 localUV = localFragCoord / _ScreenParams.xy;
+                            if (distance(tex2D(_MainTex, localUV), FOREST_COLOR) > 0.5) {
+                                continue;
+                            }
+
                             col = drawTree(col, FOREST_GRID_SIZE * uv, gridId + uvOffset + neighborOffset, 0.0, 0.0);
                         }
                     }
@@ -261,12 +316,81 @@ Shader "Hidden/AssetPostProcess"
                 return total;
             }
 
+            float4 drawCompass(float4 baseColor, float2 pos, float2 gridUV)
+            {
+                float4 color = baseColor;
+                float4 outerColor = float4(0.34, 0.26, 0.33, 1.0);
+                float4 cardinalColor = float4(0.72, 0.58, 0.55, 1.0);
+                float4 diagonalColor = float4(0.44, 0.39, 0.53, 1.0);
+                float4 largeCircleColor = float4(0.35, 0.4, 0.2, 1.0);
+                float4 smallCircleColor = float4(0.9, 0.93, 0.7, 1.0);
+
+                // Draw compass
+                float dMin = 1.0;
+                
+                // Outer circles
+                float innerCircle = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.11);
+                float outerCircle = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.15);
+                dMin = max(-innerCircle, outerCircle);
+                if (dMin < 0.0) {
+                    if (dMin < -0.008) {
+                        color = outerColor;     
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);   
+                    }
+                }
+
+                // NE, NW, SE, SW needles
+                float southeast = sdTriangleIsosceles(gridUV, pos + float2(-1.18, -0.62), float2(0.015, 0.12), rotate2D(0.785398));
+                float southwest = sdTriangleIsosceles(gridUV, pos + float2(-1.42, -0.62), float2(0.015, 0.12), rotate2D(-0.785398));
+                float northeast = sdTriangleIsosceles(gridUV, pos + float2(-1.18, -0.38), float2(0.015, 0.12), rotate2D(3.0 * 0.785398));
+                float northwest = sdTriangleIsosceles(gridUV, pos + float2(-1.42, -0.38), float2(0.015, 0.12), rotate2D(-3.0 * 0.785398));
+                if (southeast < 0.0 || southwest < 0.0 || northeast < 0.0 || northwest < 0.0) {
+                    color = diagonalColor;
+                }
+
+                // N, S, E, W needles
+                float north = sdTriangleIsosceles(gridUV, pos + float2(-1.3, -0.25), float2(0.03, 0.2), rotate2D(2.0 * 1.5708));
+                float south = sdTriangleIsosceles(gridUV, pos + float2(-1.3, -0.75), float2(0.03, 0.2), identity()); 
+                float east = sdTriangleIsosceles(gridUV, pos + float2(-1.05, -0.5), float2(0.03, 0.2), rotate2D(1.5708));
+                float west = sdTriangleIsosceles(gridUV, pos + float2(-1.55, -0.5), float2(0.03, 0.2), rotate2D(-1.5708)); 
+                if (north < 0.0 || south < 0.0 || east < 0.0 || west < 0.0) {
+                    if (north < -0.008 || south < -0.008 || east < -0.008 || west < -0.008) {
+                        color = cardinalColor;    
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);   
+                    }      
+                }  
+                
+                // Innermost circles
+                float smallCircle1 = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.07);
+                if (smallCircle1 < 0.0) {
+                    if (smallCircle1 < -0.008) {
+                        color = largeCircleColor;
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);
+                    }
+                }
+                float smallCircle2 = sdCirclePos(gridUV, pos + float2(-1.3, -0.5), 0.04);
+                if (smallCircle2 < 0.0) {
+                    if (smallCircle2 < -0.008) {
+                        color = smallCircleColor;
+                    }
+                    else {
+                        color = float4(0.0, 0.0, 0.0, 0.0);
+                    }
+                }
+
+                return color;
+            }
+
             float4 frag (v2f_img input) : COLOR
             {
                 // Get uv coordinates
                 float2 texUV = input.uv;
-				
-                //float2 gridUV = input.uv; // TODO: divide UV by screen dims to avoid stretching
 
                 float2 fragCoord = input.uv * _ScreenParams.xy;
                 float2 gridUV = (2.0 * fragCoord.xy - _ScreenParams.xy) / _ScreenParams.y;
@@ -275,13 +399,6 @@ Shader "Hidden/AssetPostProcess"
                 float4 base = tex2D(_MainTex, texUV);
                 float4 color = base;
 
-                if (distance(base, MOUNTAIN_COLOR) <= 0.5) {
-                    color = float4(0.93, 0.75, 0.55, 1.0);
-                }
-                if (distance(base, FOREST_COLOR) <= 0.5) {
-                    color = float4(0.9, 0.93, 0.7, 1.0);
-                }
-
                 // Scatter assets over the map
                 float2 cellCoordMountain = frac(MOUNTAIN_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
                 float2 gridIdMountain = floor(MOUNTAIN_GRID_SIZE * gridUV);
@@ -289,29 +406,20 @@ Shader "Hidden/AssetPostProcess"
                 float2 cellCoordTree = frac(FOREST_GRID_SIZE * gridUV) - 0.5; // remap so that middle of cell is origin
                 float2 gridIdTree = floor(FOREST_GRID_SIZE * gridUV);
 
-                // If the base color ID matches the mountains color, then scatter mountains
-                bool drawMountains = false;
-                bool drawTrees = false;
-
-                if (distance(base, MOUNTAIN_COLOR) <= 0.5) { // this should match the feature mask color
-                    drawMountains = true;
-                }
-                else if (distance(base, FOREST_COLOR) <= 0.5) {
-                    drawTrees = true;
-                }
-
-                if (drawMountains) {
+                // Draw assets in appropriate areas on the map
+                bool screenBlack = distance(base, float4(0.0, 0.0, 0.0, 0.0)) <= 0.5;
+                if (!screenBlack) {
                     color = placeMountains(color, gridUV, gridIdMountain);
-                }  
-                if (drawTrees) {
                     color = placeTrees(color, gridUV, gridIdTree);
-                }
+                }  
+
+                // Draw compass
+                float2 maxDim = _ScreenParams.xy / _ScreenParams.y;
+                float2 compassPos = float2(maxDim.x + 0.9, 0.0);
+                color = drawCompass(color, compassPos, gridUV);
 
                 // Uncomment for visualizing grid values
-                //color.rg += gridId * 0.1;
-                //color += noise2Df(gridId);
-
-                //if (cellCoord.x > 0.38 || cellCoord.y > 0.38) color = float4(0.4, 0.3, 1.0, 1.0);
+                //if (cellCoordMountain.x > 0.48 || cellCoordMountain.y > 0.48) color = float4(0.4, 0.3, 1.0, 1.0);
 
                 // Uncomment for test mountain
                 // color = float4(1.0, 1.0, 1.0, 1.0);

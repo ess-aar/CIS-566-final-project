@@ -20,11 +20,21 @@ Shader "Hidden/EdgePostProcess"
 			uniform float4x4 _InvCamProjMatrix;
 
             #define PI                3.1415926535897932384626433832795
+            #define LAND_COLOR        float4(0.f, 1.f, 0.f, 1.f)
+            #define WATER_COLOR       float4(0.f, 0.f, 1.f, 1.f)
             #define MOUNTAIN_COLOR    float4(1.f, 0.f, 0.f, 1.f)
             #define FOREST_COLOR      float4(1.f, 1.f, 0.f, 1.f)
 
+            float bias(float t, float b) {
+                return (t / ((((1.0 / b) - 2.0) * (1.0 - t)) + 1.0));
+            }
+            
             float noise2Df(float2 p) {
                 return frac(sin(dot(p, float2(127.1, 311.7))) * 43758.5453);
+            }
+
+            float2 noise2Dv(float2 p ) {
+                return frac(sin(float2(dot(p, float2(127.1, 311.7)), dot(p, float2(269.5,183.3)))) * 43758.5453);
             }
 
             float cosineInterpolate(float a, float b, float t)
@@ -70,6 +80,23 @@ Shader "Hidden/EdgePostProcess"
                 return total;
             }
 
+            float WorleyNoise(float2 uv) {
+                uv *= 10.0; // Now the space is 10x10 instead of 1x1. Change this to any number you want.
+                float2 uvInt = floor(uv);
+                float2 uvFract = frac(uv);
+                float minDist = 1.0; // Minimum distance initialized to max.
+                for(int y = -1; y <= 1; ++y) {
+                    for(int x = -1; x <= 1; ++x) {
+                        float2 neighbor = float2(float(x), float(y)); // Direction in which neighbor cell lies
+                        float2 p = noise2Dv(uvInt + neighbor); // Get the Voronoi centerpoint for the neighboring cell
+                        float2 diff = neighbor + p - uvFract; // Distance between fragment coord and neighbor’s Voronoi point
+                        float dist = length(diff);
+                        minDist = min(minDist, dist);
+                    }
+                }
+                return minDist;
+            }
+
             float4 convertToGreyscale(float4 col)
             {
                 float greyVal = dot(col, float4(0.21, 0.72, 0.07, 0.0));
@@ -97,10 +124,10 @@ Shader "Hidden/EdgePostProcess"
                 float4 color = baseColor;
 
                 // If asset mask, we should not apply outlines
-                if (distance(baseColor, MOUNTAIN_COLOR) <= 0.5) {
+                if (distance(baseColor, MOUNTAIN_COLOR) <= 0.75) {
                     return baseColor;
                 }
-                if (distance(baseColor, FOREST_COLOR) <= 0.5) {
+                if (distance(baseColor, FOREST_COLOR) <= 0.75) {
                     return baseColor;
                 }
                     
@@ -118,9 +145,15 @@ Shader "Hidden/EdgePostProcess"
                         // Get current UV coordinate
                         float2 offset = float2(i, j);
 
+                        float4 neighborPixelValue = tex2D(_MainTex, (texUV + offset * delta));
+
+                        if (distance(neighborPixelValue, FOREST_COLOR) <= 0.75 || distance(neighborPixelValue, MOUNTAIN_COLOR) <= 0.85) {
+                            continue;
+                        }
+
                         // Sample input texture
-                        horizontalSum += convertToGreyscale(tex2D(_MainTex, (texUV + offset * delta))) * horizontal[kx + 3 * ky];
-                        verticalSum += convertToGreyscale(tex2D(_MainTex, (texUV + offset * delta))) * vertical[kx + 3 * ky];
+                        horizontalSum += convertToGreyscale(neighborPixelValue) * horizontal[kx + 3 * ky];
+                        verticalSum += convertToGreyscale(neighborPixelValue) * vertical[kx + 3 * ky];
                     }
                 }
                 
@@ -130,11 +163,45 @@ Shader "Hidden/EdgePostProcess"
                 // Any outline should be black
                 if (length(sumColor.xyz) <= 1.5) color = float4(0.0, 0.0, 0.0, 0.0);
 
-                // FBM pass for paper look
-                float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
+                // Coastline hatching
+                float deltaOffset = WorleyNoise(50.0 * texUV.xy) * 0.025;
+                delta = float2(0.002 + deltaOffset, 0.002); // outline thickness
+                horizontalSum = float4(0.0, 0.0, 0.0, 0.0);
+                verticalSum = float4(0.0, 0.0, 0.0, 0.0);
+                
+                for (int m = -1; m <= 1; m++) {
+                    for (int n = -1; n <= 1; n++) {
+                        // Matrix coordinates
+                        int kx = m + 1;
+                        int ky = n + 1;
 
-                //return lerp(baseColor, color, 0.5) * fbm;
-                //return float4(convertToGreyscale(baseColor));
+                        // Get current UV coordinate
+                        float2 offset = float2(m, n);
+
+                        // Sample input texture
+                        horizontalSum += tex2D(_MainTex, (texUV - offset * delta)) * horizontal[kx + 3 * ky];
+                        verticalSum += tex2D(_MainTex, (texUV - offset * delta)) * vertical[kx + 3 * ky];
+                    }
+                }
+                
+                sum = sqrt(horizontalSum * horizontalSum + verticalSum * verticalSum);
+                float3 outlineColor = float3(0.0, 0.0, 0.0);
+                if (length(sum) >= 0.5) outlineColor = float3(1.0, 0.0, 0.0);
+                
+                // Horizontal lines
+                float u = fmod(texUV.y, 0.01);
+                float fbm = fbm2D(100.0 * texUV.xy);
+                if (u < 0.002 && u > 0.0) {
+                    if (distance(color, float4(1.0, 0.9, 0.7, 1.0)) <= 0.2 || distance(color, MOUNTAIN_COLOR) <= 0.5 || distance(color, FOREST_COLOR) <= 0.5) {
+                        //col = vec3(0.68, 0.54, 0.39);
+                    }
+                    else {
+                        if (distance(outlineColor, float3(1.0, 0.0, 0.0)) <= 0.5) {
+                            color = lerp(float4(0.0, 0.0, 0.0, 1.0), float4(0.74, 0.76, 0.89, 1.0), bias(fbm, 0.15)); 
+                        }       
+                    }
+                }
+                
                 return color;
             }	
 
