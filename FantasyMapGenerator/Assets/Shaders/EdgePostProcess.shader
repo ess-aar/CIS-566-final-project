@@ -24,9 +24,15 @@ Shader "Hidden/EdgePostProcess"
             #define WATER_COLOR       float4(0.f, 0.f, 1.f, 1.f)
             #define MOUNTAIN_COLOR    float4(1.f, 0.f, 0.f, 1.f)
             #define FOREST_COLOR      float4(1.f, 1.f, 0.f, 1.f)
+            #define LINEGRID          0.95
+            #define LINEWIDTH         0.61
 
             float bias(float t, float b) {
                 return (t / ((((1.0 / b) - 2.0) * (1.0 - t)) + 1.0));
+            }
+
+            float noise1Df(float x) {
+                return sin(2.0 * x) + sin(PI * x);
             }
             
             float noise2Df(float2 p) {
@@ -41,6 +47,32 @@ Shader "Hidden/EdgePostProcess"
             {
                 float cos_t = (1.f - cos(t * PI)) * 0.5f;
                 return lerp(a, b, cos_t);
+            }
+
+            float interpolateNoise1D(float x) {
+                int intX = int(floor(x));
+                float fractX = frac(x);
+
+                float v1 = noise1Df(float(intX));
+                float v2 = noise1Df(float(intX + 1));
+                return lerp(v1, v2, fractX);
+            }
+
+            float fbm1D(float x) 
+            {
+                float total = 0.f;
+                float persistence = 0.5f;
+                int octaves = 8;
+
+                for(int i = 1; i <= octaves; i++) {
+                    float freq = pow(2.f, float(i));
+                    float amp = pow(persistence, float(i));
+
+                    float perlin = interpolateNoise1D(x * freq);
+                    total += amp * (0.5 * (perlin + 1.0));
+                }
+
+                return total;
             }
 
             float interpolateNoise2D(float x, float y) 
@@ -163,6 +195,34 @@ Shader "Hidden/EdgePostProcess"
                 // Any outline should be black
                 if (length(sumColor.xyz) <= 1.5) color = float4(0.0, 0.0, 0.0, 0.0);
 
+                // Animated water
+                if (distance(color, float4(0.74, 0.76, 0.89, 1.0)) <= 0.5) {
+                    float4 line_col = color;
+                    
+                    float y_based_grid = texUV.y / LINEGRID;
+                    float y_pow = pow(texUV.y + 4.0f, 0.75);
+                    float x_fbm = fbm1D(100.0f + texUV.x / 5.0f);
+                    float time_movement = (2.97f * (_Time * 25.0f + 300.0f) * y_pow) / (5.0f + 2.25f * x_fbm);
+                    float x_amp = texUV.x * 25.0f;
+                    float y_amp = 5.0 * texUV.y;
+                    float xy_fbm = fbm2D(50.0 * texUV);
+                    float sinusoid_val = 1.4 * sin(x_amp + y_amp + time_movement + pow(texUV.x, 5.0));
+                    
+                    if (frac(sinusoid_val + y_based_grid) * xy_fbm < LINEWIDTH) {
+                        line_col = float4(0.45, 0.9, 1.0, 1.0) * 1.25;
+                        float fbm_val = fbm2D(5.0 * texUV + 10.0f + _Time * 0.5f);
+                        float worley_val_0 = WorleyNoise(0.1 * texUV + 20.0f);
+                        float worley_val_1 = WorleyNoise(0.5 * texUV - 17.0f);
+                        float worley_val_2 = WorleyNoise(0.25 * texUV - 35.0f);
+                        line_col = lerp(line_col, float4(0.41, 0.55, 0.98, 1.0) * 1.2f * fbm_val, bias(fbm_val,0.355));
+                        line_col = lerp(line_col, color, bias(worley_val_0, 0.23475));
+                        line_col = lerp(line_col, color, bias(worley_val_1, 0.23));
+                        line_col = lerp(line_col, color, bias(worley_val_2, 0.134));
+                    }
+
+                    color = lerp(color, line_col, 1.0);
+                }
+
                 // Coastline hatching
                 float deltaOffset = WorleyNoise(50.0 * texUV.xy) * 0.025;
                 delta = float2(0.002 + deltaOffset, 0.002); // outline thickness
@@ -192,7 +252,7 @@ Shader "Hidden/EdgePostProcess"
                 float u = fmod(texUV.y, 0.01);
                 float fbm = fbm2D(100.0 * texUV.xy);
                 if (u < 0.002 && u > 0.0) {
-                    if (distance(color, float4(1.0, 0.9, 0.7, 1.0)) <= 0.2 || distance(color, MOUNTAIN_COLOR) <= 0.5 || distance(color, FOREST_COLOR) <= 0.5) {
+                    if (distance(baseColor, float4(1.0, 0.9, 0.7, 1.0)) <= 0.2 || distance(baseColor, MOUNTAIN_COLOR) <= 0.5 || distance(baseColor, FOREST_COLOR) <= 0.5) {
                         //col = vec3(0.68, 0.54, 0.39);
                     }
                     else {
