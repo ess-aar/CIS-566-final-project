@@ -22,6 +22,7 @@ public class WFC : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        resetTileWeights();
         generateTilesWithRotation();
         generateTileEdgeData();
         this.grid.SetupGrid(tile_prefabs);
@@ -54,6 +55,7 @@ public class WFC : MonoBehaviour
               generateSeeds();
             }
             else {
+
               setSeeds();
               propagateSeeds();
             }
@@ -76,14 +78,46 @@ public class WFC : MonoBehaviour
             if (cells_to_collapse.Count == 0)
             {
                 CancelInvoke();
+
+                //if (!done)
+                //{
+                //    Debug.Log("Coverage:");
+                //    for (int i = 0; i < this.grid.feature_coverage.Length; ++i)
+                //    {
+                //        Debug.Log(i + ": " + this.grid.feature_coverage[i]);
+                //    }
+                //    done = true;
+                //}
             }
+        }
+    }
+
+    public void setSeedNumber(int new_numSeeds)
+    {
+        this.num_seeds = new_numSeeds;
+    }
+
+    public void resetTileWeights()
+    {
+        foreach (Tile ta in original_tile_prefabs)
+        {
+            ta.weighting = 1;
+        }
+    }
+
+
+    public void setTileWeight(int tile_ID, int tile_weight)
+    {
+        for (int i = 0; i < 6; ++i)
+        {
+            this.tile_prefabs[tile_ID + i].prefab.weighting = tile_weight;
         }
     }
 
     void resetWFC()
     {
         this.cur_iter = 0;
-        this.grid.resetGrid();
+        this.grid.resetGrid(this.tile_prefabs);
     }
 
     public void initiateRestart()
@@ -161,11 +195,13 @@ public class WFC : MonoBehaviour
             int retries = 10;
             while (!seedCell.is_cell_collapsed)
             {
-                int rand_index = Random.Range(0, seedCell.available_tiles.Count - 1);
+                //int rand_index = Random.Range(0, seedCell.available_tiles.Count - 1);
                 //int rand_index = 13;
-                TileInterface t = seedCell.available_tiles[rand_index];
+                //TileInterface t = seedCell.available_tiles[rand_index];
+
+                TileInterface t = this.grid.getRandomTileBasedOnWeight_2(seedCell);
                 //Debug.Log("Tile Selected as Seed: " + rand_index);
-                
+
                 can_use_seed = this.grid.checkPropagate(t, this_cell_pos);
                 // Debug.Log("can use tile : " + t.prefab.name + " at (" + this_cell_pos.x + ", " + this_cell_pos.y + ") ? " + can_use_seed);
 
@@ -174,6 +210,7 @@ public class WFC : MonoBehaviour
                     
                   // collapse cell
                   seedCell.collapseCell(t);
+                  this.grid.updateCoverage(t);
                   this.grid.collapsedCellCount++;
 
                   // propogate entropy
@@ -305,6 +342,7 @@ public class WFC : MonoBehaviour
                 {
                     // collapse each cell
                     cell.collapseCell(tile_to_instantiate);
+                    this.grid.updateCoverage(tile_to_instantiate);
                     this.grid.collapsedCellCount++;
 
                     // propogate entropy decrease to neighbors
