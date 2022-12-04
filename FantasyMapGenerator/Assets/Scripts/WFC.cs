@@ -16,12 +16,14 @@ public class WFC : MonoBehaviour
     public bool restart_button = false;
     public bool clear_button = false;
     public bool done = false;
+    
 
 
 
     // Start is called before the first frame update
     void Start()
     {
+
         resetTileWeights();
         generateTilesWithRotation();
         generateTileEdgeData();
@@ -42,7 +44,7 @@ public class WFC : MonoBehaviour
               propagateSeeds();
             }
 
-            InvokeRepeating("performWFC2", 1.0f, 0.005f);
+            InvokeRepeating("performWFC2", 1.0f, 0.0005f);
         }
 
         if (restart_button)
@@ -60,7 +62,7 @@ public class WFC : MonoBehaviour
               propagateSeeds();
             }
 
-            InvokeRepeating("performWFC2", 1.0f, 0.005f);
+            InvokeRepeating("performWFC2", 1.0f, 0.0005f);
 
             restart_button = false;
         }

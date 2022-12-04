@@ -3,6 +3,7 @@ Shader "Hidden/AssetPostProcess"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+		_CameraPos ("camera_position", Vector) = (0,0,0,0)
     }
     SubShader
     {
@@ -15,6 +16,8 @@ Shader "Hidden/AssetPostProcess"
             #include "UnityCG.cginc"
 
             uniform sampler2D _MainTex;
+			uniform float4 _CameraPos;
+			uniform float4x4 _InvCamProjMatrix;
 
             #define PI                 3.1415926535897932384626433832795
             #define LAND_COLOR         float4(0.f, 1.f, 0.f, 1.f)
@@ -262,6 +265,7 @@ Shader "Hidden/AssetPostProcess"
             {
                 // Get uv coordinates
                 float2 texUV = input.uv;
+				
                 //float2 gridUV = input.uv; // TODO: divide UV by screen dims to avoid stretching
 
                 float2 fragCoord = input.uv * _ScreenParams.xy;
