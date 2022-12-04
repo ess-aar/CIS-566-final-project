@@ -3,6 +3,7 @@ Shader "Hidden/ColorPostProcess"
     Properties
     {
         _MainTex ("Texture", 2D) = "white" {}
+		_CameraPos ("camera_position", Vector) = (0,0,0,0)
     }
     SubShader
     {
@@ -15,6 +16,8 @@ Shader "Hidden/ColorPostProcess"
             #include "UnityCG.cginc"
 
             uniform sampler2D _MainTex;
+			uniform float4 _CameraPos;
+			uniform float4x4 _InvCamProjMatrix;
 
             #define PI                3.1415926535897932384626433832795
             #define EPSILON           0.001
