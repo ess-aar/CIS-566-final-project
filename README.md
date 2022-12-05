@@ -7,7 +7,7 @@
 
 Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. Our tool is inspired by such maps. For this project our main goal was to develop a tool for visualizing and creating these maps procedurally. Our tool allows users to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
 
-This tool is implemented in Unity 3D. You can access the tool here.
+This tool is implemented in Unity 3D. You can access the tool [here](https://play.unity.com/mg/other/webglbuild2-12).
 
 
 ## Results
