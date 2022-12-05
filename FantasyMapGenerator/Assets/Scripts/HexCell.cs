@@ -84,15 +84,17 @@ public class HexCell : MonoBehaviour
         this.entropy = 1000000;
     }
     
-    public void fillCell(Tile t)
+    public bool fillCell(Tile t)
     {
-        if (this.tile != null) return;
+        if (this.tile != null) return false;
 
         this.tile = Instantiate<Tile>(t);
         this.tile.transform.SetParent(transform, false);
         this.tile.transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
         this.is_cell_collapsed = true;
         this.entropy = 1000000;
+
+        return true;
     }
 
     public void removeCell()

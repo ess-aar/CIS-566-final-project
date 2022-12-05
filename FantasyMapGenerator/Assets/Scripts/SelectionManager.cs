@@ -132,15 +132,18 @@ public class SelectionManager : MonoBehaviour
                 // Debug.Log("Raycast: " + hit.transform);
                 // hit.transform.GetComponent<Renderer>().material = selectionMaterial;
                 var cell = hit.transform.GetComponent<HexCell>();
-                cell.fillCell(tilePrefabs[activeTileIdx]);
+                bool addCell = cell.fillCell(tilePrefabs[activeTileIdx]);
                 // cell.tile.GetComponent<Renderer>().material = selectionMaterial;
                 // Debug.Log("Raycast: " + cell.x + ", " + cell.z);
 
-                var seedCell = new SeedCell();
-                seedCell.cell = cell;
-                seedCell.feature = (HexMetrics.TerrainFeature)activeTileIdx;
+                if (addCell)
+                {
+                  var seedCell = new SeedCell();
+                  seedCell.cell = cell;
+                  seedCell.feature = (HexMetrics.TerrainFeature)activeTileIdx;
 
-                if(!selection.Contains(seedCell)) selection.Add(seedCell);
+                  if(!selection.Contains(seedCell)) selection.Add(seedCell);
+                }
             }
     
             yield return null;

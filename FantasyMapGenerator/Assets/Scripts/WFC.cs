@@ -54,7 +54,6 @@ public class WFC : MonoBehaviour
               generateSeeds();
             }
             else {
-
               setSeeds();
               propagateSeeds();
             }
