@@ -12,7 +12,7 @@ This tool is implemented in Unity 3D. You can access the tool here.
 
 ## Results
 
-
+<img src="/img/project_gif.gif">
 
 ## Design Document
 
