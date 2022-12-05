@@ -5,14 +5,19 @@
 
 ## Design Document
 
-#### Introduction
+<details>
+  <summary>Introduction</summary>
 Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. We would like to develop a tool for visualizing and creating these maps procedurally. We want to allow users to be able to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
+</details>
 
-#### Goal
+<details>
+  <summary>Goals</summary>
 We intend to produce a 2D hexagonal fantasy map generator using Wave Function Collapse in the Unity game engine. We plan to render our procedurally generated map data in the style of the references below.
+</details>
 
-#### Inspiration/reference:
-
+<details>
+  <summary>Inspiration/Reference</summary>
+<br>
 <details>
   <summary>Fantasy Map Reference Images</summary>
   
@@ -48,60 +53,95 @@ We intend to produce a 2D hexagonal fantasy map generator using Wave Function Co
 
   [Roll For Fantasy Randomized Tile-based Map Generator](https://rollforfantasy.com/tools/map-creator.php)
 </details>
+</details>
 
-#### Specification:
-- 2D Wave Function Collapse: Implementation of the Wave Function Collapse algorithm
-- Hexagonal Tiles: Use hexagonal tiles for the WFC map generation
-- Non-photorealistic Rendering: Rendering of assets using shaders that provide features like cross-hatching, paint splotches, and outline generation
-- Interactivity: Manual seed placement or autoregeneration of map
 
-#### Techniques:
-- 2D Hexagonal Grid made up of 6-sided tiles with a map terrain feature type on each edge of a tile. Each tile has a color mask that defines the feature types that can occupy the tile over its domain.
-- Wave Function Collapse to place tiles in the grid based on rules that define what tiles edges can be placed together (i.e. we will only connect two tiles if the
-neighboring edge is the same feature type like water).
-- For rendering, we plan to use common NPR concepts such as cross-hatching, paint splotches, and outline generation. We will most likely write these as Unity shaders. Additionally, we may add post-process render passes for adding rivers, roads, labels, compass, torn edges, and sea monsters.
-- Unity built-in modules for cursor-based selection and GUI rendering
+<details>
+  <summary>Specification</summary>
+  <ul>
+    <li>2D Wave Function Collapse: Implementation of the Wave Function Collapse algorithm</li>
+    <li>Hexagonal Tiles: Use hexagonal tiles for the WFC map generation</li>
+    <li>Non-photorealistic Rendering: Rendering of assets using shaders that provide features like cross-hatching, paint splotches, and outline generation</li>
+    <li>Interactivity: Manual seed placement or autoregeneration of map</li>
+  </ul>
+</details>
 
-#### Design:
+<details>
+  <summary>Techniques</summary>
+    <ul>
+      <li>2D Hexagonal Grid made up of 6-sided tiles with a map terrain feature type on each edge of a tile. Each tile has a color mask that defines the feature types that can occupy the tile over its domain.</li>
+      <li>Wave Function Collapse to place tiles in the grid based on rules that define what tiles edges can be placed together (i.e. we will only connect two tiles if the neighboring edge is the same feature type like water).</li>
+      <li>For rendering, we plan to use common NPR concepts such as cross-hatching, paint splotches, and outline generation. We will most likely write these as Unity shaders. Additionally, we may add post-process render passes for adding rivers, roads, labels, compass, torn edges, and sea monsters.</li>
+      <li>Unity built-in modules for cursor-based selection and GUI rendering</li>
+  </ul>
+</details>
 
+<details>
+  <summary>Design</summary>
 <img width="482" alt="PG Project Flow Diagram" src="https://user-images.githubusercontent.com/90112787/200188201-6eef1f37-ee3b-49e3-89b8-66b1a7b93501.png">
+</details>
 
-#### Timeline:
-Milestone 1:
-- Everyone
-  - Learn Unity scripting and shading
-  - Understand and design approach to Wave Function Collapse Algorithm
-- Nick & Sakshi
-  - Basic Asset Creation (i.e. basic combination of sea, shore, and land tiles)
-  - Creation of hexagonal grid and tiles
-  - 2D Hexagonal Wave Function Collapse development
-- Megan
-  - Shade based on color map from 2D hexagonal tiles in Unity
-  - Initial prototype of NPR post-process techniques in Unity
-  - Research and prototype how to represent advanced features on tiles (mountains, forests, etc.)
+<details>
+  <summary>Timeline</summary>
+<h4>Milestone 1:</h4>
+<ul>
+  <li>Everyone</li>
+    <ul>
+      <li>Learn Unity scripting and shading</li>
+      <li>Understand and design approach to Wave Function Collapse Algorithm</li>
+    </ul>
+  <li>Nick & Sakshi</li>
+    <ul>
+      <li>Basic Asset Creation (i.e. basic combination of sea, shore, and land tiles)</li>
+      <li>Creation of hexagonal grid and tiles</li>
+      <li>2D Hexagonal Wave Function Collapse development</li>
+    </ul>
+  <li>Megan</li>
+    <ul>
+      <li>Shade based on color map from 2D hexagonal tiles in Unity</li>
+      <li>Initial prototype of NPR post-process techniques in Unity</li>
+      <li>Research and prototype how to represent advanced features on tiles (mountains, forests, etc.)</li>
+    </ul>
+</ul>
 
-Milestone 2:
-- Everyone
-  - Polish leftover features from the previous milestone
-  - Asset creation and polish (more advanced terrain and sea features such as mountain ranges, forests, lakes, castles, etc.)
-- Nick
-  - More post-processing filters (roads, rivers, labels, compass, etc.)
-- Sakshi
-  - UI features and tooling - clear canvas, regeneration of map, and inventory to select tiles
-- Megan
-  - Continue working on shaders for extra features (mountains, forests, lakes, antique painterly look, etc.)
-- If time permits
-  - Inifinite map generation :O
-  - Extra shader types (e.g. Lord of the Rings or Narnia style)
+<h4>Milestone 2:</h4>
+<ul>
+  <li>Everyone</li>
+    <ul>
+      <li>Polish leftover features from the previous milestone</li>
+      <li>Asset creation and polish (more advanced terrain and sea features such as mountain ranges, forests, lakes, castles, etc.)</li>
+    </ul>
+  <li>Nick</li>
+    <ul>
+      <li>More post-processing filters (roads, rivers, labels, compass, etc.)</li>
+    </ul>
+  <li>Sakshi</li>
+    <ul>
+      <li>UI features and tooling - clear canvas, regeneration of map, and inventory to select tiles</li>
+    </ul>
+  <li>Megan</li>
+    <ul>
+      <li>Continue working on shaders for extra features (mountains, forests, lakes, antique painterly look, etc.)</li>
+    </ul>
+  <li>If time permits</li>
+    <ul>
+      <li>Inifinite map generation :O</li>
+      <li>Extra shader types (e.g. Lord of the Rings or Narnia style)</li>
+    </ul>
+</ul>
 
-Final Submission:
-- Everyone
-  - Polish leftover features from the previous milestones
-  - Polish assets and add any extra visual features
-  - Finish UI
-  - Look into ways to publish project online (live demo)
-  - Finalize README and presentation
-
+<h4>Final Submission:</h4>
+<ul>
+  <li>Everyone</li>
+    <ul>
+      <li>Polish leftover features from the previous milestones</li>
+      <li>Polish assets and add any extra visual features</li>
+      <li>Finish UI</li>
+      <li>Look into ways to publish project online (live demo)</li>
+      <li>Finalize README and presentation</li>
+    </ul>
+</ul>
+</details>
 
 ## Milestone 1
 
@@ -367,3 +407,4 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
 
 </details>
 
+## Final Submission
