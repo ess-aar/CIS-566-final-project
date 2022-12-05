@@ -434,6 +434,9 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
 <details>
   <summary><b>Asset Updates</b></summary>
   We cleaned up the basic assets to make the lines more organic and continous. This changed the look of the output to be more smooth. In addition, we included tiles for <b>rivers</b>, i.e., tiles with 2 water edges not adjacent to eachother. We included a way to enable & disable the river tiles in the output using the UI.
+  <br>
+  <img src="/img/assets_3.png">
+
 </details>
 
 <details>
@@ -458,7 +461,18 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   <details>
     <summary><b>Map Frame</b></summary>
     Every reference map we saw had a frame that adds to the look of the map. To bring that same aesthetic to our tool, we wanted to add frame. Our frame is made using 2D SDFs for the outlines and FBM for the rough edges. We included some layered FBM to give the borders a weathered look based on the distance of from the center of the screen as well as the distance from the screen edges. The placement of the frame is relative to screen size.
+ <table>
+  <tr>
+    <td><img src="/img/frame_1.png"></td>
+    <td><img src="/img/frame_2.png"></td> 
+  </tr>
+  <tr>
+    <td><img src="/img/frame_3.png"></td>
+    <td><img src="/img/frame_5.png"></td> 
+  </tr>
+</table>
   </details>
+  
   
 </details>
 
