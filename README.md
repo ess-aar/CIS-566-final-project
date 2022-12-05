@@ -3,6 +3,9 @@
 **University of Pennsylvania CIS 566 Fall 2022, Final Project**
 * Megan Reddy, Nick Moon, and Sakshi Rathore
 
+## Overview
+
+## Results
 
 ## Design Document
 
@@ -463,3 +466,20 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   </ul>
 </details>
 
+
+<details>
+  <summary><b>Camera</b></summary>
+</details>
+
+## Post Mortem
+Overall, we really enjoyed working on this project. In the end, we accomplished all the main goals we set out from the beginning including 
+- hexagonal Wave Function Collapse, 
+- non-photorealistically rendered map, and 
+- basic user interactivity
+We planned out our tasks and goals for each milestone, which helped the project progress smoothly. Additionally, each person was given clear tasks which allowed us to make good progress in both the WFC and the Rendering parts of the project simultaneously. We maintained a task board throughout which made project management easy and kept everyone up to speed with the progress.
+For the most part we did not pivot from the development plan we set out with. Though there are still a lot of ideas, features and feedback we would have liked to implement, we are still happy with what we have accomplished with the time frame of the project.
+Some of the features we would like to implement as we continue to work on this project are:
+- Better backtracking for the WFC.
+- More assets and features such as - castles, villages, roads, sea monsters, etc.
+- More geographycally accurate feature/biome placement.
+- Advanced interactivity, e.g. infinite map generation based on the camera movement.
