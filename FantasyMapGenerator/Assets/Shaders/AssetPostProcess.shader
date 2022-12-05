@@ -419,16 +419,16 @@ Shader "Hidden/AssetPostProcess"
                 return color;
             }
 
-            float4 drawFrame(float4 color, float2 texUV)
+            float4 drawFrame(float4 color, float2 texUV, float2 pos)
             {
                 // Frame
                 float thickness = 0.01;
                 float thickness2 = 0.007;
                 float offset = 0.02;
                 float offset2 = 0.07;
-                
-                float ybound = 0.87;
-                float xbound = 1.77;
+
+                float ybound = pos.y;
+                float xbound = pos.x;
         
                 if (texUV.x < -xbound || texUV.x > xbound || texUV.y < -ybound || texUV.y > ybound)
                 {
@@ -488,7 +488,8 @@ Shader "Hidden/AssetPostProcess"
 
                 // Draw compass
                 float2 maxDim = _ScreenParams.xy / _ScreenParams.y;
-                float2 compassPos = float2(maxDim.x + 0.9, 0.0);
+                float2 frameBounds = maxDim - 0.15;
+                float2 compassPos = float2(frameBounds.x - 0.025, 0.0);
                 color = drawCompass(color, compassPos, gridUV);
 
                 // Uncomment for visualizing grid values
@@ -503,7 +504,7 @@ Shader "Hidden/AssetPostProcess"
                 // FBM pass for paper look
                 float fbm = pow(fbm2D(5.0 * gridUV), 1.0);
 
-                color = drawFrame(color, gridUV);
+                color = drawFrame(color, gridUV, frameBounds);
 
                 return color * fbm;
             }

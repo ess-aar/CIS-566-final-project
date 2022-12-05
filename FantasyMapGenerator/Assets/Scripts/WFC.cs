@@ -16,9 +16,6 @@ public class WFC : MonoBehaviour
     public bool restart_button = false;
     public bool clear_button = false;
     public bool done = false;
-    
-
-
 
     // Start is called before the first frame update
     void Start()
