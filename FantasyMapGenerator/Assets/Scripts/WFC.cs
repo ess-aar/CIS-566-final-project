@@ -21,8 +21,9 @@ public class WFC : MonoBehaviour
     void Start()
     {
 
-        resetTileWeights();
+        
         generateTilesWithRotation();
+        resetTileWeights();
         generateTileEdgeData();
         this.grid.SetupGrid(tile_prefabs);
     }
@@ -101,6 +102,29 @@ public class WFC : MonoBehaviour
         {
             ta.weighting = 1;
         }
+
+        // land
+        setTileWeight(0, 147);
+
+        // water
+        setTileWeight(6, 134);
+
+        // coast
+        setTileWeight(12, 2);
+        setTileWeight(18, 2);
+        setTileWeight(24, 2);
+        setTileWeight(30, 2);
+        setTileWeight(36, 2);
+
+        // mountain
+        setTileWeight(42, 15);
+
+        // forest
+        setTileWeight(78, 15);
+
+        // rivers
+        setTileWeight(114, 1);
+        setTileWeight(120, 1);
     }
 
 
