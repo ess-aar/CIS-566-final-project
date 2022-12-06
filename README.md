@@ -7,12 +7,15 @@
 
 Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. Our tool is inspired by such maps. For this project our main goal was to develop a tool for visualizing and creating these maps procedurally. Our tool allows users to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
 
-This tool is implemented in Unity 3D. You can access the tool [here](https://play.unity.com/mg/other/webglbuild2-12).
+This tool is implemented in Unity 3D. You can try our tool [here](https://play.unity.com/mg/other/webglbuild2-12)!
 
+Additionally, you can view our presentation slide deck [here](https://docs.google.com/presentation/d/17e4OC9rP3iqA-bK-BJn6z4du41TK7l12LN6roV2ZG8c/edit?usp=sharing).
 
 ## Results
 
 <img src="/img/project_gif.gif">
+<img width="839" height="418" src="/img/hatching.PNG">
+<img width="839" height="418" src="/img/djtyjdty.PNG">
 
 ## Design Document
 
@@ -446,16 +449,23 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   <details>
     <summary><b>Coastline Hatching</b></summary>
     In our reference images, we noticed that the coastline contours have a horizontal hatched line effect. In order to create this effect in the shader, we used the mod operation to create horizontal lines across the entire screen, and then masked out the areas that we did not want to be affected by the contours. We used the sobel filter with a thich radius to create this mark and perturbed it using FBM so that the contours would be of varying lengths. Any area that was not within this mask and not above water, would not recieve contouring. Additionally, we mixed the contour color with worley noise to create a more hand-drawn look.
+    <br><img src="/img/hatching.PNG">
   </details>
   
   <details>
     <summary><b>Animated Water</b></summary>
-    
+    <br><img src="/img/wetywrtyw.gif">
+    The water feature of map was animated using a post process. Before the addition of animation, the procedural water texture simply looked like this static image:
+    <br><img src="/img/old_Water.PNG">
+    The water is animated using a sin function based on time, as well as fractal brownian motion and multiple time, amplitude and phase offsets to get the motion.
+    To have the white water waves repeating, the result of the fract function using this animated sin function is compared with line width and repeat variables. Then,
+    a series of worley noise and FBM layer on top of each other to get a more heterogeneous look to the coloring and fading of the water texture.
   </details>
   
   <details>
     <summary><b>Compass</b></summary>
     The compass was created with 2D SDFs. Specifically, we used isoceles triangles to represent the directions and circles for the center & other larger shapes. We also used a 2D rotation matrix to correctly orient and place the SDFs around the center circles. The compass is positioned relative to the right edge of the map frame to ensure it does not go out of view.
+    <br><img src="/img/compass.PNG">
   </details>
   
   <details>
@@ -484,12 +494,25 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
     <li>Sliders to control the <b>weights</b> of land, water, coastline, mountain, forest and river tiles. All slider values range from 1 - 200 (expect river, which ranges from 0 - 50, so you can turn choose to have no rivers in your scene).</li>
     <li>Press Space bar to <b>toggle UI</b></li>
     <li>Press C key to <b>enable free camera</b> movement</li>
+    <li>Press and hold Middle mouse button to <b>pan the camera</b> while in free camera mode</li>
+    <li>Scroll the Middle mouse button to <b>zoom the camera in and out</b> while in free camera mode</li>
   </ul>
 </details>
 
 
 <details>
   <summary><b>Camera</b></summary>
+  The camera is able to be controlled when the "free camera" toggle is enabled (i.e. by hitting "C" key). This allows for panning and zooming the camera. This level
+  of control is especially appreciated when the grid size of the map is enlarged to enable traversal of a procedurally generated large-scale land mass.
+  <br>Zoomed out image of a large map:
+  <br><img src="/img/zoom_out.PNG">
+  <br>Zoomed in image of a large map:
+  <br><img src="/img/zoom_in.PNG">
+</details>
+
+<details>
+  <summary><b>Publishing to Unity Play</b></summary>
+  We built and published our project to Unity Play as a WebGL app, which can be viewed live and played in-browser <a href="https://play.unity.com/mg/other/webglbuild2-12">here</a>. This WebGL version runs a bit slower than our local Unity build, but still includes the full functionality of our tool. The deployment process was simple; we installed the WebGL Publisher package in Unity and then used this to build and run our application. Once this step was completed, we published to Unity Play using the "Publish" tab in the Unity editor.   
 </details>
 
 ## Post Mortem
@@ -499,11 +522,11 @@ Overall, we really enjoyed working on this project. In the end, we accomplished 
 - basic user interactivity
 
 We planned out our tasks and goals for each milestone, which helped the project progress smoothly. Additionally, each person was given clear tasks which allowed us to make good progress in both the WFC and the Rendering parts of the project simultaneously. We maintained a task board throughout which made project management easy and kept everyone up to speed with the progress.
-For the most part we did not pivot from the development plan we set out with. Though there are still a lot of ideas, features and feedback we would have liked to implement, we are still happy with what we have accomplished with the time frame of the project.
+For the most part, we did not pivot from the development plan we set out with. Though there are still a lot of ideas, features and feedback we would have liked to implement, we are still happy with what we have accomplished within the time frame of the project.
 
 Some of the features we would like to implement as we continue to work on this project are:
 - Options to select from various artistic map styles.
 - Better backtracking for the WFC.
 - More assets and features such as - castles, villages, roads, sea monsters, etc.
-- More geographycally accurate feature/biome placement.
+- More geographically accurate feature/biome placement.
 - Advanced interactivity, e.g. infinite map generation based on the camera movement.
