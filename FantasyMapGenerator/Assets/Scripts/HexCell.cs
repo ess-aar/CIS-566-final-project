@@ -15,7 +15,6 @@ public class HexCell : MonoBehaviour
     public int num_unique_neighboring_features;
 
     public List<TileInterface> available_tiles; // tiles available to be placed in this cell
-    private List<TileInterface> original_tiles;
 
     public Vector2 getPosition()
     {
@@ -51,7 +50,6 @@ public class HexCell : MonoBehaviour
 
     public void setTilePrefabs(List<TileInterface> t_prefabs)
     {
-        this.original_tiles = t_prefabs;
         this.available_tiles = new List<TileInterface>();
         foreach (TileInterface t in t_prefabs)
         {
@@ -59,9 +57,9 @@ public class HexCell : MonoBehaviour
         }
     }
 
-    public void resetCell()
+    public void resetCell(List<TileInterface> tile_prefabs)
     {
-        this.setTilePrefabs(original_tiles);
+        this.setTilePrefabs(tile_prefabs);
         this.entropy = this.available_tiles.Count;
         if (this.tile != null)
         {
@@ -74,10 +72,10 @@ public class HexCell : MonoBehaviour
 
     public void collapseCell(TileInterface t)
     {
-        if (this.tile != null)
+        /*if (this.tile != null)
         {
           resetCell();
-        }
+        }*/
 
         this.tile = Instantiate<Tile>(t.prefab);
         this.tile.transform.SetParent(transform, false);
@@ -86,15 +84,17 @@ public class HexCell : MonoBehaviour
         this.entropy = 1000000;
     }
     
-    public void fillCell(Tile t)
+    public bool fillCell(Tile t)
     {
-        if (this.tile != null) return;
+        if (this.tile != null) return false;
 
         this.tile = Instantiate<Tile>(t);
         this.tile.transform.SetParent(transform, false);
         this.tile.transform.rotation = Quaternion.AngleAxis(-90, Vector3.up);
         this.is_cell_collapsed = true;
         this.entropy = 1000000;
+
+        return true;
     }
 
     public void removeCell()
