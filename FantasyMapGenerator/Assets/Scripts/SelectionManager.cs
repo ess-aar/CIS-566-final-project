@@ -24,6 +24,13 @@ public class SelectionManager : MonoBehaviour
     private int layerMask = 1 << 6; //LayerMask.GetMask("Cell");
     private List<SeedCell> selection = new List<SeedCell>();
     private Coroutine selectionRoutine;
+    GameObject UIRef;
+    bool isUIActive = true;
+
+    void Start()
+    {
+        UIRef = GameObject.Find("UIDocument");
+    }
 
     void Update()
     {   
@@ -39,6 +46,12 @@ public class SelectionManager : MonoBehaviour
             //Destroy(seedUIImage);
             seedUIImage.sprite = nullSprite;
             isSeedUIActive = false;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            isUIActive = !isUIActive;
+            UIRef.SetActive(isUIActive);
         }
 
     }
@@ -111,23 +124,26 @@ public class SelectionManager : MonoBehaviour
         while(true)
         {
             var ray = cam.ScreenPointToRay(Input.mousePosition);
-            Debug.Log("Mouse: " + Input.mousePosition.x + ", " + Input.mousePosition.y);
+            //Debug.Log("Mouse: " + Input.mousePosition.x + ", " + Input.mousePosition.y);
          
-            if(Physics.Raycast(ray, out var hit, 100, layerMask))
+            if(Physics.Raycast(ray, out var hit, 70, layerMask))
             {
               Debug.DrawLine(cam.transform.position, Input.mousePosition, Color.green);
                 // Debug.Log("Raycast: " + hit.transform);
                 // hit.transform.GetComponent<Renderer>().material = selectionMaterial;
                 var cell = hit.transform.GetComponent<HexCell>();
-                cell.fillCell(tilePrefabs[activeTileIdx]);
+                bool addCell = cell.fillCell(tilePrefabs[activeTileIdx]);
                 // cell.tile.GetComponent<Renderer>().material = selectionMaterial;
                 // Debug.Log("Raycast: " + cell.x + ", " + cell.z);
 
-                var seedCell = new SeedCell();
-                seedCell.cell = cell;
-                seedCell.feature = (HexMetrics.TerrainFeature)activeTileIdx;
+                if (addCell)
+                {
+                  var seedCell = new SeedCell();
+                  seedCell.cell = cell;
+                  seedCell.feature = (HexMetrics.TerrainFeature)activeTileIdx;
 
-                if(!selection.Contains(seedCell)) selection.Add(seedCell);
+                  if(!selection.Contains(seedCell)) selection.Add(seedCell);
+                }
             }
     
             yield return null;

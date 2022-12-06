@@ -3,16 +3,35 @@
 **University of Pennsylvania CIS 566 Fall 2022, Final Project**
 * Megan Reddy, Nick Moon, and Sakshi Rathore
 
+## About
+
+Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. Our tool is inspired by such maps. For this project our main goal was to develop a tool for visualizing and creating these maps procedurally. Our tool allows users to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
+
+This tool is implemented in Unity 3D. You can try our tool [here](https://play.unity.com/mg/other/webglbuild2-12)!
+
+Additionally, you can view our presentation slide deck [here](https://docs.google.com/presentation/d/17e4OC9rP3iqA-bK-BJn6z4du41TK7l12LN6roV2ZG8c/edit?usp=sharing).
+
+## Results
+
+<img src="/img/project_gif.gif">
+<img width="839" height="418" src="/img/hatching.PNG">
+<img width="839" height="418" src="/img/djtyjdty.PNG">
+
 ## Design Document
 
-#### Introduction
+<details>
+  <summary>Introduction</summary>
 Many fantasy books, movies, and games include a hand-drawn map describing the features of the fictional world. The art style is often influenced by historic medieval cartographic practices and the author's own vision. We would like to develop a tool for visualizing and creating these maps procedurally. We want to allow users to be able to envision their own world by defining key landmarks and autogenerating the rest of the world automatically in a way that is stylistically and artistically cohesive and similar to these much beloved fantasy maps.
+</details>
 
-#### Goal
+<details>
+  <summary>Goals</summary>
 We intend to produce a 2D hexagonal fantasy map generator using Wave Function Collapse in the Unity game engine. We plan to render our procedurally generated map data in the style of the references below.
+</details>
 
-#### Inspiration/reference:
-
+<details>
+  <summary>Inspiration/Reference</summary>
+<br>
 <details>
   <summary>Fantasy Map Reference Images</summary>
   
@@ -48,60 +67,95 @@ We intend to produce a 2D hexagonal fantasy map generator using Wave Function Co
 
   [Roll For Fantasy Randomized Tile-based Map Generator](https://rollforfantasy.com/tools/map-creator.php)
 </details>
+</details>
 
-#### Specification:
-- 2D Wave Function Collapse: Implementation of the Wave Function Collapse algorithm
-- Hexagonal Tiles: Use hexagonal tiles for the WFC map generation
-- Non-photorealistic Rendering: Rendering of assets using shaders that provide features like cross-hatching, paint splotches, and outline generation
-- Interactivity: Manual seed placement or autoregeneration of map
 
-#### Techniques:
-- 2D Hexagonal Grid made up of 6-sided tiles with a map terrain feature type on each edge of a tile. Each tile has a color mask that defines the feature types that can occupy the tile over its domain.
-- Wave Function Collapse to place tiles in the grid based on rules that define what tiles edges can be placed together (i.e. we will only connect two tiles if the
-neighboring edge is the same feature type like water).
-- For rendering, we plan to use common NPR concepts such as cross-hatching, paint splotches, and outline generation. We will most likely write these as Unity shaders. Additionally, we may add post-process render passes for adding rivers, roads, labels, compass, torn edges, and sea monsters.
-- Unity built-in modules for cursor-based selection and GUI rendering
+<details>
+  <summary>Specification</summary>
+  <ul>
+    <li>2D Wave Function Collapse: Implementation of the Wave Function Collapse algorithm</li>
+    <li>Hexagonal Tiles: Use hexagonal tiles for the WFC map generation</li>
+    <li>Non-photorealistic Rendering: Rendering of assets using shaders that provide features like cross-hatching, paint splotches, and outline generation</li>
+    <li>Interactivity: Manual seed placement or autoregeneration of map</li>
+  </ul>
+</details>
 
-#### Design:
+<details>
+  <summary>Techniques</summary>
+    <ul>
+      <li>2D Hexagonal Grid made up of 6-sided tiles with a map terrain feature type on each edge of a tile. Each tile has a color mask that defines the feature types that can occupy the tile over its domain.</li>
+      <li>Wave Function Collapse to place tiles in the grid based on rules that define what tiles edges can be placed together (i.e. we will only connect two tiles if the neighboring edge is the same feature type like water).</li>
+      <li>For rendering, we plan to use common NPR concepts such as cross-hatching, paint splotches, and outline generation. We will most likely write these as Unity shaders. Additionally, we may add post-process render passes for adding rivers, roads, labels, compass, torn edges, and sea monsters.</li>
+      <li>Unity built-in modules for cursor-based selection and GUI rendering</li>
+  </ul>
+</details>
 
+<details>
+  <summary>Design</summary>
 <img width="482" alt="PG Project Flow Diagram" src="https://user-images.githubusercontent.com/90112787/200188201-6eef1f37-ee3b-49e3-89b8-66b1a7b93501.png">
+</details>
 
-#### Timeline:
-Milestone 1:
-- Everyone
-  - Learn Unity scripting and shading
-  - Understand and design approach to Wave Function Collapse Algorithm
-- Nick & Sakshi
-  - Basic Asset Creation (i.e. basic combination of sea, shore, and land tiles)
-  - Creation of hexagonal grid and tiles
-  - 2D Hexagonal Wave Function Collapse development
-- Megan
-  - Shade based on color map from 2D hexagonal tiles in Unity
-  - Initial prototype of NPR post-process techniques in Unity
-  - Research and prototype how to represent advanced features on tiles (mountains, forests, etc.)
+<details>
+  <summary>Timeline</summary>
+<h4>Milestone 1:</h4>
+<ul>
+  <li>Everyone</li>
+    <ul>
+      <li>Learn Unity scripting and shading</li>
+      <li>Understand and design approach to Wave Function Collapse Algorithm</li>
+    </ul>
+  <li>Nick & Sakshi</li>
+    <ul>
+      <li>Basic Asset Creation (i.e. basic combination of sea, shore, and land tiles)</li>
+      <li>Creation of hexagonal grid and tiles</li>
+      <li>2D Hexagonal Wave Function Collapse development</li>
+    </ul>
+  <li>Megan</li>
+    <ul>
+      <li>Shade based on color map from 2D hexagonal tiles in Unity</li>
+      <li>Initial prototype of NPR post-process techniques in Unity</li>
+      <li>Research and prototype how to represent advanced features on tiles (mountains, forests, etc.)</li>
+    </ul>
+</ul>
 
-Milestone 2:
-- Everyone
-  - Polish leftover features from the previous milestone
-  - Asset creation and polish (more advanced terrain and sea features such as mountain ranges, forests, lakes, castles, etc.)
-- Nick
-  - More post-processing filters (roads, rivers, labels, compass, etc.)
-- Sakshi
-  - UI features and tooling - clear canvas, regeneration of map, and inventory to select tiles
-- Megan
-  - Continue working on shaders for extra features (mountains, forests, lakes, antique painterly look, etc.)
-- If time permits
-  - Inifinite map generation :O
-  - Extra shader types (e.g. Lord of the Rings or Narnia style)
+<h4>Milestone 2:</h4>
+<ul>
+  <li>Everyone</li>
+    <ul>
+      <li>Polish leftover features from the previous milestone</li>
+      <li>Asset creation and polish (more advanced terrain and sea features such as mountain ranges, forests, lakes, castles, etc.)</li>
+    </ul>
+  <li>Nick</li>
+    <ul>
+      <li>More post-processing filters (roads, rivers, labels, compass, etc.)</li>
+    </ul>
+  <li>Sakshi</li>
+    <ul>
+      <li>UI features and tooling - clear canvas, regeneration of map, and inventory to select tiles</li>
+    </ul>
+  <li>Megan</li>
+    <ul>
+      <li>Continue working on shaders for extra features (mountains, forests, lakes, antique painterly look, etc.)</li>
+    </ul>
+  <li>If time permits</li>
+    <ul>
+      <li>Inifinite map generation :O</li>
+      <li>Extra shader types (e.g. Lord of the Rings or Narnia style)</li>
+    </ul>
+</ul>
 
-Final Submission:
-- Everyone
-  - Polish leftover features from the previous milestones
-  - Polish assets and add any extra visual features
-  - Finish UI
-  - Look into ways to publish project online (live demo)
-  - Finalize README and presentation
-
+<h4>Final Submission:</h4>
+<ul>
+  <li>Everyone</li>
+    <ul>
+      <li>Polish leftover features from the previous milestones</li>
+      <li>Polish assets and add any extra visual features</li>
+      <li>Finish UI</li>
+      <li>Look into ways to publish project online (live demo)</li>
+      <li>Finalize README and presentation</li>
+    </ul>
+</ul>
+</details>
 
 ## Milestone 1
 
@@ -367,3 +421,112 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
 
 </details>
 
+
+## Final Submission
+
+<details>
+  <summary><b>Bug Fixes</b></summary>
+  Some of the bugs we fixed in this milestone are:
+  <ul>
+    <li><b>Asset cutoff issue:</b> <br>Previously, assets were being cutoff at mark boundaries. To fix this issue, we changed the calculation of the asset position and added an extra check to ensure that the center point of the asset is contained within the mask. With these additions, the assets that go beyond the boundary edge are fully drawn.</li>
+    <li><b>Seed generation accounts for tile weights:</b> <br>Earlier, the seeds were being picked randomly from the processed list of tile prefabs. This did not account for the weights associated with the tile. The weighting system affected only the tile selection in the WFC logic. Now, we account of the weights of the tile when picking input seeds for WFC as well. </li>
+    <li><b>Issues with Clear button:</b> <br>We fixed a bug that did not clear all the seed tiles placed by the user manually (using the clear button) after the restart button was used.</li>
+  </ul>
+</details>
+
+<details>
+  <summary><b>Asset Updates</b></summary>
+  We cleaned up the basic assets to make the lines more organic and continuous. This changed the look of the output to be more smooth. In addition, we included tiles for <b>rivers</b>, i.e., tiles with 2 water edges not adjacent to each other. We included a way to enable & disable the river tiles in the output using the UI.
+  <br>
+  <img width="500" src="/img/assets_3.png">
+
+</details>
+
+<details>
+  <summary><b>Rendering Updates</b></summary>
+  For this milestone we worked on polishing the basic shaders as well as adding some more post-process effects.
+  <br>
+  <details>
+    <summary><b>Coastline Hatching</b></summary>
+    In our reference images, we noticed that the coastline contours have a horizontal hatched line effect. In order to create this effect in the shader, we used the mod operation to create horizontal lines across the entire screen, and then masked out the areas that we did not want to be affected by the contours. We used the sobel filter with a thick radius to create this mask and perturbed it using FBM so that the contours would be of varying lengths. Any area that was not within this mask and not above water, would not receive contouring. Additionally, we mixed the contour color with worley noise to create a more hand-drawn look.
+    <br><img src="/img/hatching.PNG">
+  </details>
+  
+  <details>
+    <summary><b>Animated Water</b></summary>
+    <br><img src="/img/wetywrtyw.gif">
+    The water feature of the map was animated using a post-process. Before the addition of animation, the procedural water texture simply looked like this static image:
+    <br><img width="391" height="200" src="/img/old_Water.PNG">
+    <br>The water is animated using a sine function based on time, as well as fractal brownian motion and multiple time, amplitude and phase offsets to get the motion.
+    To have the white water waves repeating, the result of the fract function using this animated sine function is compared with line width and repeat variables. Then,
+    a series of worley noise and FBM layer on top of each other to get a more heterogeneous look to the coloring and fading of the water texture.
+  </details>
+  
+  <details>
+    <summary><b>Compass</b></summary>
+    The compass was created with 2D SDFs. Specifically, we used isosceles triangles to represent the directions and circles for the center & other larger shapes. We also used a 2D rotation matrix to correctly orient and place the SDFs around the center circles. The compass is positioned relative to the right edge of the map frame to ensure it does not go out of view.
+    <br><img src="/img/compass.PNG">
+  </details>
+  
+  <details>
+    <summary><b>Map Frame</b></summary>
+    Every reference map we saw had a frame that adds to the look of the map. To bring that same aesthetic to our tool, we wanted to add a frame. Our frame is made using 2D SDFs for the outlines and FBM for the rough edges. We included some layered FBM to give the borders a weathered look based on the distance from the center of the screen as well as the distance from the screen edges. The placement of the frame is relative to screen size.
+ <table>
+  <tr>
+    <td><img src="/img/frame_1.png"></td>
+    <td><img src="/img/frame_2.png"></td> 
+  </tr>
+  <tr>
+    <td><img src="/img/frame_3.png"></td>
+    <td><img src="/img/frame_5.png"></td> 
+  </tr>
+</table>
+  </details>
+  
+  
+</details>
+
+<details>
+  <summary><b>UI Updates</b></summary>
+  Some UI additions are as follows:
+  <ul>
+    <li><b>Number of seeds</b> input</li>
+    <li>Sliders to control the <b>weights</b> of land, water, coastline, mountain, forest and river tiles. All slider values range from 1 - 200 (except river, which ranges from 0 - 50, so you can choose to have no rivers in your scene).</li>
+    <li>Press Space bar to <b>toggle UI</b></li>
+    <li>Press C key to <b>enable free camera</b> movement</li>
+    <li>Press and hold Middle mouse button to <b>pan the camera</b> while in free camera mode</li>
+    <li>Scroll the Middle mouse button to <b>zoom the camera in and out</b> while in free camera mode</li>
+  </ul>
+</details>
+
+
+<details>
+  <summary><b>Camera</b></summary>
+  The camera is able to be controlled when the "free camera" toggle is enabled (i.e. by hitting "C" key). This allows for panning and zooming the camera. This level
+  of control is especially appreciated when the grid size of the map is enlarged to enable traversal of a procedurally generated large-scale land mass.
+  <br><br>Zoomed out image of a large map:
+  <br><img src="/img/zoom_out.PNG">
+  <br>Zoomed in image of a large map:
+  <br><img src="/img/zoom_in.PNG">
+</details>
+
+<details>
+  <summary><b>Publishing to Unity Play</b></summary>
+  We built and published our project to Unity Play as a WebGL app, which can be viewed live and played in-browser <a href="https://play.unity.com/mg/other/webglbuild2-12">here</a>. This WebGL version runs a bit slower than our local Unity build, but still includes the full functionality of our tool. The deployment process was simple; we installed the WebGL Publisher package in Unity and then used this to build and run our application. Once this step was completed, we published to Unity Play using the "Publish" tab in the Unity editor.   
+</details>
+
+## Post Mortem
+Overall, we really enjoyed working on this project. In the end, we accomplished all the main goals we set out from the beginning including 
+- hexagonal Wave Function Collapse, 
+- non-photorealistically rendered map, and 
+- basic user interactivity
+
+We planned out our tasks and goals for each milestone, which helped the project progress smoothly. Additionally, each person was given clear tasks which allowed us to make good progress in both the WFC and the Rendering parts of the project simultaneously. We maintained a task board throughout which made project management easy and kept everyone up to speed with the progress.
+For the most part, we did not pivot from the development plan we set out with. Though there are still a lot of ideas, features and feedback we would have liked to implement, we are still happy with what we have accomplished within the time frame of the project.
+
+Some of the features we would like to implement as we continue to work on this project are:
+- Options to select from various artistic map styles.
+- Better backtracking for the WFC.
+- More assets and features such as - castles, villages, roads, sea monsters, etc.
+- More geographically accurate feature/biome placement.
+- Advanced interactivity, e.g. infinite map generation based on the camera movement.
