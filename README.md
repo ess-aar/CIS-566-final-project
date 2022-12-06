@@ -529,3 +529,21 @@ Some of the features we would like to implement as we continue to work on this p
 - More assets and features such as - castles, villages, roads, sea monsters, etc.
 - More geographically accurate feature/biome placement.
 - Advanced interactivity, e.g. infinite map generation based on the camera movement.
+
+## Resources
+
+[Catlike Coding Hex Grid Tutorials](https://catlikecoding.com/unity/tutorials/hex-map/)
+
+[Red Blob Games Hexagonal Grid Tutorial](https://www.redblobgames.com/grids/hexagons/)
+
+[Wave Function Collapse by Robert Heaton](https://robertheaton.com/2018/12/17/wavefunction-collapse-algorithm/)
+
+[Wave Function Collapse by Maxim Gumin](https://github.com/mxgmn/WaveFunctionCollapse)
+
+[Unity Camera Tutorial](https://faramira.com/implement-camera-pan-and-zoom-controls-in-unity2d/)
+
+[Unity Camera Shaders](https://lindenreidblog.com/2018/02/05/camera-shaders-unity/)
+
+[Publishing Unity Build for WebGL](https://learn.unity.com/tutorial/how-to-publish-for-webgl#5d92519bedbc2a130fa21789)
+
+[Inigo Quilez 2D SDFs](https://iquilezles.org/articles/distfunctions2d/)
