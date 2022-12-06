@@ -428,7 +428,7 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   <summary><b>Bug Fixes</b></summary>
   Some of the bugs we fixed in this milestone are:
   <ul>
-    <li><b>Asset cutoff issue:</b> <br>Perviously, assets were being cutoff at mark boundaries. To fix this issue, we changed the calculation of the asset position and added an extra check to ensure that the center point of the asset is contained within the mask. With these additions, the assets that go beyond the boundary edge are fully drawn.</li>
+    <li><b>Asset cutoff issue:</b> <br>Previously, assets were being cutoff at mark boundaries. To fix this issue, we changed the calculation of the asset position and added an extra check to ensure that the center point of the asset is contained within the mask. With these additions, the assets that go beyond the boundary edge are fully drawn.</li>
     <li><b>Seed generation accounts for tile weights:</b> <br>Earlier, the seeds were being picked randomly from the processed list of tile prefabs. This did not account for the weights associated with the tile. The weighting system affected only the tile selection in the WFC logic. Now, we account of the weights of the tile when picking input seeds for WFC as well. </li>
     <li><b>Issues with Clear button:</b> <br>We fixed a bug that did not clear all the seed tiles placed by the user manually (using the clear button) after the restart button was used.</li>
   </ul>
@@ -436,9 +436,9 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
 
 <details>
   <summary><b>Asset Updates</b></summary>
-  We cleaned up the basic assets to make the lines more organic and continous. This changed the look of the output to be more smooth. In addition, we included tiles for <b>rivers</b>, i.e., tiles with 2 water edges not adjacent to eachother. We included a way to enable & disable the river tiles in the output using the UI.
+  We cleaned up the basic assets to make the lines more organic and continuous. This changed the look of the output to be more smooth. In addition, we included tiles for <b>rivers</b>, i.e., tiles with 2 water edges not adjacent to each other. We included a way to enable & disable the river tiles in the output using the UI.
   <br>
-  <img src="/img/assets_3.png">
+  <img width="500" src="/img/assets_3.png">
 
 </details>
 
@@ -448,29 +448,29 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   <br>
   <details>
     <summary><b>Coastline Hatching</b></summary>
-    In our reference images, we noticed that the coastline contours have a horizontal hatched line effect. In order to create this effect in the shader, we used the mod operation to create horizontal lines across the entire screen, and then masked out the areas that we did not want to be affected by the contours. We used the sobel filter with a thich radius to create this mark and perturbed it using FBM so that the contours would be of varying lengths. Any area that was not within this mask and not above water, would not recieve contouring. Additionally, we mixed the contour color with worley noise to create a more hand-drawn look.
+    In our reference images, we noticed that the coastline contours have a horizontal hatched line effect. In order to create this effect in the shader, we used the mod operation to create horizontal lines across the entire screen, and then masked out the areas that we did not want to be affected by the contours. We used the sobel filter with a thick radius to create this mask and perturbed it using FBM so that the contours would be of varying lengths. Any area that was not within this mask and not above water, would not receive contouring. Additionally, we mixed the contour color with worley noise to create a more hand-drawn look.
     <br><img src="/img/hatching.PNG">
   </details>
   
   <details>
     <summary><b>Animated Water</b></summary>
     <br><img src="/img/wetywrtyw.gif">
-    The water feature of map was animated using a post process. Before the addition of animation, the procedural water texture simply looked like this static image:
-    <br><img src="/img/old_Water.PNG">
-    The water is animated using a sin function based on time, as well as fractal brownian motion and multiple time, amplitude and phase offsets to get the motion.
-    To have the white water waves repeating, the result of the fract function using this animated sin function is compared with line width and repeat variables. Then,
+    The water feature of the map was animated using a post-process. Before the addition of animation, the procedural water texture simply looked like this static image:
+    <br><img width="391" height="200" src="/img/old_Water.PNG">
+    <br>The water is animated using a sine function based on time, as well as fractal brownian motion and multiple time, amplitude and phase offsets to get the motion.
+    To have the white water waves repeating, the result of the fract function using this animated sine function is compared with line width and repeat variables. Then,
     a series of worley noise and FBM layer on top of each other to get a more heterogeneous look to the coloring and fading of the water texture.
   </details>
   
   <details>
     <summary><b>Compass</b></summary>
-    The compass was created with 2D SDFs. Specifically, we used isoceles triangles to represent the directions and circles for the center & other larger shapes. We also used a 2D rotation matrix to correctly orient and place the SDFs around the center circles. The compass is positioned relative to the right edge of the map frame to ensure it does not go out of view.
+    The compass was created with 2D SDFs. Specifically, we used isosceles triangles to represent the directions and circles for the center & other larger shapes. We also used a 2D rotation matrix to correctly orient and place the SDFs around the center circles. The compass is positioned relative to the right edge of the map frame to ensure it does not go out of view.
     <br><img src="/img/compass.PNG">
   </details>
   
   <details>
     <summary><b>Map Frame</b></summary>
-    Every reference map we saw had a frame that adds to the look of the map. To bring that same aesthetic to our tool, we wanted to add frame. Our frame is made using 2D SDFs for the outlines and FBM for the rough edges. We included some layered FBM to give the borders a weathered look based on the distance of from the center of the screen as well as the distance from the screen edges. The placement of the frame is relative to screen size.
+    Every reference map we saw had a frame that adds to the look of the map. To bring that same aesthetic to our tool, we wanted to add a frame. Our frame is made using 2D SDFs for the outlines and FBM for the rough edges. We included some layered FBM to give the borders a weathered look based on the distance from the center of the screen as well as the distance from the screen edges. The placement of the frame is relative to screen size.
  <table>
   <tr>
     <td><img src="/img/frame_1.png"></td>
@@ -491,7 +491,7 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   Some UI additions are as follows:
   <ul>
     <li><b>Number of seeds</b> input</li>
-    <li>Sliders to control the <b>weights</b> of land, water, coastline, mountain, forest and river tiles. All slider values range from 1 - 200 (expect river, which ranges from 0 - 50, so you can turn choose to have no rivers in your scene).</li>
+    <li>Sliders to control the <b>weights</b> of land, water, coastline, mountain, forest and river tiles. All slider values range from 1 - 200 (except river, which ranges from 0 - 50, so you can choose to have no rivers in your scene).</li>
     <li>Press Space bar to <b>toggle UI</b></li>
     <li>Press C key to <b>enable free camera</b> movement</li>
     <li>Press and hold Middle mouse button to <b>pan the camera</b> while in free camera mode</li>
@@ -504,7 +504,7 @@ https://user-images.githubusercontent.com/90112787/204433411-c4f9f59a-9365-4ccc-
   <summary><b>Camera</b></summary>
   The camera is able to be controlled when the "free camera" toggle is enabled (i.e. by hitting "C" key). This allows for panning and zooming the camera. This level
   of control is especially appreciated when the grid size of the map is enlarged to enable traversal of a procedurally generated large-scale land mass.
-  <br>Zoomed out image of a large map:
+  <br><br>Zoomed out image of a large map:
   <br><img src="/img/zoom_out.PNG">
   <br>Zoomed in image of a large map:
   <br><img src="/img/zoom_in.PNG">
